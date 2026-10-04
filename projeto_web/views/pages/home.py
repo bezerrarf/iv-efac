@@ -71,24 +71,14 @@ def logo_orbital_hpc() -> rx.Component:
             ),
             z_index="3",
         ),
-        # Núcleo do Evento (Singularidade / Anã Branca)
+        # Núcleo do Evento (Logotipo Oficial IV EFAC com Soldadinho-do-Araripe)
         rx.box(
-            rx.vstack(
-                rx.icon(
-                    tag="telescope",
-                    size=42,
-                    color=rx.color_mode_cond(light="#103460", dark="#00ADB5"),
-                ),
-                rx.text(
-                    "IV EFAC",
-                    size="3",
-                    weight="bold",
-                    color=rx.color_mode_cond(light="#103460", dark="white"),
-                    letter_spacing="2.5px",
-                ),
-                rx.badge("2026", color_scheme="cyan", variant="soft", size="1"),
-                spacing="1",
-                align="center",
+            rx.image(
+                src="/logo_ivefac.jpeg",
+                width="128px",
+                height="128px",
+                border_radius="50%",
+                object_fit="cover",
             ),
             width="135px",
             height="135px",
@@ -102,8 +92,8 @@ def logo_orbital_hpc() -> rx.Component:
                 dark="3px solid rgba(0, 173, 181, 0.7)",
             ),
             box_shadow=rx.color_mode_cond(
-                light="0 10px 30px rgba(16, 52, 96, 0.2)",
-                dark="0 0 35px rgba(0, 173, 181, 0.4), inset 0 0 20px rgba(16, 52, 96, 0.6)",
+                light="0 10px 30px rgba(16, 52, 96, 0.25)",
+                dark="0 0 35px rgba(0, 173, 181, 0.5), inset 0 0 20px rgba(16, 52, 96, 0.6)",
             ),
             display="grid",
             place_items="center",
@@ -185,6 +175,23 @@ def tela_inicio() -> rx.Component:
         rx.hstack(
             # Coluna de Texto e Informações Principais
             rx.vstack(
+                # Banner Panorâmico Chapada do Araripe & Astrofísica
+                rx.box(
+                    rx.image(
+                        src="/cariri_cosmico_banner.jpeg",
+                        width="100%",
+                        height="140px",
+                        border_radius="14px",
+                        object_fit="cover",
+                        box_shadow="0 8px 24px rgba(16, 52, 96, 0.18)",
+                        border=rx.color_mode_cond(
+                            light="1.5px solid rgba(16, 52, 96, 0.15)",
+                            dark="1.5px solid rgba(0, 173, 181, 0.35)",
+                        ),
+                    ),
+                    width="100%",
+                    margin_bottom="0.2rem",
+                ),
                 rx.badge(
                     rx.hstack(
                         rx.box(
@@ -392,6 +399,57 @@ def tela_sobre() -> rx.Component:
                 width="100%",
                 margin_top="1rem",
             ),
+            # Destaque Cartaz Oficial do Evento
+            rx.card(
+                rx.hstack(
+                    rx.image(
+                        src="/poster_oficial_ivefac.jpeg",
+                        width="180px",
+                        height="250px",
+                        object_fit="cover",
+                        border_radius="12px",
+                        box_shadow="0 6px 20px rgba(0, 0, 0, 0.25)",
+                    ),
+                    rx.vstack(
+                        rx.badge("Publicação Oficial", color_scheme="cyan", variant="solid", size="1"),
+                        rx.heading("Cartaz Oficial do IV EFAC 2026", size="4", weight="bold", color=rx.color_mode_cond(light="#103460", dark="white")),
+                        rx.text(
+                            "Material oficial de divulgação com selos institucionais da Universidade Federal do Cariri (UFCA), "
+                            "Governo do Estado do Ceará e FUNCAP (Edital 03/2026). O evento celebra a astrofísica contemporânea, "
+                            "os radiotelescópios e a formação científica no interior cearense.",
+                            size="2",
+                            color=rx.color_mode_cond(light="#334155", dark="var(--gray-11)"),
+                            line_height="1.6",
+                        ),
+                        rx.link(
+                            rx.button(
+                                rx.hstack(
+                                    rx.text("Visualizar Cartaz em Alta Resolução"),
+                                    rx.icon(tag="file-text", size=15),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                size="2",
+                                variant="outline",
+                                color_scheme="cyan",
+                                radius="full",
+                            ),
+                            href="/poster_oficial_ivefac.jpeg",
+                            is_external=True,
+                        ),
+                        spacing="2",
+                        align="start",
+                    ),
+                    spacing="4",
+                    align="center",
+                    wrap="wrap",
+                ),
+                padding="1.5rem",
+                border_radius="16px",
+                max_width="1060px",
+                width="100%",
+                margin_top="0.5rem",
+            ),
             rx.hstack(
                 rx.button(
                     rx.hstack(
@@ -553,6 +611,40 @@ def tela_palestrantes() -> rx.Component:
                 max_width="1220px",
                 width="100%",
                 margin_top="1rem",
+            ),
+            # Card Padrão de Apresentação de Keynotes
+            rx.card(
+                rx.hstack(
+                    rx.image(
+                        src="/card_palestrante_template.jpeg",
+                        width="160px",
+                        height="160px",
+                        object_fit="cover",
+                        border_radius="12px",
+                        border="1.5px solid rgba(0, 173, 181, 0.4)",
+                        box_shadow="0 4px 15px rgba(0, 0, 0, 0.15)",
+                    ),
+                    rx.vstack(
+                        rx.badge("Identidade Visual Oficial", color_scheme="indigo", variant="surface", size="1"),
+                        rx.heading("Padrão de Apresentação dos Conferencistas", size="3", weight="bold", color=rx.color_mode_cond(light="#103460", dark="white")),
+                        rx.text(
+                            "Os palestrantes do IV EFAC são divulgados em cards temáticos oficiais com as cores da astrofísica "
+                            "regional, indicando tema de pesquisa, conferência magna e afiliação acadêmica.",
+                            size="2",
+                            color=rx.color_mode_cond(light="#475569", dark="var(--gray-10)"),
+                            line_height="1.5",
+                        ),
+                        spacing="2",
+                        align="start",
+                    ),
+                    spacing="4",
+                    align="center",
+                    wrap="wrap",
+                ),
+                padding="1.2rem",
+                max_width="1220px",
+                width="100%",
+                margin_top="0.8rem",
             ),
             rx.button(
                 rx.hstack(

@@ -146,10 +146,12 @@ def navbar() -> rx.Component:
             rx.link(
                 rx.hstack(
                     rx.box(
-                        rx.box(
-                            width="30px",
-                            height="30px",
+                        rx.image(
+                            src="/logo_ivefac.jpeg",
+                            width="32px",
+                            height="32px",
                             border_radius="50%",
+                            object_fit="cover",
                             border=rx.color_mode_cond(
                                 light="2px solid #103460",
                                 dark="2px solid #00ADB5",
@@ -157,12 +159,6 @@ def navbar() -> rx.Component:
                             box_shadow=rx.color_mode_cond(
                                 light="0 0 10px rgba(16, 52, 96, 0.3)",
                                 dark="0 0 12px rgba(0, 173, 181, 0.6)",
-                            ),
-                            display="grid",
-                            place_items="center",
-                            background=rx.color_mode_cond(
-                                light="radial-gradient(circle, #103460 20%, #e2e8f0 80%)",
-                                dark="radial-gradient(circle, #00ADB5 15%, transparent 70%)",
                             ),
                         ),
                         position="relative",

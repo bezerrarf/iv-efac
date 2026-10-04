@@ -111,38 +111,24 @@ def credencial_card() -> rx.Component:
                 width="100%",
             ),
             rx.divider(color_scheme="gray", opacity="0.2"),
-            rx.hstack(
-                rx.image(
-                    src="/logo_ivefac.jpeg",
-                    width="54px",
-                    height="54px",
-                    border_radius="50%",
-                    object_fit="cover",
-                    border="2px solid #00ADB5",
-                    box_shadow="0 0 12px rgba(0, 173, 181, 0.4)",
+            rx.vstack(
+                rx.text("Credencial Oficial de Participante", size="1", color="var(--gray-9)", text_transform="uppercase"),
+                rx.heading(
+                    EventoState.user_nome,
+                    size="6",
+                    weight="bold",
+                    color=rx.color_mode_cond(light="#103460", dark="white"),
                 ),
-                rx.vstack(
-                    rx.text("Credencial Oficial de Participante", size="1", color="var(--gray-9)", text_transform="uppercase"),
-                    rx.heading(
-                        EventoState.user_nome,
-                        size="6",
-                        weight="bold",
-                        color=rx.color_mode_cond(light="#103460", dark="white"),
-                    ),
-                    rx.text(EventoState.user_email, size="2", color=rx.color_mode_cond(light="#475569", dark="var(--gray-10)")),
-                    rx.hstack(
-                        rx.icon(tag="building", size=16, color="#00ADB5"),
-                        rx.text(EventoState.user_instituicao, size="2", color=rx.color_mode_cond(light="#334155", dark="var(--gray-11)")),
-                        align="center",
-                        spacing="1",
-                    ),
-                    align="start",
+                rx.text(EventoState.user_email, size="2", color=rx.color_mode_cond(light="#475569", dark="var(--gray-10)")),
+                rx.hstack(
+                    rx.icon(tag="building", size=16, color="#00ADB5"),
+                    rx.text(EventoState.user_instituicao, size="2", color=rx.color_mode_cond(light="#334155", dark="var(--gray-11)")),
+                    align="center",
                     spacing="1",
                 ),
-                spacing="3",
-                align="center",
+                align="start",
+                spacing="1",
                 margin_y="0.5rem",
-                width="100%",
             ),
             # Código da Inscrição em destaque
             rx.box(
@@ -396,16 +382,6 @@ def inscricao_page() -> rx.Component:
         navbar(),
         rx.box(
             rx.vstack(
-                rx.image(
-                    src="/logo_ivefac.jpeg",
-                    width="72px",
-                    height="72px",
-                    border_radius="50%",
-                    object_fit="cover",
-                    border="2px solid #00ADB5",
-                    box_shadow="0 0 20px rgba(0, 173, 181, 0.35)",
-                    margin_bottom="0.2rem",
-                ),
                 rx.badge("Portal de Credenciamento Oficial • IV EFAC", color_scheme="cyan", variant="soft", size="2"),
                 rx.heading(
                     "Inscrição & Credencial do Evento",

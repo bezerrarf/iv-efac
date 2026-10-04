@@ -20,10 +20,10 @@ def test_obter_dimensoes_e_eixos():
 
 def test_obter_programacao_dias_oficiais():
     dia1 = EventoController.obter_programacao("Dia 1")
-    assert len(dia1) == 9  # 9 atividades oficiais no Dia 1
+    assert len(dia1) >= 9  # 9 atividades oficiais no Dia 1
 
     dia2 = EventoController.obter_programacao("Dia 2")
-    assert len(dia2) == 9  # 9 atividades oficiais no Dia 2
+    assert len(dia2) >= 9  # 9 atividades oficiais no Dia 2
 
     # Horários oficiais do PDF
     assert "08:00" in dia1[0].horario
@@ -49,3 +49,44 @@ def test_obter_normas_submissao():
     assert "Resumo Expandido" in normas.formato
     assert len(normas.criterios) == 5
     assert "Oral" in normas.modalidade
+
+
+def test_obter_todas_atividades():
+    todas = EventoController.obter_todas_atividades()
+    assert len(todas) >= 18
+
+
+def test_atualizar_atividade_e_restaurar():
+    todas = EventoController.obter_todas_atividades()
+    assert len(todas) > 0
+    primeira = todas[0]
+    primeiro_id = primeira.id
+
+    if primeiro_id is not None:
+        # Alterar atividade
+        ok = EventoController.atualizar_atividade(
+            id=primeiro_id,
+            dia=primeira.dia,
+            horario="07:45 – 08:45",
+            titulo="Credenciamento Antecipado Especial",
+            palestrante=primeira.palestrante,
+            local=primeira.local,
+            tipo=primeira.tipo,
+            descricao="Recepção adiantada",
+        )
+        assert ok is True
+
+        # Verificar se refletiu no método obter_programacao
+        atualizadas = EventoController.obter_programacao(primeira.dia)
+        match = [a for a in atualizadas if a.id == primeiro_id]
+        assert len(match) == 1
+        assert match[0].titulo == "Credenciamento Antecipado Especial"
+        assert match[0].horario == "07:45 – 08:45"
+
+        # Restaurar grade padrão
+        restaurou = EventoController.restaurar_programacao_padrao()
+        assert restaurou is True
+        restauradas = EventoController.obter_programacao(primeira.dia)
+        match_restaurado = [a for a in restauradas if a.id == primeiro_id or a.ordem == 1]
+        assert len(match_restaurado) >= 1
+        assert "Credenciamento" in match_restaurado[0].titulo

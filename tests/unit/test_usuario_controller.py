@@ -109,3 +109,78 @@ def test_obter_estatisticas(controller: UsuarioController):
     stats2 = controller.obter_estatisticas()
     assert stats2["total_inscritos"] == 2
     assert stats2["vagas_restantes"] == 298
+
+
+def test_promover_e_revogar_supervisor(controller: UsuarioController):
+    cadastro = controller.cadastrar(
+        nome="Vera Rubin",
+        email="vera.rubin@carnegie.edu",
+        senha="materia_escura",
+    )
+    user_id = cadastro.dado.id
+    assert cadastro.dado.role == "participante"
+
+    # Promover a supervisor
+    res_promocao = controller.alterar_role(user_id, "supervisor")
+    assert res_promocao.sucesso is True
+    assert res_promocao.dado.role == "supervisor"
+    assert "Supervisor" in res_promocao.mensagem
+
+    # Revogar para participante
+    res_revogacao = controller.alterar_role(user_id, "participante")
+    assert res_revogacao.sucesso is True
+    assert res_revogacao.dado.role == "participante"
+
+
+def test_conferencia_presenca(controller: UsuarioController):
+    cadastro = controller.cadastrar(
+        nome="Jocelyn Bell Burnell",
+        email="jocelyn.bell@oxford.ac.uk",
+        senha="pulsar_descobe",
+    )
+    user_id = cadastro.dado.id
+    assert cadastro.dado.presenca_confirmada is False
+
+    # Marcar presença (Check-in)
+    res_presenca1 = controller.alternar_presenca(user_id)
+    assert res_presenca1.sucesso is True
+    assert res_presenca1.dado.presenca_confirmada is True
+    assert "CONFIRMADA" in res_presenca1.mensagem
+
+    # Desmarcar presença
+    res_presenca2 = controller.alternar_presenca(user_id)
+    assert res_presenca2.sucesso is True
+    assert res_presenca2.dado.presenca_confirmada is False
+    assert "PENDENTE" in res_presenca2.mensagem
+
+
+def test_atualizar_foto_perfil(controller: UsuarioController):
+    cadastro = controller.cadastrar(
+        nome="Albert Einstein",
+        email="einstein@princeton.edu",
+        senha="relatividade_geral",
+    )
+    user_id = cadastro.dado.id
+
+    res_foto = controller.atualizar_foto(user_id, "https://exemplo.com/foto_einstein.jpg")
+    assert res_foto.sucesso is True
+    assert res_foto.dado.foto_url == "https://exemplo.com/foto_einstein.jpg"
+
+
+def test_listar_inscritos_com_filtro(controller: UsuarioController):
+    controller.cadastrar(nome="Max Planck", email="planck@berlin.de", senha="quanta_de_energia", instituicao="Univ Berlim")
+    controller.cadastrar(nome="Niels Bohr", email="bohr@copenhagen.dk", senha="modelo_atomico", instituicao="Univ Copenhague")
+
+    # Sem filtro: retorna todos
+    todos = controller.listar_inscritos()
+    assert len(todos) == 2
+
+    # Com filtro por nome
+    filtro_planck = controller.listar_inscritos("Planck")
+    assert len(filtro_planck) == 1
+    assert filtro_planck[0].nome == "Max Planck"
+
+    # Com filtro por instituicao
+    filtro_inst = controller.listar_inscritos("Copenhague")
+    assert len(filtro_inst) == 1
+    assert filtro_inst[0].nome == "Niels Bohr"

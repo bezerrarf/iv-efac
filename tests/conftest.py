@@ -1,4 +1,4 @@
-"""Configurações e fixtures globais de teste para o AstroData 2026."""
+"""Configurações e fixtures globais de teste para o IV EFAC 2026."""
 
 import pytest
 from typing import Optional
@@ -36,6 +36,27 @@ class InMemoryUsuarioRepository(UsuarioRepositoryProtocol):
 
     def list_all(self) -> list[Usuario]:
         return list(self._usuarios.values())
+
+    def update_role(self, user_id: int, role: str) -> Optional[Usuario]:
+        u = self._usuarios.get(user_id)
+        if u:
+            u.role = role
+            return u
+        return None
+
+    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+        u = self._usuarios.get(user_id)
+        if u:
+            u.presenca_confirmada = not bool(u.presenca_confirmada)
+            return u
+        return None
+
+    def update_foto(self, user_id: int, foto_url: str) -> Optional[Usuario]:
+        u = self._usuarios.get(user_id)
+        if u:
+            u.foto_url = foto_url
+            return u
+        return None
 
 
 @pytest.fixture

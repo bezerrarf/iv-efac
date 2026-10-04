@@ -1,4 +1,4 @@
-"""Entidade Usuario para o domínio do evento AstroData 2026."""
+"""Entidade Usuario para o domínio do evento IV EFAC 2026."""
 
 from datetime import datetime, timezone
 from typing import Optional
@@ -20,4 +20,7 @@ class Usuario(SQLModel, table=True):
         default_factory=lambda: f"ASTRO-{secrets.token_hex(3).upper()}",
         index=True,
     )
+    role: str = Field(default="participante", index=True)  # 'participante', 'supervisor', 'admin'
+    foto_url: Optional[str] = Field(default=None)
+    presenca_confirmada: bool = Field(default=False, index=True)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

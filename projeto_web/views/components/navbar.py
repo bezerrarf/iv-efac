@@ -65,33 +65,56 @@ def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
     )
 
 
-def nav_edital_pulsante(url: str = "/cronograma") -> rx.Component:
-    """Link do Edital com efeito pulsante contínuo e prevenção de quebra."""
-    return rx.link(
-        rx.badge(
-            rx.hstack(
-                rx.icon(tag="file-text", size=13),
-                rx.text("Edital", size="1", weight="bold"),
-                spacing="1",
-                align="center",
+def nav_edital_pulsante(url: str = "/assets/edital_iv_efac_2026.pdf", pronto: bool = False) -> rx.Component:
+    """Espaço reservado para o Edital do evento.
+    Dedicado exclusivamente a baixar o PDF do evento com regras.
+    Mantido desativado até a publicação oficial final do documento.
+    """
+    if pronto:
+        return rx.link(
+            rx.badge(
+                rx.hstack(
+                    rx.icon(tag="file-down", size=13),
+                    rx.text("Baixar Edital", size="1", weight="bold"),
+                    spacing="1",
+                    align="center",
+                ),
+                color_scheme="cyan",
+                variant="solid",
+                radius="full",
+                padding_x="0.75rem",
+                padding_y="0.25rem",
+                _hover={"opacity": "1", "transform": "scale(1.05)"},
+                style=STYLE_BUTTON_CHIP,
             ),
-            color_scheme="cyan",
-            variant="solid",
-            radius="full",
-            padding_x="0.75rem",
-            padding_y="0.25rem",
-            style={
-                "@keyframes piscaEdital": {
-                    "0%, 100%": {"opacity": "1", "transform": "scale(1)"},
-                    "50%": {"opacity": "0.6", "transform": "scale(0.96)"},
-                },
-                "animation": "piscaEdital 1.8s ease-in-out infinite",
-                **STYLE_BUTTON_CHIP,
-            },
-            _hover={"opacity": "1", "transform": "scale(1.05)"},
+            href=url,
+            download="Edital_IV_EFAC_2026.pdf",
+        )
+
+    # Estado desativado preparado para o PDF das regras
+    return rx.tooltip(
+        rx.box(
+            rx.badge(
+                rx.hstack(
+                    rx.icon(tag="file-text", size=13, color="rgba(255, 255, 255, 0.5)"),
+                    rx.text("Edital", size="1", weight="medium", color="rgba(255, 255, 255, 0.7)"),
+                    rx.badge("Em Breve", color_scheme="gray", variant="soft", size="1"),
+                    spacing="1",
+                    align="center",
+                ),
+                color_scheme="gray",
+                variant="surface",
+                radius="full",
+                padding_x="0.65rem",
+                padding_y="0.25rem",
+                border="1px dashed rgba(255, 255, 255, 0.2)",
+                opacity="0.7",
+                cursor="not-allowed",
+                style=STYLE_BUTTON_CHIP,
+            ),
+            id="btn-edital-disabled",
         ),
-        href=url,
-        style=STYLE_BUTTON_CHIP,
+        content="Edital Oficial com Regras do Evento (Download em breve - aguardando publicação final do PDF)",
     )
 
 
@@ -113,7 +136,7 @@ def menu_mobile_telas() -> rx.Component:
             rx.menu.item("Palestrantes", on_click=lambda: EventoState.set_tela("palestrantes")),
             rx.menu.item("Programação Oficial", on_click=lambda: EventoState.set_tela("programacao")),
             rx.menu.item("Submissões de Trabalhos", on_click=lambda: EventoState.set_tela("submissoes")),
-            rx.menu.item("Edital Oficial", on_click=rx.redirect("/cronograma")),
+            rx.menu.item("Edital Oficial (PDF em breve)", disabled=True),
             rx.menu.item("Localização", on_click=lambda: EventoState.set_tela("local")),
             rx.menu.item("Sobre o Evento", on_click=lambda: EventoState.set_tela("sobre")),
             rx.menu.separator(),
@@ -128,21 +151,22 @@ def menu_mobile_telas() -> rx.Component:
 def navbar() -> rx.Component:
     return rx.box(
         rx.hstack(
-            # Marca / Logo oficial do evento
+            # Marca / Logo oficial do evento (WhatsApp Image 2026-10-03 at 15.58.16)
             rx.link(
                 rx.hstack(
                     rx.box(
-                        rx.box(
-                            width="30px",
-                            height="30px",
+                        rx.image(
+                            src="/logo_ivefac.jpeg",
+                            alt="Logo Oficial IV EFAC 2026",
+                            width="36px",
+                            height="36px",
                             border_radius="50%",
-                            border="2px solid #00ADB5",
-                            box_shadow="0 0 14px rgba(0, 173, 181, 0.6)",
-                            display="grid",
-                            place_items="center",
-                            background="radial-gradient(circle, #00ADB5 20%, transparent 75%)",
+                            object_fit="cover",
+                            border="1.5px solid #00ADB5",
+                            box_shadow="0 0 12px rgba(0, 173, 181, 0.5)",
                         ),
-                        position="relative",
+                        display="grid",
+                        place_items="center",
                     ),
                     rx.vstack(
                         rx.hstack(
@@ -178,7 +202,7 @@ def navbar() -> rx.Component:
                 nav_item_secao("Palestrantes", "palestrantes", "users"),
                 nav_item_secao("Programação", "programacao", "calendar"),
                 nav_item_secao("Submissões", "submissoes", "file-text"),
-                nav_edital_pulsante("/cronograma"),
+                nav_edital_pulsante(),
                 nav_item_secao("Local", "local", "map-pin"),
                 nav_item_secao("Sobre", "sobre", "info"),
                 spacing="2",
@@ -190,6 +214,15 @@ def navbar() -> rx.Component:
                 rx.cond(
                     EventoState.is_logged_in,
                     rx.hstack(
+                        rx.cond(
+                            EventoState.is_admin,
+                            rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
+                            rx.cond(
+                                EventoState.is_supervisor,
+                                rx.badge("SUPERVISOR", color_scheme="violet", variant="solid", size="1"),
+                                rx.fragment(),
+                            ),
+                        ),
                         rx.badge(
                             rx.hstack(
                                 rx.icon(tag="circle-check", size=14),

@@ -15,6 +15,9 @@ class Atividade:
     tipo: str
     descricao: str
     tipo_color: str = "indigo"
+    id: Optional[int] = None
+    dia: str = "Dia 1"
+    ordem: int = 0
 
 
 @dataclass
@@ -80,7 +83,8 @@ class EventoController:
     ]
 
     @staticmethod
-    def obter_programacao(dia: str) -> List[Atividade]:
+    def obter_programacao_padrao(dia: str) -> List[Atividade]:
+        """Grade oficial estática padrão do evento."""
         programacoes = {
             "Dia 1": [
                 Atividade(
@@ -91,6 +95,8 @@ class EventoController:
                     tipo="Acolhimento",
                     descricao="Recepção presencial dos congressistas, entrega de credenciais e materiais do simpósio.",
                     tipo_color="violet",
+                    dia="Dia 1",
+                    ordem=1,
                 ),
                 Atividade(
                     horario="09:00 – 09:30",
@@ -100,6 +106,8 @@ class EventoController:
                     tipo="Sessão Solene",
                     descricao="Abertura oficial com a direção do IFE, coordenação do IV EFAC e representantes da FUNCAP.",
                     tipo_color="indigo",
+                    dia="Dia 1",
+                    ordem=2,
                 ),
                 Atividade(
                     horario="09:30 – 10:30",
@@ -109,6 +117,8 @@ class EventoController:
                     tipo="Palestra de Abertura",
                     descricao="Inovação, epistemologia, metodologias ativas e formação científica de qualidade no ensino contemporâneo.",
                     tipo_color="cyan",
+                    dia="Dia 1",
+                    ordem=3,
                 ),
                 Atividade(
                     horario="10:30 – 11:00",
@@ -118,6 +128,8 @@ class EventoController:
                     tipo="Intervalo Técnico",
                     descricao="Momento de conexão e articulação científica entre estudantes, professores e conferencistas.",
                     tipo_color="gray",
+                    dia="Dia 1",
+                    ordem=4,
                 ),
                 Atividade(
                     horario="11:00 – 12:30",
@@ -127,6 +139,8 @@ class EventoController:
                     tipo="Palestra Convidada",
                     descricao="Estrutura e física da matéria sob densidades e pressões extremas: evolução estelar, pulsares e estrelas de nêutrons.",
                     tipo_color="sky",
+                    dia="Dia 1",
+                    ordem=5,
                 ),
                 Atividade(
                     horario="12:30 – 14:00",
@@ -136,6 +150,8 @@ class EventoController:
                     tipo="Intervalo",
                     descricao="Pausa para refeição e descanso dos congressistas.",
                     tipo_color="gray",
+                    dia="Dia 1",
+                    ordem=6,
                 ),
                 Atividade(
                     horario="14:00 – 17:30",
@@ -145,6 +161,8 @@ class EventoController:
                     tipo="Sessão Técnica",
                     descricao="Apresentação oral (15 minutos) de resumos expandidos submetidos e aprovados pelos comitês avaliadores.",
                     tipo_color="teal",
+                    dia="Dia 1",
+                    ordem=7,
                 ),
                 Atividade(
                     horario="17:30 – 18:00",
@@ -154,6 +172,8 @@ class EventoController:
                     tipo="Intervalo Técnico",
                     descricao="Pausa para ajuste de áudio e recepção da conferência magna.",
                     tipo_color="gray",
+                    dia="Dia 1",
+                    ordem=8,
                 ),
                 Atividade(
                     horario="18:00 – 19:15",
@@ -163,6 +183,8 @@ class EventoController:
                     tipo="Plenária Magna",
                     descricao="Astrofísica de altas energias, objetos ultradensos, processos de radiação e física de fronteira.",
                     tipo_color="indigo",
+                    dia="Dia 1",
+                    ordem=9,
                 ),
             ],
             "Dia 2": [
@@ -174,6 +196,8 @@ class EventoController:
                     tipo="Sessão Técnica",
                     descricao="Comunicações em Ensino de Física, Física Teórica, Astrofísica e Aplicações Computacionais.",
                     tipo_color="cyan",
+                    dia="Dia 2",
+                    ordem=10,
                 ),
                 Atividade(
                     horario="10:15 – 10:45",
@@ -183,6 +207,8 @@ class EventoController:
                     tipo="Intervalo Técnico",
                     descricao="Convivência acadêmica e café da manhã institucional.",
                     tipo_color="gray",
+                    dia="Dia 2",
+                    ordem=11,
                 ),
                 Atividade(
                     horario="10:45 – 11:45",
@@ -192,6 +218,8 @@ class EventoController:
                     tipo="Palestra Convidada",
                     descricao="Modelagem computacional de sistemas astrofísicos, métodos numéricos e computação científica de alto desempenho.",
                     tipo_color="teal",
+                    dia="Dia 2",
+                    ordem=12,
                 ),
                 Atividade(
                     horario="11:45 – 12:45",
@@ -201,6 +229,8 @@ class EventoController:
                     tipo="Palestra Convidada",
                     descricao="Gravitação em regimes de campo forte, termodinâmica de buracos negros e avanços na cosmologia quântica.",
                     tipo_color="sky",
+                    dia="Dia 2",
+                    ordem=13,
                 ),
                 Atividade(
                     horario="12:45 – 14:00",
@@ -210,6 +240,8 @@ class EventoController:
                     tipo="Intervalo",
                     descricao="Pausa para refeição e recomposição.",
                     tipo_color="gray",
+                    dia="Dia 2",
+                    ordem=14,
                 ),
                 Atividade(
                     horario="14:00 – 17:30",
@@ -219,6 +251,8 @@ class EventoController:
                     tipo="Sessão Especial",
                     descricao="Exposição de Pôsteres Científicos no Hall Principal e Sessão Oral de Iniciação Científica/Mestrado com Banca Avaliadora.",
                     tipo_color="indigo",
+                    dia="Dia 2",
+                    ordem=15,
                 ),
                 Atividade(
                     horario="17:30 – 18:00",
@@ -228,6 +262,8 @@ class EventoController:
                     tipo="Intervalo Técnico",
                     descricao="Preparação para a conferência magna de encerramento.",
                     tipo_color="gray",
+                    dia="Dia 2",
+                    ordem=16,
                 ),
                 Atividade(
                     horario="18:00 – 19:15",
@@ -237,6 +273,8 @@ class EventoController:
                     tipo="Conferência Magna",
                     descricao="Astrofísica de partículas, processamento de Big Data cósmico, Machine Learning e levantamentos observacionais.",
                     tipo_color="violet",
+                    dia="Dia 2",
+                    ordem=17,
                 ),
                 Atividade(
                     horario="19:15 – 19:45",
@@ -246,10 +284,122 @@ class EventoController:
                     tipo="Solenidade de Encerramento",
                     descricao="Premiação dos destaques orais e pôsteres, formalização dos Anais do IV EFAC e encerramento oficial.",
                     tipo_color="indigo",
+                    dia="Dia 2",
+                    ordem=18,
                 ),
             ],
         }
         return programacoes.get(dia, programacoes["Dia 1"])
+
+    @staticmethod
+    def obter_programacao(dia: str) -> List[Atividade]:
+        """Busca programação do SQLite persistente ou fallback para padrão."""
+        try:
+            from projeto_web.repositories.database import get_session
+            from projeto_web.models.atividade import AtividadeModel
+            from sqlmodel import select
+
+            with get_session() as session:
+                stmt = select(AtividadeModel).where(AtividadeModel.dia == dia).order_by(AtividadeModel.ordem.asc(), AtividadeModel.id.asc())
+                resultados = session.exec(stmt).all()
+                if resultados:
+                    return [
+                        Atividade(
+                            id=r.id,
+                            dia=r.dia,
+                            horario=r.horario,
+                            titulo=r.titulo,
+                            palestrante=r.palestrante,
+                            local=r.local,
+                            tipo=r.tipo,
+                            descricao=r.descricao,
+                            tipo_color=r.tipo_color,
+                            ordem=r.ordem,
+                        )
+                        for r in resultados
+                    ]
+        except Exception:
+            pass
+
+        return EventoController.obter_programacao_padrao(dia)
+
+    @staticmethod
+    def obter_todas_atividades() -> List[Atividade]:
+        """Retorna todas as atividades de todos os dias persistidas no banco."""
+        todas = []
+        for dia in ["Dia 1", "Dia 2"]:
+            todas.extend(EventoController.obter_programacao(dia))
+        return todas
+
+    @staticmethod
+    def atualizar_atividade(
+        id: int,
+        dia: str,
+        horario: str,
+        titulo: str,
+        palestrante: str,
+        local: str,
+        tipo: str,
+        descricao: str,
+    ) -> bool:
+        """Permite ao administrador alterar datas, horários e temas diretamente no banco."""
+        try:
+            from projeto_web.repositories.database import get_session
+            from projeto_web.models.atividade import AtividadeModel
+
+            with get_session() as session:
+                item = session.get(AtividadeModel, id)
+                if not item:
+                    return False
+                item.dia = dia
+                item.horario = horario
+                item.titulo = titulo
+                item.palestrante = palestrante
+                item.local = local
+                item.tipo = tipo
+                item.descricao = descricao
+                session.add(item)
+                session.commit()
+                return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def restaurar_programacao_padrao() -> bool:
+        """Restaura a grade de atividades para os valores originais do edital."""
+        try:
+            from projeto_web.repositories.database import get_session
+            from projeto_web.models.atividade import AtividadeModel
+            from sqlmodel import select
+
+            with get_session() as session:
+                stmt = select(AtividadeModel)
+                itens = session.exec(stmt).all()
+                for i in itens:
+                    session.delete(i)
+                session.commit()
+
+                ordem_counter = 1
+                for dia in ["Dia 1", "Dia 2"]:
+                    padrao = EventoController.obter_programacao_padrao(dia)
+                    for p in padrao:
+                        at = AtividadeModel(
+                            dia=dia,
+                            horario=p.horario,
+                            titulo=p.titulo,
+                            palestrante=p.palestrante,
+                            local=p.local,
+                            tipo=p.tipo,
+                            descricao=p.descricao,
+                            tipo_color=p.tipo_color,
+                            ordem=ordem_counter,
+                        )
+                        session.add(at)
+                        ordem_counter += 1
+                session.commit()
+                return True
+        except Exception:
+            return False
 
     @staticmethod
     def obter_palestrantes() -> List[Palestrante]:

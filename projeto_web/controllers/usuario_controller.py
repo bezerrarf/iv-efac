@@ -1,7 +1,7 @@
 """Controller para orquestração de regras de negócio de usuários e participantes (C de MVC)."""
 
 from dataclasses import dataclass
-from typing import Generic, Optional, TypeVar
+from typing import Generic, List, Optional, TypeVar
 from projeto_web.core.config import CAPACIDADE_MAXIMA_EVENTO
 from projeto_web.core.security import PasswordHasherProtocol
 from projeto_web.models.usuario import Usuario
@@ -84,6 +84,7 @@ class UsuarioController:
             modalidade=modalidade,
             area=area,
             senha_hash=self._hasher.hash(senha),
+            role="participante",
         )
 
         salvo = self._repository.save(novo_usuario)
@@ -138,11 +139,79 @@ class UsuarioController:
             dado=atualizado,
         )
 
+    def listar_inscritos(self, termo: Optional[str] = None) -> List[Usuario]:
+        """Retorna todos os inscritos filtrados por termo de busca opcional."""
+        todos = self._repository.list_all()
+        if not termo or not termo.strip():
+            return todos
+        termo_clean = termo.strip().lower()
+        return [
+            u for u in todos
+            if (
+                termo_clean in u.nome.lower()
+                or termo_clean in u.email.lower()
+                or termo_clean in u.codigo_inscricao.lower()
+                or termo_clean in u.instituicao.lower()
+                or termo_clean in u.role.lower()
+            )
+        ]
+
+    def alterar_role(self, user_id: int, nova_role: str) -> ControllerResult[Usuario]:
+        """Permite ao administrador conceder ou revogar permissões de supervisor."""
+        if nova_role not in ["participante", "supervisor", "admin"]:
+            return ControllerResult(sucesso=False, mensagem="Permissão inválida.")
+
+        atualizado = self._repository.update_role(user_id, nova_role)
+        if not atualizado:
+            return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
+
+        status_label = "Supervisor(a)" if nova_role == "supervisor" else "Participante Regular"
+        return ControllerResult(
+            sucesso=True,
+            mensagem=f"Poderes de {status_label} atualizados para {atualizado.nome}!",
+            dado=atualizado,
+        )
+
+    def alternar_presenca(self, user_id: int) -> ControllerResult[Usuario]:
+        """Permite ao supervisor/admin marcar conferência de presença do participante."""
+        atualizado = self._repository.toggle_presenca(user_id)
+        if not atualizado:
+            return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
+
+        status = "CONFIRMADA" if atualizado.presenca_confirmada else "PENDENTE"
+        return ControllerResult(
+            sucesso=True,
+            mensagem=f"Presença de {atualizado.nome} marcada como {status}!",
+            dado=atualizado,
+        )
+
+    def atualizar_foto(self, user_id: int, foto_url: str) -> ControllerResult[Usuario]:
+        """Atualiza a foto de identificação do participante ou palestrante."""
+        atualizado = self._repository.update_foto(user_id, foto_url.strip())
+        if not atualizado:
+            return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
+
+        return ControllerResult(
+            sucesso=True,
+            mensagem="Foto do cartão de identificação atualizada com sucesso!",
+            dado=atualizado,
+        )
+
     def obter_estatisticas(self) -> dict:
         """Calcula métricas de vagas e inscritos."""
         total = self._repository.count()
+        todos = self._repository.list_all()
+        presenciais = sum(1 for u in todos if u.modalidade == "Presencial")
+        onlines = sum(1 for u in todos if u.modalidade == "Online")
+        presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False))
+        supervisores = sum(1 for u in todos if getattr(u, "role", "") == "supervisor")
+
         return {
             "total_inscritos": total,
             "capacidade_maxima": self._capacidade_maxima,
             "vagas_restantes": max(0, self._capacidade_maxima - total),
+            "presenciais": presenciais,
+            "onlines": onlines,
+            "presentes": presentes,
+            "supervisores": supervisores,
         }

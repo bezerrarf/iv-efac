@@ -26,3 +26,15 @@ class UsuarioRepositoryProtocol(Protocol):
     def list_all(self) -> list[Usuario]:
         """Retorna todos os usuários cadastrados."""
         ...
+
+    def update_role(self, user_id: int, role: str) -> Optional[Usuario]:
+        """Atualiza a role/permissão de um usuário ('participante', 'supervisor', 'admin')."""
+        ...
+
+    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+        """Alterna o status de presença confirmada de um participante."""
+        ...
+
+    def update_foto(self, user_id: int, foto_url: str) -> Optional[Usuario]:
+        """Atualiza a URL ou dado da foto do participante."""
+        ...

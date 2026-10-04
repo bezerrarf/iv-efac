@@ -1,12 +1,19 @@
 """Página de Inscrição, Login, Credencial e Submissões do IV EFAC (View - UI/UX Pro Max).
 Preserva persistência completa no SQLite em modo WAL e controle de sessão.
-Pure Deep Cosmic Dark Theme com responsividade completa para todas as telas.
+Pure Deep Cosmic Dark Theme com responsividade e flexibilidade completa.
+Inclui:
+- Cartão de Identificação Digital Oficial baseado em WhatsApp Image 2026-10-03 at 16.05.42
+- Painel Administrativo com análise de participantes, concessão de supervisores e editor de grade
+- Painel de Supervisão para conferência de presença durante as atividades do evento
 """
 
 import reflex as rx
 from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.footer import footer
 from projeto_web.views.components.cosmic_background import cosmic_background
+from projeto_web.views.components.badge_card import cartao_identificacao_digital
+from projeto_web.views.components.painel_admin import painel_admin_view
+from projeto_web.views.components.painel_supervisor import painel_supervisor_view
 from projeto_web.state.evento_state import EventoState
 from projeto_web.styles.theme import (
     COLOR_BG,
@@ -27,7 +34,7 @@ def templates_pos_inscricao() -> rx.Component:
         rx.vstack(
             rx.hstack(
                 rx.icon(tag="file-down", size=20, color=COLOR_CYAN),
-                rx.heading("Modelos Oficiais de Submissão", size="4", weight="bold", color="white", style=STYLE_HEADING_RESPONSIVE),
+                rx.heading("Modelos Oficiais de Submissão", size="4", weight="bold", color="white"),
                 align="center",
                 spacing="2",
             ),
@@ -66,7 +73,7 @@ def templates_pos_inscricao() -> rx.Component:
                 rx.link(
                     rx.card(
                         rx.hstack(
-                            rx.icon(tag="presentation", size=18, color=COLOR_CYAN_LIGHT),
+                            rx.icon(tag="presentation", size=18, color="#818CF8"),
                             rx.vstack(
                                 rx.text("Slide para Apresentação Oral (15 min)", size="2", weight="bold", color="white"),
                                 rx.text("Padrão 16:9 oficial com chancela UFCA e FUNCAP", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
@@ -82,7 +89,7 @@ def templates_pos_inscricao() -> rx.Component:
                         padding="0.75rem",
                         background="rgba(15, 23, 42, 0.6)",
                         border="1px solid rgba(255, 255, 255, 0.08)",
-                        _hover={"border_color": COLOR_CYAN_LIGHT, "transform": "translateY(-1px)"},
+                        _hover={"border_color": "#818CF8", "transform": "translateY(-1px)"},
                         transition="all 0.2s ease",
                     ),
                     href="#",
@@ -91,7 +98,7 @@ def templates_pos_inscricao() -> rx.Component:
                 rx.link(
                     rx.card(
                         rx.hstack(
-                            rx.icon(tag="layout-grid", size=18, color="#818CF8"),
+                            rx.icon(tag="layout-grid", size=18, color="#34d399"),
                             rx.vstack(
                                 rx.text("Modelo de Pôster / Painel Científico", size="2", weight="bold", color="white"),
                                 rx.text("Dimensão 90x120cm para exibição no hall do IFE", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
@@ -99,7 +106,7 @@ def templates_pos_inscricao() -> rx.Component:
                                 align="start",
                             ),
                             rx.spacer(),
-                            rx.badge("Baixar Template", color_scheme="indigo", size="1", style=STYLE_BUTTON_CHIP),
+                            rx.badge("Baixar Template", color_scheme="green", size="1", style=STYLE_BUTTON_CHIP),
                             align="center",
                             width="100%",
                         ),
@@ -107,7 +114,7 @@ def templates_pos_inscricao() -> rx.Component:
                         padding="0.75rem",
                         background="rgba(15, 23, 42, 0.6)",
                         border="1px solid rgba(255, 255, 255, 0.08)",
-                        _hover={"border_color": "#818CF8", "transform": "translateY(-1px)"},
+                        _hover={"border_color": "#34d399", "transform": "translateY(-1px)"},
                         transition="all 0.2s ease",
                     ),
                     href="#",
@@ -124,132 +131,6 @@ def templates_pos_inscricao() -> rx.Component:
     )
 
 
-def credencial_card() -> rx.Component:
-    """Card exibido quando o usuário está autenticado/inscrito (Deep Cosmic Glass)."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                rx.icon(tag="circle-check", size=24, color="#34d399"),
-                rx.badge("Inscrição Confirmada • IV EFAC", color_scheme="green", variant="solid", size="2", style=STYLE_BUTTON_CHIP),
-                rx.spacer(),
-                rx.badge(EventoState.user_modalidade, color_scheme="cyan", variant="soft", size="2", style=STYLE_BUTTON_CHIP),
-                align="center",
-                width="100%",
-                wrap="wrap",
-                gap="2",
-            ),
-            rx.divider(color_scheme="gray", opacity="0.18"),
-            rx.vstack(
-                rx.text("Credencial Oficial de Participante", size="1", color="var(--gray-9)", text_transform="uppercase", letter_spacing="0.1em"),
-                rx.heading(
-                    EventoState.user_nome,
-                    size=rx.breakpoints(initial="5", sm="6"),
-                    weight="bold",
-                    color="white",
-                    style=STYLE_HEADING_RESPONSIVE,
-                ),
-                rx.text(EventoState.user_email, size="2", color="var(--gray-10)", style=STYLE_TEXT_RESPONSIVE),
-                rx.hstack(
-                    rx.icon(tag="building", size=16, color=COLOR_CYAN),
-                    rx.text(EventoState.user_instituicao, size="2", color="var(--gray-11)", style=STYLE_TEXT_RESPONSIVE),
-                    align="center",
-                    spacing="1",
-                ),
-                align="start",
-                spacing="1",
-                margin_y="0.5rem",
-                width="100%",
-            ),
-            # Código da Inscrição em destaque
-            rx.box(
-                rx.vstack(
-                    rx.text("Seu Código de Check-in no Campus Brejo Santo", size="1", color=COLOR_CYAN, style=STYLE_TEXT_RESPONSIVE),
-                    rx.heading(EventoState.user_codigo, size=rx.breakpoints(initial="6", sm="7"), weight="bold", color=COLOR_CYAN, letter_spacing="2px"),
-                    align="center",
-                    spacing="0",
-                ),
-                background="rgba(0, 173, 181, 0.08)",
-                border="1px dashed rgba(0, 173, 181, 0.45)",
-                border_radius="12px",
-                padding="1rem",
-                width="100%",
-            ),
-            # Ação de troca de modalidade com ID explícito para automação e feedback imediato
-            rx.hstack(
-                rx.text("Modalidade atual:", size="2", color="var(--gray-10)"),
-                rx.cond(
-                    EventoState.user_modalidade == "Presencial",
-                    rx.button(
-                        "Mudar para Online",
-                        id="btn-alternar-modalidade",
-                        size="1",
-                        variant="outline",
-                        color_scheme="cyan",
-                        on_click=lambda: EventoState.alterar_modalidade_usuario("Online"),
-                        style=STYLE_BUTTON_CHIP,
-                    ),
-                    rx.button(
-                        "Mudar para Presencial",
-                        id="btn-alternar-modalidade",
-                        size="1",
-                        variant="outline",
-                        color_scheme="indigo",
-                        on_click=lambda: EventoState.alterar_modalidade_usuario("Presencial"),
-                        style=STYLE_BUTTON_CHIP,
-                    ),
-                ),
-                align="center",
-                spacing="2",
-                wrap="wrap",
-            ),
-            # Status do Certificado
-            rx.box(
-                rx.hstack(
-                    rx.icon(tag="award", size=18, color="#f59e0b"),
-                    rx.vstack(
-                        rx.text("Certificado Oficial de Participação", size="2", weight="bold", color="white"),
-                        rx.text("Disponível a partir de 12 de novembro de 2026 após as sessões de encerramento.", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
-                        spacing="0",
-                        align="start",
-                    ),
-                    spacing="2",
-                    align="center",
-                ),
-                background="rgba(245, 158, 11, 0.08)",
-                border="1px solid rgba(245, 158, 11, 0.2)",
-                border_radius="10px",
-                padding="0.75rem",
-                width="100%",
-            ),
-            rx.divider(color_scheme="gray", opacity="0.18"),
-            # Seção de Templates pós-inscrição
-            templates_pos_inscricao(),
-            rx.hstack(
-                rx.button(
-                    "Encerrar Sessão",
-                    variant="outline",
-                    color_scheme="red",
-                    size="2",
-                    on_click=EventoState.logout,
-                    style=STYLE_BUTTON_CHIP,
-                ),
-                justify="end",
-                width="100%",
-            ),
-            spacing="4",
-            width="100%",
-        ),
-        background="linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85))",
-        backdrop_filter="blur(16px)",
-        border="1px solid rgba(0, 173, 181, 0.3)",
-        box_shadow="0 12px 45px rgba(0, 0, 0, 0.45)",
-        padding=rx.breakpoints(initial="1.25rem", sm="2rem"),
-        max_width="580px",
-        width="100%",
-        border_radius="16px",
-    )
-
-
 def feedback_alert() -> rx.Component:
     return rx.cond(
         EventoState.feedback_msg != "",
@@ -262,6 +143,190 @@ def feedback_alert() -> rx.Component:
             width="100%",
             margin_bottom="1rem",
         ),
+    )
+
+
+def logged_in_hub() -> rx.Component:
+    """Hub interativo do participante, supervisor e administrador autenticado."""
+    return rx.vstack(
+        feedback_alert(),
+        # Barra Superior de Status do Usuário
+        rx.hstack(
+            rx.hstack(
+                rx.cond(
+                    EventoState.user_foto_url != "",
+                    rx.image(
+                        src=EventoState.user_foto_url,
+                        width="42px",
+                        height="42px",
+                        border_radius="50%",
+                        object_fit="cover",
+                        border="1.5px solid #00ADB5",
+                    ),
+                    rx.box(
+                        rx.icon(tag="user", size=20, color=COLOR_CYAN),
+                        background="rgba(0, 173, 181, 0.15)",
+                        border_radius="50%",
+                        padding="0.55rem",
+                        display="grid",
+                        place_items="center",
+                    ),
+                ),
+                rx.vstack(
+                    rx.hstack(
+                        rx.heading(EventoState.user_nome, size="3", weight="bold", color="white"),
+                        rx.cond(
+                            EventoState.is_admin,
+                            rx.badge("SUPER ADMIN", color_scheme="red", variant="solid", size="1"),
+                            rx.cond(
+                                EventoState.is_supervisor,
+                                rx.badge("SUPERVISOR(A)", color_scheme="violet", variant="solid", size="1"),
+                                rx.badge("PARTICIPANTE", color_scheme="cyan", variant="solid", size="1"),
+                            ),
+                        ),
+                        spacing="2",
+                        align="center",
+                        wrap="wrap",
+                    ),
+                    rx.text(
+                        f"{EventoState.user_email} • {EventoState.user_instituicao} ({EventoState.user_modalidade})",
+                        size="1",
+                        color="var(--gray-9)",
+                        style=STYLE_TEXT_RESPONSIVE,
+                    ),
+                    spacing="0",
+                    align="start",
+                ),
+                spacing="3",
+                align="center",
+            ),
+            rx.spacer(),
+            # Ação de Alterar Modalidade
+            rx.hstack(
+                rx.cond(
+                    EventoState.user_modalidade == "Presencial",
+                    rx.button(
+                        "Mudar para Online",
+                        size="1",
+                        variant="outline",
+                        color_scheme="cyan",
+                        on_click=lambda: EventoState.alterar_modalidade_usuario("Online"),
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    rx.button(
+                        "Mudar para Presencial",
+                        size="1",
+                        variant="outline",
+                        color_scheme="indigo",
+                        on_click=lambda: EventoState.alterar_modalidade_usuario("Presencial"),
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                ),
+                rx.button(
+                    rx.hstack(
+                        rx.icon(tag="log-out", size=14),
+                        rx.text("Sair", size="1"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    variant="ghost",
+                    color_scheme="red",
+                    size="2",
+                    on_click=EventoState.logout,
+                    style=STYLE_BUTTON_CHIP,
+                ),
+                spacing="2",
+                align="center",
+            ),
+            width="100%",
+            align="center",
+            padding="1rem 1.25rem",
+            background="rgba(15, 23, 42, 0.85)",
+            border="1px solid rgba(0, 173, 181, 0.25)",
+            border_radius="14px",
+            box_shadow="0 8px 30px rgba(0, 0, 0, 0.35)",
+            wrap="wrap",
+            gap="2",
+        ),
+        # Navegação em Abas do Hub
+        rx.tabs.root(
+            rx.tabs.list(
+                rx.tabs.trigger(
+                    rx.hstack(
+                        rx.icon(tag="contact", size=15),
+                        rx.text("Cartão de Identificação (Crachá)", size="2"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    value="cracha",
+                ),
+                rx.cond(
+                    EventoState.is_admin,
+                    rx.tabs.trigger(
+                        rx.hstack(
+                            rx.icon(tag="shield-alert", size=15),
+                            rx.text("Painel do Administrador", size="2"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        value="admin",
+                    ),
+                    rx.fragment(),
+                ),
+                rx.cond(
+                    EventoState.is_supervisor,
+                    rx.tabs.trigger(
+                        rx.hstack(
+                            rx.icon(tag="clipboard-check", size=15),
+                            rx.text("Conferência de Presença", size="2"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        value="presenca",
+                    ),
+                    rx.fragment(),
+                ),
+                rx.tabs.trigger(
+                    rx.hstack(
+                        rx.icon(tag="file-down", size=15),
+                        rx.text("Modelos & Submissões", size="2"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    value="modelos",
+                ),
+                size="2",
+            ),
+            rx.tabs.content(
+                cartao_identificacao_digital(),
+                value="cracha",
+                padding_top="1.5rem",
+                width="100%",
+            ),
+            rx.tabs.content(
+                painel_admin_view(),
+                value="admin",
+                padding_top="1.5rem",
+                width="100%",
+            ),
+            rx.tabs.content(
+                painel_supervisor_view(),
+                value="presenca",
+                padding_top="1.5rem",
+                width="100%",
+            ),
+            rx.tabs.content(
+                templates_pos_inscricao(),
+                value="modelos",
+                padding_top="1.5rem",
+                width="100%",
+            ),
+            default_value="cracha",
+            width="100%",
+        ),
+        spacing="4",
+        width="100%",
+        max_width="920px",
     )
 
 
@@ -355,6 +420,7 @@ def form_cadastro() -> rx.Component:
         rx.button(
             "Confirmar Inscrição Gratuita",
             size="3",
+            color_scheme="indigo",
             radius="full",
             width="100%",
             margin_top="1rem",
@@ -362,7 +428,7 @@ def form_cadastro() -> rx.Component:
             background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
             color="white",
             box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",
-            _hover={"transform": "translateY(-1px)", "box_shadow": "0 6px 24px rgba(0, 173, 181, 0.55)"},
+            _hover={"transform": "translateY(-1px)", "box_shadow": "0 6px 22px rgba(0, 173, 181, 0.55)"},
             transition="all 0.2s ease",
             style=STYLE_BUTTON_CHIP,
         ),
@@ -442,7 +508,7 @@ def inscricao_page() -> rx.Component:
                 ),
                 rx.cond(
                     EventoState.is_logged_in,
-                    credencial_card(),
+                    logged_in_hub(),
                     rx.card(
                         rx.tabs.root(
                             rx.tabs.list(

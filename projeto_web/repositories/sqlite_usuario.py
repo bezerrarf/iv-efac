@@ -43,5 +43,38 @@ class SQLiteUsuarioRepository(UsuarioRepositoryProtocol):
 
     def list_all(self) -> list[Usuario]:
         with self._session_factory() as session:
-            statement = select(Usuario)
+            statement = select(Usuario).order_by(Usuario.id.asc())
             return list(session.exec(statement).all())
+
+    def update_role(self, user_id: int, role: str) -> Optional[Usuario]:
+        with self._session_factory() as session:
+            usuario = session.get(Usuario, user_id)
+            if usuario:
+                usuario.role = role
+                session.add(usuario)
+                session.commit()
+                session.refresh(usuario)
+                return usuario
+            return None
+
+    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+        with self._session_factory() as session:
+            usuario = session.get(Usuario, user_id)
+            if usuario:
+                usuario.presenca_confirmada = not bool(usuario.presenca_confirmada)
+                session.add(usuario)
+                session.commit()
+                session.refresh(usuario)
+                return usuario
+            return None
+
+    def update_foto(self, user_id: int, foto_url: str) -> Optional[Usuario]:
+        with self._session_factory() as session:
+            usuario = session.get(Usuario, user_id)
+            if usuario:
+                usuario.foto_url = foto_url
+                session.add(usuario)
+                session.commit()
+                session.refresh(usuario)
+                return usuario
+            return None

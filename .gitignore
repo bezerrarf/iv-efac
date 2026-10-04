@@ -1,3 +1,6 @@
+.web
+.states
+*.py[cod]
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -36,3 +39,6 @@ cloudflared.exe
 .idea/
 .DS_Store
 Thumbs.db
+
+# Testes Locais e Automacoes
+.automacao/

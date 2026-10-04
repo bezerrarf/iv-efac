@@ -1,13 +1,21 @@
-"""Barra de navegação acadêmica oficial do IV EFAC (View).
-Permite alternar entre as seções/telas diretamente pelos itens do topo com feedback ativo.
+"""Barra de navegação acadêmica oficial do IV EFAC (View - UI/UX Pro Max).
+Pure Deep Cosmic Dark Theme. Adaptável a todas as telas (Desktop, Tablet e Mobile).
 """
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.styles.theme import (
+    COLOR_NAVBAR_BG,
+    COLOR_BORDER_SUBTLE,
+    COLOR_CYAN,
+    COLOR_CYAN_LIGHT,
+    COLOR_SURFACE_GLASS,
+    STYLE_BUTTON_CHIP,
+)
 
 
 def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
-    """Item do menu superior com indicador visual de tela ativa."""
+    """Item do menu superior com indicador visual cósmico de tela ativa."""
     is_ativa = EventoState.tela_ativa == chave
 
     return rx.button(
@@ -29,35 +37,36 @@ def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
         on_click=lambda: EventoState.set_tela(chave),
         color=rx.cond(
             is_ativa,
-            rx.color_mode_cond(light="#103460", dark="#00ADB5"),
-            rx.color_mode_cond(light="#475569", dark="var(--gray-10)"),
+            COLOR_CYAN,
+            "rgba(226, 232, 240, 0.85)",
         ),
         background=rx.cond(
             is_ativa,
-            rx.color_mode_cond(light="rgba(16, 52, 96, 0.08)", dark="rgba(0, 173, 181, 0.15)"),
+            "rgba(0, 173, 181, 0.15)",
             "transparent",
         ),
         border=rx.cond(
             is_ativa,
-            rx.color_mode_cond(light="1px solid rgba(16, 52, 96, 0.2)", dark="1px solid rgba(0, 173, 181, 0.3)"),
+            "1px solid rgba(0, 173, 181, 0.35)",
             "1px solid transparent",
         ),
         box_shadow=rx.cond(
             is_ativa,
-            rx.color_mode_cond(light="0 2px 8px rgba(16, 52, 96, 0.08)", dark="0 0 12px rgba(0, 173, 181, 0.25)"),
+            "0 0 14px rgba(0, 173, 181, 0.3)",
             "none",
         ),
         _hover={
-            "color": rx.color_mode_cond(light="#103460", dark="#38bdf8"),
-            "background": rx.color_mode_cond(light="rgba(0, 0, 0, 0.04)", dark="rgba(255, 255, 255, 0.06)"),
+            "color": COLOR_CYAN_LIGHT,
+            "background": "rgba(255, 255, 255, 0.06)",
             "transform": "translateY(-1px)",
         },
         transition="all 0.18s ease",
+        style=STYLE_BUTTON_CHIP,
     )
 
 
 def nav_edital_pulsante(url: str = "/cronograma") -> rx.Component:
-    """Link do Edital com efeito pulsante contínuo."""
+    """Link do Edital com efeito pulsante contínuo e prevenção de quebra."""
     return rx.link(
         rx.badge(
             rx.hstack(
@@ -77,50 +86,26 @@ def nav_edital_pulsante(url: str = "/cronograma") -> rx.Component:
                     "50%": {"opacity": "0.6", "transform": "scale(0.96)"},
                 },
                 "animation": "piscaEdital 1.8s ease-in-out infinite",
+                **STYLE_BUTTON_CHIP,
             },
             _hover={"opacity": "1", "transform": "scale(1.05)"},
         ),
         href=url,
-    )
-
-
-def botao_alternar_tema() -> rx.Component:
-    """Botão moderno de alternância entre Buraco Negro (Escuro) e Anã Branca (Claro)."""
-    return rx.tooltip(
-        rx.button(
-            rx.color_mode_cond(
-                light=rx.icon(tag="moon", size=18, color="#1e293b"),
-                dark=rx.icon(tag="sun", size=18, color="#facc15"),
-            ),
-            variant="ghost",
-            size="2",
-            radius="full",
-            on_click=rx.toggle_color_mode,
-            _hover={
-                "background": rx.color_mode_cond(
-                    light="rgba(0, 0, 0, 0.05)",
-                    dark="rgba(255, 255, 255, 0.1)",
-                )
-            },
-            aria_label="Alternar Tema: Buraco Negro / Anã Branca",
-        ),
-        content=rx.color_mode_cond(
-            light="Mudar para Buraco Negro (Tema Escuro)",
-            dark="Mudar para Anã Branca (Tema Claro)",
-        ),
+        style=STYLE_BUTTON_CHIP,
     )
 
 
 def menu_mobile_telas() -> rx.Component:
-    """Menu responsivo para dispositivos móveis."""
+    """Menu responsivo para telas compactas e tablets (< 1024px)."""
     return rx.menu.root(
         rx.menu.trigger(
             rx.button(
                 rx.icon(tag="menu", size=20),
                 variant="ghost",
                 size="2",
-                color=rx.color_mode_cond(light="#103460", dark="white"),
+                color="white",
                 display=["flex", "flex", "none"],
+                aria_label="Abrir Menu de Navegação",
             )
         ),
         rx.menu.content(
@@ -133,8 +118,9 @@ def menu_mobile_telas() -> rx.Component:
             rx.menu.item("Sobre o Evento", on_click=lambda: EventoState.set_tela("sobre")),
             rx.menu.separator(),
             rx.menu.item("Garantir Inscrição", on_click=rx.redirect("/inscricao")),
-            background=rx.color_mode_cond(light="#ffffff", dark="rgba(15, 23, 42, 0.98)"),
-            border=rx.color_mode_cond(light="1px solid #e2e8f0", dark="1px solid rgba(255, 255, 255, 0.1)"),
+            background="rgba(15, 23, 42, 0.98)",
+            border="1px solid rgba(255, 255, 255, 0.12)",
+            box_shadow="0 10px 40px rgba(0, 0, 0, 0.6)",
         ),
     )
 
@@ -142,7 +128,7 @@ def menu_mobile_telas() -> rx.Component:
 def navbar() -> rx.Component:
     return rx.box(
         rx.hstack(
-            # Marca / Logo oficial do evento (ao clicar retorna ao Início)
+            # Marca / Logo oficial do evento
             rx.link(
                 rx.hstack(
                     rx.box(
@@ -150,20 +136,11 @@ def navbar() -> rx.Component:
                             width="30px",
                             height="30px",
                             border_radius="50%",
-                            border=rx.color_mode_cond(
-                                light="2px solid #103460",
-                                dark="2px solid #00ADB5",
-                            ),
-                            box_shadow=rx.color_mode_cond(
-                                light="0 0 10px rgba(16, 52, 96, 0.3)",
-                                dark="0 0 12px rgba(0, 173, 181, 0.6)",
-                            ),
+                            border="2px solid #00ADB5",
+                            box_shadow="0 0 14px rgba(0, 173, 181, 0.6)",
                             display="grid",
                             place_items="center",
-                            background=rx.color_mode_cond(
-                                light="radial-gradient(circle, #103460 20%, #e2e8f0 80%)",
-                                dark="radial-gradient(circle, #00ADB5 15%, transparent 70%)",
-                            ),
+                            background="radial-gradient(circle, #00ADB5 20%, transparent 75%)",
                         ),
                         position="relative",
                     ),
@@ -173,7 +150,7 @@ def navbar() -> rx.Component:
                                 "IV EFAC",
                                 size="4",
                                 weight="bold",
-                                color=rx.color_mode_cond(light="#103460", dark="white"),
+                                color="white",
                             ),
                             rx.badge("2026", color_scheme="cyan", variant="soft", size="1"),
                             spacing="1",
@@ -182,7 +159,8 @@ def navbar() -> rx.Component:
                         rx.text(
                             "Física & Astronomia • UFCA",
                             size="1",
-                            color=rx.color_mode_cond(light="#64748b", dark="var(--gray-9)"),
+                            color="var(--gray-9)",
+                            style={"white_space": "nowrap"},
                         ),
                         spacing="0",
                         align="start",
@@ -192,8 +170,9 @@ def navbar() -> rx.Component:
                 ),
                 href="/",
                 on_click=lambda: EventoState.set_tela("inicio"),
+                style=STYLE_BUTTON_CHIP,
             ),
-            # Navegação no Topo: Eixos, Palestrantes, Programação, Submissões, Edital, Local e Sobre (último item)
+            # Navegação no Topo: Telas Principais (Visível a partir de Desktop / md/lg)
             rx.hstack(
                 nav_item_secao("Eixos", "eixos", "orbit"),
                 nav_item_secao("Palestrantes", "palestrantes", "users"),
@@ -206,7 +185,7 @@ def navbar() -> rx.Component:
                 align="center",
                 display=["none", "none", "flex"],
             ),
-            # Acessos (Entrar, Inscreva-se, Alternador de Tema e Menu Mobile)
+            # Acessos (Entrar, Inscreva-se e Menu Mobile)
             rx.hstack(
                 rx.cond(
                     EventoState.is_logged_in,
@@ -227,6 +206,7 @@ def navbar() -> rx.Component:
                             variant="ghost",
                             color_scheme="red",
                             on_click=EventoState.logout,
+                            style=STYLE_BUTTON_CHIP,
                         ),
                         spacing="2",
                         align="center",
@@ -241,17 +221,13 @@ def navbar() -> rx.Component:
                                 color_scheme="cyan",
                                 radius="full",
                                 padding_x="1rem",
-                                border=rx.color_mode_cond(
-                                    light="1.5px solid #cbd5e1",
-                                    dark="1.5px solid rgba(0, 173, 181, 0.4)",
-                                ),
-                                color=rx.color_mode_cond(light="#103460", dark="#00ADB5"),
+                                border="1.5px solid rgba(0, 173, 181, 0.4)",
+                                color="#00ADB5",
                                 _hover={
-                                    "background": rx.color_mode_cond(
-                                        light="#f1f5f9",
-                                        dark="rgba(0, 173, 181, 0.12)",
-                                    ),
+                                    "background": "rgba(0, 173, 181, 0.15)",
+                                    "border_color": "#00ADB5",
                                 },
+                                style=STYLE_BUTTON_CHIP,
                             ),
                             href="/inscricao",
                         ),
@@ -263,13 +239,17 @@ def navbar() -> rx.Component:
                                 variant="solid",
                                 color_scheme="indigo",
                                 radius="full",
-                                padding_x="1.4rem",
+                                padding_x="1.3rem",
                                 font_weight="bold",
-                                background="#103460",
+                                background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
                                 color="white",
-                                box_shadow="0 4px 15px rgba(16, 52, 96, 0.3)",
-                                _hover={"transform": "translateY(-1px)", "background": "#16457e"},
+                                box_shadow="0 4px 16px rgba(0, 173, 181, 0.35)",
+                                _hover={
+                                    "transform": "translateY(-1px)",
+                                    "box_shadow": "0 6px 20px rgba(0, 173, 181, 0.5)",
+                                },
                                 transition="all 0.2s ease",
+                                style=STYLE_BUTTON_CHIP,
                             ),
                             href="/inscricao",
                         ),
@@ -277,8 +257,6 @@ def navbar() -> rx.Component:
                         align="center",
                     ),
                 ),
-                # Alternador de Tema Cósmico
-                botao_alternar_tema(),
                 # Menu Mobile
                 menu_mobile_telas(),
                 spacing="2",
@@ -294,13 +272,7 @@ def navbar() -> rx.Component:
         top="0",
         z_index="100",
         backdrop_filter="blur(16px)",
-        background=rx.color_mode_cond(
-            light="rgba(255, 255, 255, 0.92)",
-            dark="rgba(6, 8, 20, 0.92)",
-        ),
-        border_bottom=rx.color_mode_cond(
-            light="1px solid #e2e8f0",
-            dark="1px solid rgba(255, 255, 255, 0.08)",
-        ),
+        background=COLOR_NAVBAR_BG,
+        border_bottom=f"1px solid {COLOR_BORDER_SUBTLE}",
         width="100%",
     )

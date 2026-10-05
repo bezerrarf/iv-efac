@@ -69,7 +69,7 @@ class EventoController:
         "endereco": "Rua Olegário Emídio de Araújo, s/n - Centro, Brejo Santo - CE",
         "cidade": "Brejo Santo",
         "state": "CE",
-        "fomento": "FUNCAP – Edital 03/2026 (Processo: CER-0264-00190.01.00/26)",
+        "fomento": "Fomento FUNCAP (Processo: CER-0264-00190.01.00/26)",
         "coordenacao_geral": "Prof. Dr. Edson Otoniel da Silva e Prof. Dr. André Flávio Gonçalves Silva",
         "coordenador": "Prof. Dr. Edson Otoniel da Silva e Prof. Dr. André Flávio Gonçalves Silva",
         "email_contato": "edson.otoniel@ufca.edu.br",
@@ -365,6 +365,41 @@ class EventoController:
             return False
 
     @staticmethod
+    def adicionar_atividade(
+        dia: str,
+        horario: str,
+        titulo: str,
+        palestrante: str,
+        local: str,
+        tipo: str,
+        descricao: str,
+    ) -> bool:
+        """Permite ao administrador criar e delegar manualmente uma nova atividade."""
+        try:
+            from projeto_web.repositories.database import get_session
+            from projeto_web.models.atividade import AtividadeModel
+            from sqlmodel import select
+
+            with get_session() as session:
+                stmt = select(AtividadeModel).where(AtividadeModel.dia == dia)
+                total_dia = len(session.exec(stmt).all())
+                nova = AtividadeModel(
+                    dia=dia,
+                    horario=horario,
+                    titulo=titulo,
+                    palestrante=palestrante,
+                    local=local,
+                    tipo=tipo,
+                    descricao=descricao,
+                    ordem=total_dia + 1,
+                )
+                session.add(nova)
+                session.commit()
+                return True
+        except Exception:
+            return False
+
+    @staticmethod
     def restaurar_programacao_padrao() -> bool:
         """Restaura a grade de atividades para os valores originais do edital."""
         try:
@@ -537,7 +572,7 @@ class EventoController:
                 "Prof. Dr. Tharcisyo Sá e Sousa Duarte (UFCA)",
             ],
             "instituicao_executora": "Universidade Federal do Cariri – UFCA (Instituto de Formação de Educadores – IFE)",
-            "fomento": "Fundação Cearense de Apoio ao Desenvolvimento Científico e Tecnológico – FUNCAP / Governo do Estado do Ceará (Edital 03/2026 - Processo: CER-0264-00190.01.00/26)",
+            "fomento": "Fundação Cearense de Apoio ao Desenvolvimento Científico e Tecnológico – Fomento FUNCAP / Governo do Estado do Ceará (Processo: CER-0264-00190.01.00/26)",
             "parceiros": [
                 "ITA (Instituto Tecnológico de Aeronáutica)",
                 "CBPF (Centro Brasileiro de Pesquisas Físicas)",

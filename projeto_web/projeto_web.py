@@ -43,3 +43,10 @@ app.add_page(
     title="Inscrição & Credencial Oficial • IV EFAC 2026",
     description="Portal oficial de credenciamento do IV EFAC no Campus Brejo Santo – UFCA com emissão de certificado oficial.",
 )
+
+app.add_page(
+    inscricao_page,
+    route="/login",
+    title="Login & Acesso • IV EFAC 2026",
+    description="Acesso ao portal de inscritos e painel administrativo do IV EFAC 2026.",
+)

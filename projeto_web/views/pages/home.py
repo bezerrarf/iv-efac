@@ -104,60 +104,257 @@ def logo_orbital_hpc() -> rx.Component:
 
 
 def display_hud_contagem() -> rx.Component:
-    """Display digital estilo relógio atômico para o início do simpósio."""
+    """Display digital estilo relógio atômico para o início do simpósio (11/11 às 08h00)
+    com transição para mensagens de boas-vindas e citações inspiradoras de cientistas.
+    """
     alvo = datetime(2026, 11, 11, 8, 0, 0)
-    agora = datetime(2026, 10, 1, 16, 0, 0)
-    dias = max((alvo - agora).days, 0)
-    horas = max(((alvo - agora).seconds // 3600), 0)
+    agora = datetime.now()
+    diff_segundos = max(int((alvo - agora).total_seconds()), 0)
+    init_dias = diff_segundos // 86400
+    init_horas = (diff_segundos % 86400) // 3600
+    init_min = (diff_segundos % 3600) // 60
+    init_seg = diff_segundos % 60
 
-    def hud_item(val: str, label: str) -> rx.Component:
+    def hud_item(id_elem: str, val_inicial: str, label: str) -> rx.Component:
         return rx.box(
             rx.vstack(
-                rx.heading(val, size="5", weight="bold", color=COLOR_CYAN),
-                rx.text(label, size="1", color="var(--gray-9)", text_transform="uppercase"),
+                rx.heading(
+                    val_inicial,
+                    id=id_elem,
+                    size="5",
+                    weight="bold",
+                    color=rx.color_mode_cond(light="#103460", dark="#00ADB5"),
+                ),
+                rx.text(
+                    label,
+                    size="1",
+                    color=rx.color_mode_cond(light="#64748b", dark="var(--gray-9)"),
+                    text_transform="uppercase",
+                    letter_spacing="1px",
+                ),
                 spacing="0",
                 align="center",
             ),
-            background="rgba(15, 23, 42, 0.8)",
-            border=f"1px solid {COLOR_BORDER_CYAN}",
+            background=rx.color_mode_cond(light="rgba(255, 255, 255, 0.9)", dark="rgba(15, 23, 42, 0.8)"),
+            border=rx.color_mode_cond(light="1px solid #e2e8f0", dark="1px solid rgba(0, 173, 181, 0.3)"),
             border_radius="10px",
-            padding="0.45rem 0.85rem",
-            min_width="65px",
-            box_shadow="0 4px 14px rgba(0, 0, 0, 0.3)",
+            padding="0.5rem 0.9rem",
+            min_width="68px",
+            box_shadow="0 4px 12px rgba(0, 0, 0, 0.15)",
         )
 
-    return rx.box(
+    # 1. Visão de Contagem Regressiva Ativa
+    visao_relogio = rx.box(
         rx.vstack(
             rx.hstack(
                 rx.box(
-                    width="6px",
-                    height="6px",
+                    width="8px",
+                    height="8px",
                     border_radius="50%",
-                    background=COLOR_CYAN,
-                    box_shadow=f"0 0 8px {COLOR_CYAN}",
+                    background="#00ADB5",
+                    box_shadow="0 0 10px #00ADB5",
                 ),
                 rx.text(
                     "CONTAGEM REGRESSIVA PARA ABERTURA",
                     size="1",
                     weight="bold",
                     letter_spacing="1.5px",
-                    color=COLOR_CYAN,
-                    style=STYLE_BUTTON_CHIP,
+                    color=rx.color_mode_cond(light="#103460", dark="#00ADB5"),
                 ),
+                rx.badge("11/11 às 08h00", color_scheme="cyan", variant="surface", size="1"),
                 spacing="2",
                 align="center",
             ),
             rx.hstack(
-                hud_item(str(dias), "Dias"),
-                hud_item(str(horas), "Horas"),
-                hud_item("30", "Min"),
-                hud_item("00", "Seg"),
+                hud_item("hud-dias", str(init_dias).zfill(2), "Dias"),
+                hud_item("hud-horas", str(init_horas).zfill(2), "Horas"),
+                hud_item("hud-min", str(init_min).zfill(2), "Min"),
+                hud_item("hud-seg", str(init_seg).zfill(2), "Seg"),
                 spacing="2",
                 align="center",
             ),
-            spacing="1",
+            rx.hstack(
+                rx.button(
+                    rx.hstack(
+                        rx.icon(tag="sparkles", size=14, color="#38bdf8"),
+                        rx.text("Ver Mensagens Inspiradoras dos Cientistas", size="1"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    size="1",
+                    variant="ghost",
+                    color_scheme="cyan",
+                    cursor="pointer",
+                    on_click=EventoState.alternar_preview_evento_iniciado,
+                    padding="0.2rem 0.5rem",
+                ),
+                spacing="1",
+                align="center",
+                margin_top="0.3rem",
+            ),
+            spacing="2",
             align="start",
         ),
+        id="hud-countdown-container",
+    )
+
+    # 2. Visão de Evento em Andamento / Mensagens Inspiradoras dos Cientistas
+    visao_evento_iniciado = rx.box(
+        rx.vstack(
+            rx.hstack(
+                rx.box(
+                    width="10px",
+                    height="10px",
+                    border_radius="50%",
+                    background="#22c55e",
+                    box_shadow="0 0 12px #22c55e",
+                ),
+                rx.badge("AO VIVO • SIMPÓSIO EM ANDAMENTO", color_scheme="green", variant="surface", size="2"),
+                rx.spacer(),
+                rx.button(
+                    rx.hstack(
+                        rx.icon(tag="clock", size=13),
+                        rx.text("Ver Relógio", size="1"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    size="1",
+                    variant="ghost",
+                    color_scheme="gray",
+                    cursor="pointer",
+                    on_click=EventoState.alternar_preview_evento_iniciado,
+                ),
+                spacing="2",
+                align="center",
+                width="100%",
+            ),
+            rx.heading(
+                "Aproveite Cada Momento do IV EFAC 2026!",
+                size="4",
+                weight="bold",
+                color="white",
+            ),
+            rx.text(
+                "Abertura oficial realizada às 08h00! Participe ativamente das conferências magnas, apresentações orais e minicursos no Campus Brejo Santo – UFCA.",
+                size="2",
+                color="var(--gray-10)",
+                line_height="1.5",
+            ),
+            # Card com Mensagem Inspiradora do Cientista
+            rx.box(
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(tag="sparkles", size=22, color=EventoState.frase_cientista_cor),
+                        rx.vstack(
+                            rx.text(EventoState.frase_cientista_autor, size="2", weight="bold", color="white"),
+                            rx.text(EventoState.frase_cientista_area, size="1", color=EventoState.frase_cientista_cor),
+                            spacing="0",
+                            align="start",
+                        ),
+                        rx.spacer(),
+                        rx.badge("Inspiração Científica", color_scheme="cyan", variant="soft", size="1"),
+                        align="center",
+                        width="100%",
+                    ),
+                    rx.text(
+                        EventoState.frase_cientista_texto,
+                        size="2",
+                        color="var(--gray-11)",
+                        font_style="italic",
+                        line_height="1.6",
+                    ),
+                    # Controles de navegação de citações
+                    rx.hstack(
+                        rx.button(
+                            rx.hstack(
+                                rx.icon(tag="chevron-left", size=14),
+                                rx.text("Anterior", size="1"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="1",
+                            variant="outline",
+                            color_scheme="gray",
+                            on_click=EventoState.frase_anterior_cientista,
+                        ),
+                        rx.text(
+                            EventoState.frase_cientista_paginacao,
+                            size="1",
+                            color="var(--gray-9)",
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.text("Próxima", size="1"),
+                                rx.icon(tag="chevron-right", size=14),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="1",
+                            variant="outline",
+                            color_scheme="cyan",
+                            on_click=EventoState.proxima_frase_cientista,
+                        ),
+                        spacing="3",
+                        align="center",
+                        justify="between",
+                        width="100%",
+                        padding_top="0.4rem",
+                    ),
+                    spacing="2",
+                    align="start",
+                    width="100%",
+                ),
+                padding="1rem 1.25rem",
+                border_radius="14px",
+                background="rgba(15, 23, 42, 0.8)",
+                border="1px solid rgba(0, 173, 181, 0.25)",
+                box_shadow="0 6px 20px rgba(0, 0, 0, 0.25)",
+                width="100%",
+                max_width="580px",
+            ),
+            spacing="2",
+            align="start",
+        ),
+        id="hud-live-container",
+    )
+
+    # Script JavaScript nativo para atualização contínua a cada segundo
+    script_countdown = rx.script("""
+    (function() {
+        function tickCountdown() {
+            var alvo = new Date("2026-11-11T08:00:00-03:00").getTime();
+            var agora = new Date().getTime();
+            var diff = alvo - agora;
+
+            var elDias = document.getElementById("hud-dias");
+            var elHoras = document.getElementById("hud-horas");
+            var elMin = document.getElementById("hud-min");
+            var elSeg = document.getElementById("hud-seg");
+
+            if (diff > 0) {
+                var dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var min = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var seg = Math.floor((diff % (1000 * 60)) / 1000);
+
+                if (elDias) elDias.innerText = String(dias).padStart(2, '0');
+                if (elHoras) elHoras.innerText = String(horas).padStart(2, '0');
+                if (elMin) elMin.innerText = String(min).padStart(2, '0');
+                if (elSeg) elSeg.innerText = String(seg).padStart(2, '0');
+            }
+        }
+        setInterval(tickCountdown, 1000);
+        tickCountdown();
+    })();
+    """)
+
+    return rx.box(
+        rx.cond(
+            EventoState.evento_iniciado_preview,
+            visao_evento_iniciado,
+            visao_relogio,
+        ),
+        script_countdown,
     )
 
 
@@ -254,7 +451,7 @@ def tela_inicio() -> rx.Component:
                         border="1.5px solid #00ADB5",
                         color=COLOR_CYAN,
                         _hover={"background": "rgba(0, 173, 181, 0.15)"},
-                        on_click=lambda: EventoState.set_tela("submissoes"),
+                        on_click=EventoState.set_tela("submissoes"),
                         style=STYLE_BUTTON_CHIP,
                     ),
                     spacing="3",
@@ -372,7 +569,7 @@ def tela_sobre() -> rx.Component:
                             align="center",
                         ),
                         rx.text(
-                            "Financiado sob o Edital 03/2026 de Apoio a Eventos Científicos "
+                            "Financiado com Fomento FUNCAP de Apoio a Eventos Científicos "
                             "(Processo: CER-0264-00190.01.00/26), o IV EFAC viabiliza a interiorização "
                             "efetiva da pós-graduação e iniciação científica no IFE – Campus Brejo Santo.",
                             size="2",
@@ -409,7 +606,7 @@ def tela_sobre() -> rx.Component:
                     background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
                     color="white",
                     box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",
-                    on_click=lambda: EventoState.set_tela("eixos"),
+                    on_click=EventoState.set_tela("eixos"),
                     style=STYLE_BUTTON_CHIP,
                 ),
                 margin_top="1.5rem",
@@ -500,7 +697,7 @@ def tela_eixos() -> rx.Component:
                 color="white",
                 box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",
                 margin_top="1.5rem",
-                on_click=lambda: EventoState.set_tela("palestrantes"),
+                on_click=EventoState.set_tela("palestrantes"),
                 style=STYLE_BUTTON_CHIP,
             ),
             spacing="3",
@@ -586,7 +783,7 @@ def tela_palestrantes() -> rx.Component:
                 color="white",
                 box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",
                 margin_top="1.5rem",
-                on_click=lambda: EventoState.set_tela("programacao"),
+                on_click=EventoState.set_tela("programacao"),
                 style=STYLE_BUTTON_CHIP,
             ),
             spacing="3",
@@ -647,7 +844,7 @@ def tela_programacao() -> rx.Component:
                     "Dia 1 • 11/Nov (Quarta-feira)",
                     variant=rx.cond(EventoState.dia_selecionado == "Dia 1", "solid", "outline"),
                     color_scheme="cyan",
-                    on_click=lambda: EventoState.set_dia("Dia 1"),
+                    on_click=EventoState.set_dia("Dia 1"),
                     radius="full",
                     size="2",
                     padding_x="1.4rem",
@@ -667,7 +864,7 @@ def tela_programacao() -> rx.Component:
                     "Dia 2 • 12/Nov (Quinta-feira)",
                     variant=rx.cond(EventoState.dia_selecionado == "Dia 2", "solid", "outline"),
                     color_scheme="cyan",
-                    on_click=lambda: EventoState.set_dia("Dia 2"),
+                    on_click=EventoState.set_dia("Dia 2"),
                     radius="full",
                     size="2",
                     padding_x="1.4rem",
@@ -725,7 +922,7 @@ def tela_programacao() -> rx.Component:
                     background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
                     color="white",
                     box_shadow="0 4px 16px rgba(0, 173, 181, 0.35)",
-                    on_click=lambda: EventoState.set_tela("submissoes"),
+                    on_click=EventoState.set_tela("submissoes"),
                     style=STYLE_BUTTON_CHIP,
                 ),
                 spacing="3",
@@ -928,7 +1125,7 @@ def tela_local() -> rx.Component:
             ),
             # Régua de Parceiros e Fomento
             rx.flex(
-                parceiro_chip("FUNCAP", "Edital 03/2026"),
+                parceiro_chip("FUNCAP", "Fomento Oficial"),
                 parceiro_chip("Governo do Ceará", "Fomento Oficial"),
                 parceiro_chip("UFCA / IFE", "Campus Brejo Santo"),
                 parceiro_chip("ITA", "São José dos Campos"),
@@ -1009,7 +1206,7 @@ def home_page() -> rx.Component:
         # Rodapé Mínimo Discreto
         rx.box(
             rx.text(
-                "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Fomento FUNCAP (Edital 03/2026) • Reflex & SQLite WAL",
+                "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Desenvolvido por Ramon Firmino Bezerra.",
                 size="1",
                 color="var(--gray-8)",
                 text_align="center",

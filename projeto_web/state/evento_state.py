@@ -1,8 +1,10 @@
 """Ponte reativa (Reflex State) que consome os Controllers (MVC)."""
 
 from typing import List, Dict, Any, Optional
+from datetime import datetime
 import reflex as rx
 from projeto_web.core.security import PBKDF2PasswordHasher
+from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
 from projeto_web.repositories.database import init_db
 from projeto_web.repositories.sqlite_usuario import SQLiteUsuarioRepository
 from projeto_web.controllers.usuario_controller import UsuarioController
@@ -81,6 +83,15 @@ class EventoState(rx.State):
     admin_total_presentes: int = 0
     admin_total_supervisores: int = 0
 
+    # Gestão de Senhas pelo Administrador
+    admin_senha_user_id: int = 0
+    admin_senha_user_nome: str = ""
+    admin_nova_senha_input: str = ""
+    modal_alterar_senha_aberto: bool = False
+
+    admin_propria_senha_input: str = ""
+    admin_propria_senha_confirm: str = ""
+
     # Editor de Atividades / Programação pelo Admin
     admin_atividades: List[Dict[str, Any]] = []
     edit_ativ_id: int = 0
@@ -93,16 +104,141 @@ class EventoState(rx.State):
     edit_ativ_descricao: str = ""
     is_editing_atividade: bool = False
 
+    # Criação e Delegação de Nova Atividade pelo Admin
+    is_creating_atividade: bool = False
+    new_ativ_dia: str = "Dia 1"
+    new_ativ_horario: str = "08:00 – 09:30"
+    new_ativ_titulo: str = ""
+    new_ativ_palestrante: str = ""
+    new_ativ_local: str = "Auditório Principal - Campus Brejo Santo"
+    new_ativ_tipo: str = "Conferência"
+    new_ativ_descricao: str = ""
+
+    # Visualização e Emissão da Carteirinha pelo Admin
+    admin_carteirinha_aberta: bool = False
+    admin_carteirinha_nome: str = ""
+    admin_carteirinha_email: str = ""
+    admin_carteirinha_inst: str = ""
+    admin_carteirinha_mod: str = ""
+    admin_carteirinha_cod: str = ""
+    admin_carteirinha_foto: str = ""
+    admin_carteirinha_role: str = ""
+
     # --- Painel de Supervisão / Conferência de Presença ---
     superv_busca: str = ""
     superv_inscritos: List[Dict[str, Any]] = []
     superv_presentes_count: int = 0
     superv_total_count: int = 0
 
+    # --- Contagem Regressiva & Mensagens Inspiradoras dos Cientistas ---
+    evento_iniciado_preview: bool = False
+    frase_cientista_indice: int = 0
+
+    FRASES_CIENTISTAS: List[Dict[str, str]] = [
+        {
+            "autor": "Albert Einstein",
+            "area": "Física Teórica • Prêmio Nobel",
+            "frase": "A imaginação é mais importante que o conhecimento. O conhecimento é limitado, enquanto a imaginação abraça o mundo inteiro, estimulando o progresso.",
+            "icone": "atom",
+            "cor": "#00ADB5",
+        },
+        {
+            "autor": "Marie Curie",
+            "area": "Física & Química • 2x Prêmio Nobel",
+            "frase": "Nada na vida deve ser temido, somente compreendido. Agora é o momento de compreender mais, para que possamos temer menos. Aproveite as descobertas do simpósio!",
+            "icone": "sparkles",
+            "cor": "#f43f5e",
+        },
+        {
+            "autor": "Alan Turing",
+            "area": "Pioneiro da Ciência da Computação & Matemática",
+            "frase": "Às vezes são as pessoas de quem ninguém espera nada que fazem as coisas que ninguém jamais poderia imaginar. Dedique-se e transforme suas ideias em realidade.",
+            "icone": "cpu",
+            "cor": "#818cf8",
+        },
+        {
+            "autor": "Richard Feynman",
+            "area": "Física Quântica • Prêmio Nobel",
+            "frase": "Para aqueles que não conhecem matemática, é difícil sentir a beleza mais profunda da natureza. Se você quer aprender sobre o universo, mergulhe na física e na matemática.",
+            "icone": "zap",
+            "cor": "#eab308",
+        },
+        {
+            "autor": "Ada Lovelace",
+            "area": "Pioneira da Computação & Matemática",
+            "frase": "O motor analítico tece padrões algébricos tal como o tear de Jacquard tece flores e folhas. A computação é uma extensão ilimitada da nossa inteligência.",
+            "icone": "code",
+            "cor": "#a855f7",
+        },
+        {
+            "autor": "Carl Sagan",
+            "area": "Astrofísica & Divulgação Científica",
+            "frase": "Diante da vastidão do cosmos e da imensidão do tempo, é uma alegria compartilhar um planeta e uma era com mentes tão brilhantes. Aproveite cada minuto do IV EFAC!",
+            "icone": "telescope",
+            "cor": "#38bdf8",
+        },
+        {
+            "autor": "Stephen Hawking",
+            "area": "Cosmologia Teórica & Gravitação",
+            "frase": "Lembre-se sempre de olhar para cima, para as estrelas, e não para baixo, para os seus pés. Seja curioso e nunca desista de compreender as leis do universo.",
+            "icone": "orbit",
+            "cor": "#06b6d4",
+        },
+        {
+            "autor": "Katherine Johnson",
+            "area": "Matemática Orbital • Trajetórias da NASA",
+            "frase": "Tudo na natureza é física e matemática aplicada. Apaixone-se pelo que você estuda e dê o seu melhor em cada cálculo e observação.",
+            "icone": "rocket",
+            "cor": "#10b981",
+        },
+    ]
+
+    def alternar_preview_evento_iniciado(self):
+        """Alterna entre o relógio de contagem e a mensagem comemorativa com frases dos cientistas."""
+        self.evento_iniciado_preview = not self.evento_iniciado_preview
+
+    def proxima_frase_cientista(self):
+        """Avança para a próxima frase inspiradora."""
+        self.frase_cientista_indice = (self.frase_cientista_indice + 1) % len(self.FRASES_CIENTISTAS)
+
+    def frase_anterior_cientista(self):
+        """Retorna para a frase inspiradora anterior."""
+        self.frase_cientista_indice = (self.frase_cientista_indice - 1 + len(self.FRASES_CIENTISTAS)) % len(self.FRASES_CIENTISTAS)
+
+    @rx.var
+    def frase_cientista_autor(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return self.FRASES_CIENTISTAS[idx]["autor"]
+
+    @rx.var
+    def frase_cientista_area(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return self.FRASES_CIENTISTAS[idx]["area"]
+
+    @rx.var
+    def frase_cientista_texto(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return self.FRASES_CIENTISTAS[idx]["frase"]
+
+    @rx.var
+    def frase_cientista_cor(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return self.FRASES_CIENTISTAS[idx]["cor"]
+
+    @rx.var
+    def frase_cientista_paginacao(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return f"Mensagem {idx + 1} de {len(self.FRASES_CIENTISTAS)}"
+
     def set_tela(self, tela: str):
         if tela in self.TELAS_ORDEM:
             self.tela_ativa = tela
             self.indice_tela = self.TELAS_ORDEM.index(tela)
+
+    def navegar_para_tela(self, tela: str):
+        """Define a tela ativa e redireciona para a home de qualquer rota do site."""
+        self.set_tela(tela)
+        return rx.redirect("/")
 
     def proxima_tela(self):
         prox = (self.indice_tela + 1) % len(self.TELAS_ORDEM)
@@ -146,8 +282,11 @@ class EventoState(rx.State):
         if modo in ["participante", "palestrante"]:
             self.badge_modo = modo
 
-    def set_badge_foto_input(self, val: str):
-        self.badge_foto_input = val
+    def set_badge_foto_input(self, val: Any):
+        if isinstance(val, str):
+            self.badge_foto_input = val
+        else:
+            self.badge_foto_input = ""
 
     def set_admin_filtro(self, termo: str):
         self.admin_filtro_busca = termo
@@ -315,6 +454,47 @@ class EventoState(rx.State):
         self.badge_foto_input = str(url)
         self.salvar_foto_perfil()
 
+    async def handle_upload_foto(self, files: List[rx.UploadFile]):
+        """Recebe o arquivo de imagem enviado do computador ou dispositivo móvel (celular/tablet)."""
+        if not self.is_logged_in or not self.user_id:
+            self.feedback_msg = "Você precisa estar logado para atualizar sua foto."
+            self.feedback_tipo = "error"
+            return
+
+        if not files:
+            self.feedback_msg = "Nenhum arquivo de imagem foi selecionado."
+            self.feedback_tipo = "error"
+            return
+
+        import base64
+        for file in files:
+            upload_data = await file.read()
+            if len(upload_data) > 6 * 1024 * 1024:
+                self.feedback_msg = "A foto selecionada ultrapassa o limite de 6MB."
+                self.feedback_tipo = "error"
+                return
+
+            nome_arq = (file.filename or "").lower()
+            mime = "image/jpeg"
+            if nome_arq.endswith(".png"):
+                mime = "image/png"
+            elif nome_arq.endswith(".webp"):
+                mime = "image/webp"
+
+            b64_str = base64.b64encode(upload_data).decode("utf-8")
+            data_uri = f"data:{mime};base64,{b64_str}"
+
+            res = _usuario_controller.atualizar_foto(self.user_id, data_uri)
+            if res.sucesso and res.dado:
+                self.user_foto_url = data_uri
+                self.feedback_msg = "Foto da carteirinha enviada com sucesso do seu dispositivo!"
+                self.feedback_tipo = "success"
+                return
+            else:
+                self.feedback_msg = res.mensagem
+                self.feedback_tipo = "error"
+                return
+
     # --- Ações do Super Admin ---
     def carregar_painel_admin(self):
         """Carrega e filtra a lista de inscritos e calcula métricas para o admin."""
@@ -367,6 +547,87 @@ class EventoState(rx.State):
         self.feedback_msg = res.mensagem
         self.feedback_tipo = "success" if res.sucesso else "error"
         self.carregar_painel_admin()
+
+    # --- Gestão de Senhas (Inscritos e Próprio Admin) ---
+    def abrir_modal_senha(self, user_id: Any, user_nome: str):
+        """Abre o formulário de alteração de senha de um participante."""
+        try:
+            self.admin_senha_user_id = int(user_id)
+        except Exception:
+            return
+        self.admin_senha_user_nome = str(user_nome)
+        self.admin_nova_senha_input = ""
+        self.modal_alterar_senha_aberto = True
+
+    def fechar_modal_senha(self):
+        """Fecha o formulário modal de alteração de senha."""
+        self.modal_alterar_senha_aberto = False
+        self.admin_senha_user_id = 0
+        self.admin_senha_user_nome = ""
+        self.admin_nova_senha_input = ""
+
+    def set_admin_nova_senha(self, val: str):
+        self.admin_nova_senha_input = val
+
+    def salvar_nova_senha_inscrito(self):
+        """Persiste a nova senha definida pelo administrador para o inscrito selecionado."""
+        if not self.is_admin or not self.admin_senha_user_id:
+            return
+        res = _usuario_controller.alterar_senha(self.admin_senha_user_id, self.admin_nova_senha_input)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.modal_alterar_senha_aberto = False
+            self.admin_nova_senha_input = ""
+
+    def set_admin_propria_senha(self, val: str):
+        self.admin_propria_senha_input = val
+
+    def set_admin_propria_senha_confirm(self, val: str):
+        self.admin_propria_senha_confirm = val
+
+    def salvar_propria_senha_admin(self):
+        """Super Admin altera com segurança a sua própria credencial de acesso."""
+        if not self.is_admin or not self.user_id:
+            return
+        if not self.admin_propria_senha_input or len(self.admin_propria_senha_input.strip()) < 6:
+            self.feedback_msg = "A nova senha deve possuir no mínimo 6 caracteres."
+            self.feedback_tipo = "error"
+            return
+        if self.admin_propria_senha_input != self.admin_propria_senha_confirm:
+            self.feedback_msg = "A confirmação de senha não coincide com a nova senha digitada."
+            self.feedback_tipo = "error"
+            return
+        res = _usuario_controller.alterar_senha(self.user_id, self.admin_propria_senha_input)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.admin_propria_senha_input = ""
+            self.admin_propria_senha_confirm = ""
+
+    # --- Exportação Oficial da Lista de Inscritos (CSV e PDF) para Admin e Supervisores ---
+    def exportar_inscritos_csv(self):
+        """Gera e dispara o download da relação de participantes em formato CSV para Admin e Supervisores."""
+        if not (self.is_admin or self.is_supervisor):
+            self.feedback_msg = "Permissão negada: apenas administradores e supervisores podem baixar a lista."
+            self.feedback_tipo = "error"
+            return
+        usuarios = _usuario_controller.listar_inscritos()
+        csv_str = gerar_csv_inscritos(usuarios)
+        data_tag = datetime.now().strftime("%Y%m%d_%H%M")
+        return rx.download(data=csv_str, filename=f"inscritos_iv_efac_{data_tag}.csv")
+
+    def exportar_inscritos_pdf(self):
+        """Gera e dispara o download do relatório oficial de credenciamento em PDF para Admin e Supervisores."""
+        if not (self.is_admin or self.is_supervisor):
+            self.feedback_msg = "Permissão negada: apenas administradores e supervisores podem baixar a lista."
+            self.feedback_tipo = "error"
+            return
+        usuarios = _usuario_controller.listar_inscritos()
+        stats = _usuario_controller.obter_estatisticas()
+        pdf_bytes = gerar_pdf_inscritos(usuarios, stats)
+        data_tag = datetime.now().strftime("%Y%m%d_%H%M")
+        return rx.download(data=pdf_bytes, filename=f"relatorio_oficial_inscritos_iv_efac_{data_tag}.pdf")
 
     # Editor de Atividades / Palestras
     def carregar_atividades_admin(self):
@@ -446,6 +707,86 @@ class EventoState(rx.State):
         else:
             self.feedback_msg = "Erro ao restaurar a grade de programação."
             self.feedback_tipo = "error"
+
+    # Criação e Delegação Manual de Atividades pelo Admin
+    def abrir_criacao_atividade(self):
+        """Abre o formulário para criar e delegar uma nova atividade na grade."""
+        self.is_creating_atividade = True
+        self.new_ativ_titulo = ""
+        self.new_ativ_palestrante = ""
+        self.new_ativ_descricao = ""
+
+    def fechar_criacao_atividade(self):
+        self.is_creating_atividade = False
+
+    def set_new_ativ_dia(self, val: str):
+        self.new_ativ_dia = val
+
+    def set_new_ativ_horario(self, val: str):
+        self.new_ativ_horario = val
+
+    def set_new_ativ_titulo(self, val: str):
+        self.new_ativ_titulo = val
+
+    def set_new_ativ_palestrante(self, val: str):
+        self.new_ativ_palestrante = val
+
+    def set_new_ativ_local(self, val: str):
+        self.new_ativ_local = val
+
+    def set_new_ativ_tipo(self, val: str):
+        self.new_ativ_tipo = val
+
+    def set_new_ativ_descricao(self, val: str):
+        self.new_ativ_descricao = val
+
+    def criar_nova_atividade(self):
+        """Persiste nova atividade criada e delegada pelo admin."""
+        if not self.is_admin:
+            return
+        if not self.new_ativ_titulo.strip():
+            self.feedback_msg = "Informe o título ou tema da atividade."
+            self.feedback_tipo = "error"
+            return
+
+        ok = EventoController.adicionar_atividade(
+            dia=self.new_ativ_dia,
+            horario=self.new_ativ_horario,
+            titulo=self.new_ativ_titulo,
+            palestrante=self.new_ativ_palestrante,
+            local=self.new_ativ_local,
+            tipo=self.new_ativ_tipo,
+            descricao=self.new_ativ_descricao,
+        )
+        if ok:
+            self.feedback_msg = "Nova atividade criada e delegada com sucesso!"
+            self.feedback_tipo = "success"
+            self.is_creating_atividade = False
+            self.carregar_atividades_admin()
+        else:
+            self.feedback_msg = "Erro ao delegar nova atividade."
+            self.feedback_tipo = "error"
+
+    # Inspeção e Emissão de Carteirinha de Participante pelo Admin
+    def ver_carteirinha_admin(self, user_id: Any):
+        """Abre a carteirinha oficial do participante selecionado para visualização/impressão."""
+        try:
+            uid = int(user_id)
+        except Exception:
+            return
+        u = _usuario_controller._repository.find_by_id(uid)
+        if u:
+            self.admin_carteirinha_nome = u.nome
+            self.admin_carteirinha_email = u.email
+            self.admin_carteirinha_inst = u.instituicao
+            self.admin_carteirinha_mod = u.modalidade
+            self.admin_carteirinha_cod = u.codigo_inscricao
+            self.admin_carteirinha_foto = u.foto_url or ""
+            self.admin_carteirinha_role = u.role
+            self.admin_carteirinha_aberta = True
+
+    def fechar_carteirinha_admin(self):
+        self.admin_carteirinha_aberta = False
 
     # --- Ações de Supervisor (Conferência de Presença) ---
     def carregar_painel_supervisor(self):

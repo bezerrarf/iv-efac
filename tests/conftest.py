@@ -58,6 +58,13 @@ class InMemoryUsuarioRepository(UsuarioRepositoryProtocol):
             return u
         return None
 
+    def update_senha(self, user_id: int, nova_senha_hash: str) -> Optional[Usuario]:
+        u = self._usuarios.get(user_id)
+        if u:
+            u.senha_hash = nova_senha_hash
+            return u
+        return None
+
 
 @pytest.fixture
 def hasher() -> PasswordHasherProtocol:

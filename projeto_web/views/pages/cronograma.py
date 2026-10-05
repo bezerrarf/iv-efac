@@ -1,6 +1,6 @@
 """Página de Cronograma oficial do IV EFAC (View - UI/UX Pro Max).
 Grade horária dos 2 dias oficiais (11 e 12 de Novembro de 2026).
-Pure Deep Cosmic Dark Theme com responsividade completa para todas as telas.
+Preserva consistência visual com Fundo Cósmico Vetorial, Navbar e Footer oficiais.
 """
 
 import reflex as rx
@@ -23,21 +23,21 @@ from projeto_web.styles.theme import (
 
 
 def timeline_card(item: Atividade) -> rx.Component:
-    """Card de atividade da programação com micro-efeito e adaptação total de tela."""
+    """Card cósmico premium para exibição de cada atividade da grade horária."""
     return rx.card(
         rx.hstack(
             rx.vstack(
                 rx.badge(item.horario, color_scheme="cyan", variant="solid", size="2", style=STYLE_BUTTON_CHIP),
                 rx.text(item.local, size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
                 align="start",
-                min_width=["80px", "110px"],
+                min_width=rx.breakpoints(initial="80px", sm="110px"),
                 spacing="1",
             ),
             rx.box(
                 width="2px",
                 height="100%",
-                background="rgba(0, 173, 181, 0.25)",
-                margin_x=["0.5rem", "1rem"],
+                background="rgba(0, 173, 181, 0.3)",
+                margin_x="0.8rem",
                 display=["none", "block"],
             ),
             rx.vstack(
@@ -49,7 +49,7 @@ def timeline_card(item: Atividade) -> rx.Component:
                 ),
                 rx.heading(
                     item.titulo,
-                    size=rx.breakpoints(initial="3", sm="4"),
+                    size="3",
                     weight="bold",
                     color="white",
                     style=STYLE_HEADING_RESPONSIVE,
@@ -63,9 +63,9 @@ def timeline_card(item: Atividade) -> rx.Component:
                 ),
                 rx.text(
                     item.descricao,
-                    size="2",
+                    size="1",
                     color="var(--gray-10)",
-                    line_height="1.55",
+                    line_height="1.5",
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
                 spacing="1",
@@ -74,22 +74,17 @@ def timeline_card(item: Atividade) -> rx.Component:
             ),
             width="100%",
             align="start",
-            spacing="3",
         ),
         background=COLOR_SURFACE_GLASS,
         backdrop_filter="blur(16px)",
         border=f"1px solid {COLOR_BORDER_CYAN}",
-        border_radius="14px",
         padding=rx.breakpoints(initial="1rem", sm="1.25rem"),
-        margin_bottom="1rem",
+        margin_bottom="0.75rem",
+        border_radius="14px",
         width="100%",
-        box_shadow="0 8px 30px rgba(0, 0, 0, 0.35)",
-        _hover={
-            "border_color": "rgba(0, 173, 181, 0.6)",
-            "transform": "translateX(4px)",
-            "box_shadow": "0 10px 35px rgba(0, 173, 181, 0.15)",
-        },
-        transition="all 0.22s ease",
+        box_shadow="0 6px 25px rgba(0, 0, 0, 0.35)",
+        _hover={"border_color": COLOR_CYAN, "transform": "translateX(4px)"},
+        transition="all 0.2s ease",
     )
 
 
@@ -104,13 +99,13 @@ def dia_content(dia_nome: str) -> rx.Component:
 
 def cronograma_page() -> rx.Component:
     return rx.box(
-        # Fundo Vetorial Cósmico Adaptativo
+        # Fundo Cósmico Vetorial Imersivo e Fixo
         cosmic_background(),
 
         navbar(),
         rx.box(
             rx.vstack(
-                rx.badge("Programação Oficial • IV EFAC", color_scheme="cyan", variant="soft", size="2", style=STYLE_BUTTON_CHIP),
+                rx.badge("Programação Oficial • 2 Dias de Imersão", color_scheme="cyan", variant="soft", size="2", style=STYLE_BUTTON_CHIP),
                 rx.heading(
                     "Grade Horária de Atividades",
                     size=rx.breakpoints(initial="6", sm="7", md="8"),
@@ -120,14 +115,14 @@ def cronograma_page() -> rx.Component:
                     style=STYLE_HEADING_RESPONSIVE,
                 ),
                 rx.text(
-                    "Dois dias de imersão intensiva com conferências magnas, minicurso de Python, mesas-redondas e sessões de comunicação oral e pôsteres.",
+                    "Dois dias de imersão intensiva com conferências magnas, minicurso de Python, mesas-redondas e sessões de comunicação oral e pôsteres no Campus Brejo Santo – UFCA.",
                     size=rx.breakpoints(initial="2", sm="3"),
                     color="var(--gray-10)",
                     text_align="center",
                     max_width="740px",
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
-                # Seleção de Abas Dia 1 e Dia 2 com transição cósmica
+                # Seleção de Abas Dia 1 e Dia 2 com transição suave
                 rx.hstack(
                     rx.button(
                         rx.hstack(
@@ -138,7 +133,7 @@ def cronograma_page() -> rx.Component:
                         ),
                         variant=rx.cond(EventoState.dia_selecionado == "Dia 1", "solid", "outline"),
                         color_scheme="cyan",
-                        on_click=lambda: EventoState.set_dia("Dia 1"),
+                        on_click=EventoState.set_dia("Dia 1"),
                         radius="full",
                         padding_x="1.6rem",
                         background=rx.cond(
@@ -150,11 +145,6 @@ def cronograma_page() -> rx.Component:
                             EventoState.dia_selecionado == "Dia 1",
                             "none",
                             f"1px solid {COLOR_BORDER_CYAN}",
-                        ),
-                        box_shadow=rx.cond(
-                            EventoState.dia_selecionado == "Dia 1",
-                            "0 4px 18px rgba(0, 173, 181, 0.4)",
-                            "none",
                         ),
                         style=STYLE_BUTTON_CHIP,
                     ),
@@ -167,7 +157,7 @@ def cronograma_page() -> rx.Component:
                         ),
                         variant=rx.cond(EventoState.dia_selecionado == "Dia 2", "solid", "outline"),
                         color_scheme="cyan",
-                        on_click=lambda: EventoState.set_dia("Dia 2"),
+                        on_click=EventoState.set_dia("Dia 2"),
                         radius="full",
                         padding_x="1.6rem",
                         background=rx.cond(
@@ -179,11 +169,6 @@ def cronograma_page() -> rx.Component:
                             EventoState.dia_selecionado == "Dia 2",
                             "none",
                             f"1px solid {COLOR_BORDER_CYAN}",
-                        ),
-                        box_shadow=rx.cond(
-                            EventoState.dia_selecionado == "Dia 2",
-                            "0 4px 18px rgba(0, 173, 181, 0.4)",
-                            "none",
                         ),
                         style=STYLE_BUTTON_CHIP,
                     ),
@@ -205,7 +190,7 @@ def cronograma_page() -> rx.Component:
                 spacing="4",
                 max_width="1150px",
                 margin="0 auto",
-                padding=rx.breakpoints(initial="2rem 1rem", sm="3rem 1.5rem"),
+                padding=rx.breakpoints(initial="2rem 1rem 4rem 1rem", sm="3rem 1.5rem 5rem 1.5rem"),
             ),
             width="100%",
             position="relative",

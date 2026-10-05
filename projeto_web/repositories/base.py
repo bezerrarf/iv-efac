@@ -38,3 +38,7 @@ class UsuarioRepositoryProtocol(Protocol):
     def update_foto(self, user_id: int, foto_url: str) -> Optional[Usuario]:
         """Atualiza a URL ou dado da foto do participante."""
         ...
+
+    def update_senha(self, user_id: int, nova_senha_hash: str) -> Optional[Usuario]:
+        """Atualiza a senha criptografada (hash PBKDF2) de um usuário."""
+        ...

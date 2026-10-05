@@ -1,9 +1,12 @@
 """Painel Administrativo Oficial do IV EFAC (View - UI/UX Pro Max).
 Exclusivo para o Super Administrador Geral do Evento.
 Permite:
-1. Analisar participantes inscritos e estatísticas globais.
-2. Alterar datas, horários, temas e palestrantes diretamente pelo site.
+1. Analisar participantes inscritos e estatísticas globais em tempo real.
+2. Criar, alterar e delegar manualmente dias, horários, temas e responsáveis de palestras.
 3. Conceder e revogar poderes de Supervisor para qualquer participante.
+4. Alterar a senha de qualquer participante e a sua própria senha de Super Admin.
+5. Inspecionar, gerar e emitir a Carteirinha Oficial de qualquer inscrito.
+6. Exportar a relação completa de inscritos em formatos CSV e PDF oficial.
 """
 
 import reflex as rx
@@ -50,13 +53,331 @@ def stat_metric_box(valor: any, rotulo: str, icone: str, cor: str) -> rx.Compone
     )
 
 
+def modal_alterar_senha_inscrito() -> rx.Component:
+    """Modal para o administrador redefinir a senha de qualquer participante."""
+    return rx.cond(
+        EventoState.modal_alterar_senha_aberto,
+        rx.box(
+            # Backdrop de foco
+            rx.box(
+                position="fixed",
+                inset="0",
+                background="rgba(0, 0, 0, 0.8)",
+                z_index="1000",
+                backdrop_filter="blur(8px)",
+                on_click=EventoState.fechar_modal_senha,
+            ),
+            # Caixa do Modal
+            rx.card(
+                rx.vstack(
+                    rx.hstack(
+                        rx.box(
+                            rx.icon(tag="key", size=22, color=COLOR_CYAN),
+                            background="rgba(0, 173, 181, 0.15)",
+                            border_radius="8px",
+                            padding="0.5rem",
+                            display="grid",
+                            place_items="center",
+                        ),
+                        rx.vstack(
+                            rx.heading("Alterar Senha do Inscrito", size="4", weight="bold", color="white"),
+                            rx.text("Redefinição direta no banco SQLite WAL", size="1", color="var(--gray-9)"),
+                            spacing="0",
+                            align="start",
+                        ),
+                        rx.spacer(),
+                        rx.button(
+                            rx.icon(tag="x", size=18),
+                            variant="ghost",
+                            color_scheme="gray",
+                            size="1",
+                            on_click=EventoState.fechar_modal_senha,
+                            cursor="pointer",
+                        ),
+                        align="center",
+                        width="100%",
+                    ),
+                    rx.divider(color_scheme="gray", opacity="0.2"),
+                    rx.box(
+                        rx.hstack(
+                            rx.icon(tag="user", size=16, color="var(--gray-10)"),
+                            rx.text(
+                                "Participante: ",
+                                rx.text.strong(EventoState.admin_senha_user_nome, color="white"),
+                                size="2",
+                                color="var(--gray-10)",
+                            ),
+                            spacing="2",
+                            align="center",
+                        ),
+                        background="rgba(255, 255, 255, 0.04)",
+                        padding="0.6rem 0.9rem",
+                        border_radius="8px",
+                        width="100%",
+                    ),
+                    rx.vstack(
+                        rx.text("Nova Senha", size="2", weight="bold", color="white"),
+                        rx.input(
+                            placeholder="Digite a nova senha (mínimo 6 caracteres)",
+                            type="password",
+                            value=EventoState.admin_nova_senha_input,
+                            on_change=EventoState.set_admin_nova_senha,
+                            size="3",
+                            width="100%",
+                        ),
+                        spacing="1",
+                        width="100%",
+                    ),
+                    rx.hstack(
+                        rx.button(
+                            "Cancelar",
+                            variant="outline",
+                            color_scheme="gray",
+                            size="2",
+                            on_click=EventoState.fechar_modal_senha,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon(tag="check", size=16),
+                                rx.text("Salvar Nova Senha"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            variant="solid",
+                            color_scheme="cyan",
+                            size="2",
+                            on_click=EventoState.salvar_nova_senha_inscrito,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        spacing="3",
+                        justify="end",
+                        width="100%",
+                        padding_top="0.5rem",
+                    ),
+                    spacing="3",
+                    width="100%",
+                ),
+                position="fixed",
+                top="50%",
+                left="50%",
+                transform="translate(-50%, -50%)",
+                z_index="1001",
+                width="92%",
+                max_width="480px",
+                background="rgba(15, 23, 42, 0.98)",
+                border="1.5px solid rgba(0, 173, 181, 0.4)",
+                box_shadow="0 25px 60px rgba(0, 0, 0, 0.8)",
+                border_radius="16px",
+                padding="1.5rem",
+            ),
+        ),
+        rx.fragment(),
+    )
+
+
+def modal_carteirinha_admin() -> rx.Component:
+    """Modal para o administrador visualizar, conferir e imprimir a carteirinha de qualquer inscrito."""
+    return rx.cond(
+        EventoState.admin_carteirinha_aberta,
+        rx.box(
+            # Backdrop de foco
+            rx.box(
+                position="fixed",
+                inset="0",
+                background="rgba(0, 0, 0, 0.85)",
+                z_index="1000",
+                backdrop_filter="blur(8px)",
+                on_click=EventoState.fechar_carteirinha_admin,
+            ),
+            # Caixa do Modal
+            rx.card(
+                rx.vstack(
+                    rx.hstack(
+                        rx.box(
+                            rx.icon(tag="id-card", size=22, color=COLOR_CYAN),
+                            background="rgba(0, 173, 181, 0.15)",
+                            border_radius="8px",
+                            padding="0.5rem",
+                            display="grid",
+                            place_items="center",
+                        ),
+                        rx.vstack(
+                            rx.heading("Carteirinha Oficial do Participante", size="4", weight="bold", color="white"),
+                            rx.text("Emissão digital com chancela acadêmica UFCA / IFE", size="1", color="var(--gray-9)"),
+                            spacing="0",
+                            align="start",
+                        ),
+                        rx.spacer(),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon(tag="printer", size=14),
+                                rx.text("Imprimir"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="1",
+                            variant="outline",
+                            color_scheme="green",
+                            on_click=rx.call_script("window.print()"),
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        rx.button(
+                            rx.icon(tag="x", size=18),
+                            variant="ghost",
+                            color_scheme="gray",
+                            size="1",
+                            on_click=EventoState.fechar_carteirinha_admin,
+                            cursor="pointer",
+                        ),
+                        align="center",
+                        width="100%",
+                    ),
+                    rx.divider(color_scheme="gray", opacity="0.2"),
+                    # Cartão de Identificação / Carteirinha
+                    rx.box(
+                        rx.vstack(
+                            rx.hstack(
+                                rx.image(
+                                    src="/logo_ivefac.jpeg",
+                                    alt="Logo IV EFAC",
+                                    width="36px",
+                                    height="36px",
+                                    border_radius="50%",
+                                    object_fit="cover",
+                                    border="1.5px solid #00ADB5",
+                                ),
+                                rx.vstack(
+                                    rx.text("IV EFAC 2026", size="2", weight="bold", color="white"),
+                                    rx.text("Universidade Federal do Cariri • Campus Brejo Santo", size="1", color="var(--gray-9)"),
+                                    spacing="0",
+                                ),
+                                rx.spacer(),
+                                rx.badge("CARTEIRINHA OFICIAL", color_scheme="cyan", variant="solid", size="1"),
+                                align="center",
+                                width="100%",
+                            ),
+                            rx.divider(color_scheme="cyan", opacity="0.3"),
+                            rx.hstack(
+                                rx.box(
+                                    rx.cond(
+                                        EventoState.admin_carteirinha_foto != "",
+                                        rx.image(
+                                            src=EventoState.admin_carteirinha_foto,
+                                            alt=EventoState.admin_carteirinha_nome,
+                                            width="95px",
+                                            height="95px",
+                                            border_radius="50%",
+                                            object_fit="cover",
+                                            border="2.5px solid #00ADB5",
+                                            box_shadow="0 0 16px rgba(0, 173, 181, 0.4)",
+                                        ),
+                                        rx.box(
+                                            rx.icon(tag="user", size=38, color="#00ADB5"),
+                                            width="95px",
+                                            height="95px",
+                                            border_radius="50%",
+                                            background="rgba(15, 23, 42, 0.9)",
+                                            border="2px dashed rgba(0, 173, 181, 0.5)",
+                                            display="grid",
+                                            place_items="center",
+                                        ),
+                                    ),
+                                    display="grid",
+                                    place_items="center",
+                                ),
+                                rx.vstack(
+                                    rx.text(EventoState.admin_carteirinha_nome, size="3", weight="bold", color="white"),
+                                    rx.text(EventoState.admin_carteirinha_email, size="1", color="var(--gray-10)"),
+                                    rx.text(EventoState.admin_carteirinha_inst, size="1", color="var(--gray-9)"),
+                                    rx.hstack(
+                                        rx.badge(EventoState.admin_carteirinha_mod, color_scheme="indigo", size="1"),
+                                        rx.badge(EventoState.admin_carteirinha_role.upper(), color_scheme="violet", size="1"),
+                                        rx.badge(
+                                            rx.hstack(
+                                                rx.icon(tag="qr-code", size=11),
+                                                rx.text(EventoState.admin_carteirinha_cod, size="1"),
+                                                spacing="1",
+                                                align="center",
+                                            ),
+                                            color_scheme="cyan",
+                                            variant="surface",
+                                            size="1",
+                                        ),
+                                        spacing="2",
+                                        wrap="wrap",
+                                    ),
+                                    spacing="1",
+                                    align="start",
+                                    flex="1",
+                                ),
+                                spacing="3",
+                                align="center",
+                                width="100%",
+                            ),
+                            rx.box(
+                                rx.hstack(
+                                    rx.hstack(
+                                        rx.icon(tag="calendar", size=13, color="#00ADB5"),
+                                        rx.text("11 e 12 Nov 2026", size="1", weight="bold", color="white"),
+                                        spacing="1",
+                                        align="center",
+                                    ),
+                                    rx.hstack(
+                                        rx.icon(tag="clock", size=13, color="#f59e0b"),
+                                        rx.text("08h00 Abertura", size="1", weight="bold", color="white"),
+                                        spacing="1",
+                                        align="center",
+                                    ),
+                                    rx.spacer(),
+                                    rx.text("Fomento FUNCAP", size="1", color="#38bdf8"),
+                                    align="center",
+                                    width="100%",
+                                ),
+                                padding="0.55rem 0.85rem",
+                                background="rgba(0, 0, 0, 0.4)",
+                                border_radius="10px",
+                                border="1px solid rgba(255, 255, 255, 0.08)",
+                                width="100%",
+                            ),
+                            spacing="3",
+                            width="100%",
+                        ),
+                        padding="1.35rem",
+                        background="linear-gradient(155deg, rgba(8, 12, 28, 0.98) 0%, rgba(16, 28, 54, 0.95) 100%)",
+                        border="1.5px solid rgba(0, 173, 181, 0.5)",
+                        border_radius="16px",
+                        box_shadow="0 10px 35px rgba(0, 173, 181, 0.25)",
+                        width="100%",
+                    ),
+                    spacing="3",
+                    width="100%",
+                ),
+                position="fixed",
+                top="50%",
+                left="50%",
+                transform="translate(-50%, -50%)",
+                z_index="1001",
+                width="92%",
+                max_width="560px",
+                background="rgba(15, 23, 42, 0.98)",
+                border="1.5px solid rgba(0, 173, 181, 0.4)",
+                box_shadow="0 25px 60px rgba(0, 0, 0, 0.85)",
+                border_radius="16px",
+                padding="1.5rem",
+            ),
+        ),
+        rx.fragment(),
+    )
+
+
 def tabela_inscritos_admin() -> rx.Component:
-    """Tabela analítica de participantes com concessão de poderes de supervisor."""
+    """Tabela analítica de participantes com alteração de senha, emissão de carteirinha e exportação em CSV/PDF."""
     return rx.vstack(
-        # Barra de Pesquisa e Filtros
+        # Barra Superior: Pesquisa, Recarregar e Botões de Exportação
         rx.hstack(
             rx.input(
-                placeholder="Buscar por nome, e-mail, código de inscrição ou polo...",
+                placeholder="Buscar por nome, e-mail, código ou polo...",
                 value=EventoState.admin_filtro_busca,
                 on_change=EventoState.set_admin_filtro,
                 size="2",
@@ -75,8 +396,39 @@ def tabela_inscritos_admin() -> rx.Component:
                 on_click=EventoState.carregar_painel_admin,
                 style=STYLE_BUTTON_CHIP,
             ),
+            # Botão Baixar CSV
+            rx.button(
+                rx.hstack(
+                    rx.icon(tag="file-spreadsheet", size=14),
+                    rx.text("Baixar CSV", size="1"),
+                    spacing="1",
+                    align="center",
+                ),
+                size="2",
+                variant="surface",
+                color_scheme="green",
+                on_click=EventoState.exportar_inscritos_csv,
+                style=STYLE_BUTTON_CHIP,
+                id="btn-admin-export-csv",
+            ),
+            # Botão Baixar PDF
+            rx.button(
+                rx.hstack(
+                    rx.icon(tag="file-down", size=14),
+                    rx.text("Baixar PDF Oficial", size="1"),
+                    spacing="1",
+                    align="center",
+                ),
+                size="2",
+                variant="solid",
+                color_scheme="cyan",
+                on_click=EventoState.exportar_inscritos_pdf,
+                style=STYLE_BUTTON_CHIP,
+                id="btn-admin-export-pdf",
+            ),
             width="100%",
             spacing="2",
+            wrap="wrap",
         ),
         # Lista de Inscritos
         rx.box(
@@ -88,7 +440,7 @@ def tabela_inscritos_admin() -> rx.Component:
                         rx.table.column_header_cell("Modalidade / Polo"),
                         rx.table.column_header_cell("Função / Role"),
                         rx.table.column_header_cell("Presença"),
-                        rx.table.column_header_cell("Ações de Admin"),
+                        rx.table.column_header_cell("Ações Administrativas"),
                     )
                 ),
                 rx.table.body(
@@ -131,28 +483,60 @@ def tabela_inscritos_admin() -> rx.Component:
                                 ),
                             ),
                             rx.table.cell(
-                                rx.cond(
-                                    u["role"] != "admin",
-                                    rx.cond(
-                                        u["is_supervisor"],
-                                        rx.button(
-                                            "Revogar Supervisor",
-                                            size="1",
-                                            variant="outline",
-                                            color_scheme="red",
-                                            on_click=EventoState.rebaixar_supervisor(u["id"]),
-                                            style=STYLE_BUTTON_CHIP,
+                                rx.hstack(
+                                    # Botão Carteirinha
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="id-card", size=12),
+                                            rx.text("Carteirinha", size="1"),
+                                            spacing="1",
+                                            align="center",
                                         ),
-                                        rx.button(
-                                            "Tornar Supervisor",
-                                            size="1",
-                                            variant="solid",
-                                            color_scheme="violet",
-                                            on_click=EventoState.promover_supervisor(u["id"]),
-                                            style=STYLE_BUTTON_CHIP,
-                                        ),
+                                        size="1",
+                                        variant="outline",
+                                        color_scheme="cyan",
+                                        on_click=EventoState.ver_carteirinha_admin(u["id"]),
+                                        style=STYLE_BUTTON_CHIP,
                                     ),
-                                    rx.text("Admin Supremo", size="1", color="var(--gray-9)"),
+                                    rx.cond(
+                                        u["role"] != "admin",
+                                        rx.cond(
+                                            u["is_supervisor"],
+                                            rx.button(
+                                                "Revogar",
+                                                size="1",
+                                                variant="outline",
+                                                color_scheme="red",
+                                                on_click=EventoState.rebaixar_supervisor(u["id"]),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                            rx.button(
+                                                "Supervisor",
+                                                size="1",
+                                                variant="solid",
+                                                color_scheme="violet",
+                                                on_click=EventoState.promover_supervisor(u["id"]),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                        ),
+                                        rx.badge("Master", color_scheme="red", variant="soft", size="1"),
+                                    ),
+                                    # Botão Alterar Senha do Inscrito
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="key", size=12),
+                                            rx.text("Senha", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="surface",
+                                        color_scheme="cyan",
+                                        on_click=EventoState.abrir_modal_senha(u["id"], u["nome"]),
+                                        style=STYLE_BUTTON_CHIP,
+                                    ),
+                                    spacing="2",
+                                    align="center",
                                 ),
                             ),
                             align="center",
@@ -173,13 +557,13 @@ def tabela_inscritos_admin() -> rx.Component:
 
 
 def editor_atividades_admin() -> rx.Component:
-    """Editor completo de palestras, temas e horários da grade oficial."""
+    """Editor completo de palestras, delegação de responsáveis, temas e horários da grade oficial."""
     return rx.vstack(
         rx.hstack(
             rx.vstack(
-                rx.heading("Gestão da Grade de Palestras & Horários", size="4", weight="bold", color="white"),
+                rx.heading("Gestão e Delegação Manual da Grade de Atividades", size="4", weight="bold", color="white"),
                 rx.text(
-                    "Altere datas, horários e temas diretamente pelo site. As alterações refletem imediatamente no cronograma público.",
+                    "Altere manualmente datas, horários e temas, delegue responsáveis e crie novas atividades diretamente pelo site.",
                     size="2",
                     color="var(--gray-10)",
                 ),
@@ -187,45 +571,192 @@ def editor_atividades_admin() -> rx.Component:
                 align="start",
             ),
             rx.spacer(),
-            rx.button(
-                rx.hstack(
-                    rx.icon(tag="rotate-ccw", size=14),
-                    rx.text("Restaurar Grade Padrão", size="1"),
-                    spacing="1",
-                    align="center",
+            rx.hstack(
+                # Botão Criar / Delegar Nova Atividade
+                rx.button(
+                    rx.hstack(
+                        rx.icon(tag="plus-circle", size=14),
+                        rx.text("Delegar Nova Atividade", size="1"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    size="2",
+                    variant="solid",
+                    color_scheme="cyan",
+                    on_click=EventoState.abrir_criacao_atividade,
+                    style=STYLE_BUTTON_CHIP,
                 ),
-                size="2",
-                variant="outline",
-                color_scheme="amber",
-                on_click=EventoState.restaurar_grade_padrao,
-                style=STYLE_BUTTON_CHIP,
+                rx.button(
+                    rx.hstack(
+                        rx.icon(tag="rotate-ccw", size=14),
+                        rx.text("Restaurar Grade Padrão", size="1"),
+                        spacing="1",
+                        align="center",
+                    ),
+                    size="2",
+                    variant="outline",
+                    color_scheme="amber",
+                    on_click=EventoState.restaurar_grade_padrao,
+                    style=STYLE_BUTTON_CHIP,
+                ),
+                spacing="2",
+                align="center",
             ),
-            width="100%",
             align="center",
+            width="100%",
             wrap="wrap",
-            gap="2",
         ),
-        # Formulário Modal/Inline de Edição (Aparece quando is_editing_atividade é True)
+        # Formulário para Criar e Delegar Nova Atividade
         rx.cond(
-            EventoState.is_editing_atividade,
-            rx.box(
+            EventoState.is_creating_atividade,
+            rx.card(
                 rx.vstack(
                     rx.hstack(
-                        rx.icon(tag="edit-3", size=18, color=COLOR_CYAN),
-                        rx.heading("Editar Atividade / Palestra", size="3", weight="bold", color="white"),
+                        rx.icon(tag="plus-circle", size=18, color=COLOR_CYAN),
+                        rx.heading("Delegar e Criar Nova Atividade na Grade", size="3", weight="bold", color="white"),
                         rx.spacer(),
-                        rx.button(
-                            rx.icon(tag="x", size=16),
-                            variant="ghost",
-                            size="1",
-                            on_click=EventoState.fechar_edicao_atividade,
-                        ),
-                        width="100%",
+                        rx.badge("Nova Atividade", color_scheme="green", size="1"),
                         align="center",
+                        width="100%",
                     ),
                     rx.grid(
                         rx.vstack(
-                            rx.text("Dia do Evento", size="1", weight="bold", color="var(--gray-9)"),
+                            rx.text("Dia do Evento", size="1", weight="bold", color="white"),
+                            rx.select(
+                                ["Dia 1", "Dia 2"],
+                                value=EventoState.new_ativ_dia,
+                                on_change=EventoState.set_new_ativ_dia,
+                                size="2",
+                                width="100%",
+                            ),
+                            spacing="1",
+                        ),
+                        rx.vstack(
+                            rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
+                            rx.input(
+                                placeholder="Ex: 14:00 – 15:30",
+                                value=EventoState.new_ativ_horario,
+                                on_change=EventoState.set_new_ativ_horario,
+                                size="2",
+                                width="100%",
+                            ),
+                            spacing="1",
+                        ),
+                        rx.vstack(
+                            rx.text("Tipo de Atividade", size="1", weight="bold", color="white"),
+                            rx.select(
+                                ["Conferência", "Mesa-Redonda", "Minicurso", "Sessão Oral", "Abertura", "Intervalo"],
+                                value=EventoState.new_ativ_tipo,
+                                on_change=EventoState.set_new_ativ_tipo,
+                                size="2",
+                                width="100%",
+                            ),
+                            spacing="1",
+                        ),
+                        rx.vstack(
+                            rx.text("Local / Sala", size="1", weight="bold", color="white"),
+                            rx.input(
+                                value=EventoState.new_ativ_local,
+                                on_change=EventoState.set_new_ativ_local,
+                                size="2",
+                                width="100%",
+                            ),
+                            spacing="1",
+                        ),
+                        columns=rx.breakpoints(initial="1", sm="2", md="4"),
+                        spacing="3",
+                        width="100%",
+                    ),
+                    rx.vstack(
+                        rx.text("Título / Tema da Palestra ou Atividade", size="1", weight="bold", color="white"),
+                        rx.input(
+                            placeholder="Tema da conferência ou título do minicurso...",
+                            value=EventoState.new_ativ_titulo,
+                            on_change=EventoState.set_new_ativ_titulo,
+                            size="2",
+                            width="100%",
+                        ),
+                        spacing="1",
+                        width="100%",
+                    ),
+                    rx.vstack(
+                        rx.text("Delegar Responsável / Palestrante", size="1", weight="bold", color="white"),
+                        rx.input(
+                            placeholder="Nome do palestrante, supervisor ou debatedor responsável...",
+                            value=EventoState.new_ativ_palestrante,
+                            on_change=EventoState.set_new_ativ_palestrante,
+                            size="2",
+                            width="100%",
+                        ),
+                        spacing="1",
+                        width="100%",
+                    ),
+                    rx.vstack(
+                        rx.text("Ementa / Descrição Detalhada", size="1", weight="bold", color="white"),
+                        rx.text_area(
+                            placeholder="Breve ementa ou tópicos da atividade...",
+                            value=EventoState.new_ativ_descricao,
+                            on_change=EventoState.set_new_ativ_descricao,
+                            size="2",
+                            width="100%",
+                            rows="2",
+                        ),
+                        spacing="1",
+                        width="100%",
+                    ),
+                    rx.hstack(
+                        rx.button(
+                            "Cancelar",
+                            size="2",
+                            variant="ghost",
+                            color_scheme="gray",
+                            on_click=EventoState.fechar_criacao_atividade,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon(tag="check", size=16),
+                                rx.text("Criar e Delegar Atividade"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="2",
+                            variant="solid",
+                            color_scheme="green",
+                            on_click=EventoState.criar_nova_atividade,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        spacing="2",
+                        justify="end",
+                        width="100%",
+                    ),
+                    spacing="3",
+                    width="100%",
+                ),
+                background="rgba(15, 23, 42, 0.95)",
+                border="1.5px solid rgba(34, 197, 94, 0.4)",
+                border_radius="14px",
+                width="100%",
+                margin_bottom="1rem",
+            ),
+            rx.fragment(),
+        ),
+        # Formulário de Edição Aberto
+        rx.cond(
+            EventoState.is_editing_atividade,
+            rx.card(
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(tag="pencil", size=18, color=COLOR_CYAN),
+                        rx.heading("Editar e Re-delegar Atividade", size="3", weight="bold", color="white"),
+                        rx.spacer(),
+                        rx.badge(f"ID #{EventoState.edit_ativ_id}", color_scheme="cyan", size="1"),
+                        align="center",
+                        width="100%",
+                    ),
+                    rx.grid(
+                        rx.vstack(
+                            rx.text("Dia do Evento (Manual)", size="1", weight="bold", color="white"),
                             rx.select(
                                 ["Dia 1", "Dia 2"],
                                 value=EventoState.edit_ativ_dia,
@@ -236,78 +767,70 @@ def editor_atividades_admin() -> rx.Component:
                             spacing="1",
                         ),
                         rx.vstack(
-                            rx.text("Faixa Horária", size="1", weight="bold", color="var(--gray-9)"),
+                            rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
                             rx.input(
                                 value=EventoState.edit_ativ_horario,
                                 on_change=EventoState.set_edit_ativ_horario,
-                                placeholder="Ex: 09:30 – 10:30",
                                 size="2",
                                 width="100%",
                             ),
                             spacing="1",
                         ),
                         rx.vstack(
-                            rx.text("Tipo / Sessão", size="1", weight="bold", color="var(--gray-9)"),
-                            rx.input(
+                            rx.text("Tipo de Atividade", size="1", weight="bold", color="white"),
+                            rx.select(
+                                ["Abertura", "Conferência", "Minicurso", "Mesa-Redonda", "Sessão Oral", "Intervalo"],
                                 value=EventoState.edit_ativ_tipo,
                                 on_change=EventoState.set_edit_ativ_tipo,
-                                placeholder="Ex: Palestra Convidada",
                                 size="2",
                                 width="100%",
                             ),
                             spacing="1",
                         ),
-                        columns=rx.breakpoints(initial="1", sm="3"),
-                        spacing="2",
+                        rx.vstack(
+                            rx.text("Local / Sala", size="1", weight="bold", color="white"),
+                            rx.input(
+                                value=EventoState.edit_ativ_local,
+                                on_change=EventoState.set_edit_ativ_local,
+                                size="2",
+                                width="100%",
+                            ),
+                            spacing="1",
+                        ),
+                        columns=rx.breakpoints(initial="1", sm="2", md="4"),
+                        spacing="3",
                         width="100%",
                     ),
                     rx.vstack(
-                        rx.text("Título / Tema da Palestra", size="1", weight="bold", color="var(--gray-9)"),
+                        rx.text("Tema / Título da Palestra ou Atividade", size="1", weight="bold", color="white"),
                         rx.input(
                             value=EventoState.edit_ativ_titulo,
                             on_change=EventoState.set_edit_ativ_titulo,
-                            placeholder="Tema oficial da apresentação",
                             size="2",
                             width="100%",
                         ),
                         spacing="1",
                         width="100%",
                     ),
-                    rx.grid(
-                        rx.vstack(
-                            rx.text("Palestrante / Convidado", size="1", weight="bold", color="var(--gray-9)"),
-                            rx.input(
-                                value=EventoState.edit_ativ_palestrante,
-                                on_change=EventoState.set_edit_ativ_palestrante,
-                                placeholder="Nome do(a) pesquisador(a)",
-                                size="2",
-                                width="100%",
-                            ),
-                            spacing="1",
+                    rx.vstack(
+                        rx.text("Delegar Palestrante(s) ou Supervisor", size="1", weight="bold", color="white"),
+                        rx.input(
+                            value=EventoState.edit_ativ_palestrante,
+                            on_change=EventoState.set_edit_ativ_palestrante,
+                            size="2",
+                            width="100%",
                         ),
-                        rx.vstack(
-                            rx.text("Local", size="1", weight="bold", color="var(--gray-9)"),
-                            rx.input(
-                                value=EventoState.edit_ativ_local,
-                                on_change=EventoState.set_edit_ativ_local,
-                                placeholder="Auditório Central, Sala Temática...",
-                                size="2",
-                                width="100%",
-                            ),
-                            spacing="1",
-                        ),
-                        columns=rx.breakpoints(initial="1", sm="2"),
-                        spacing="2",
+                        spacing="1",
                         width="100%",
                     ),
                     rx.vstack(
-                        rx.text("Descrição / Resumo da Atividade", size="1", weight="bold", color="var(--gray-9)"),
+                        rx.text("Ementa / Descrição Detalhada", size="1", weight="bold", color="white"),
                         rx.text_area(
                             value=EventoState.edit_ativ_descricao,
                             on_change=EventoState.set_edit_ativ_descricao,
-                            placeholder="Detalhes sobre os tópicos abordados...",
                             size="2",
                             width="100%",
+                            rows="2",
                         ),
                         spacing="1",
                         width="100%",
@@ -315,15 +838,22 @@ def editor_atividades_admin() -> rx.Component:
                     rx.hstack(
                         rx.button(
                             "Cancelar",
-                            variant="ghost",
                             size="2",
+                            variant="ghost",
+                            color_scheme="gray",
                             on_click=EventoState.fechar_edicao_atividade,
+                            style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
-                            "Salvar Alterações na Grade",
+                            rx.hstack(
+                                rx.icon(tag="check", size=16),
+                                rx.text("Salvar Alterações na Grade"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="2",
                             variant="solid",
                             color_scheme="cyan",
-                            size="2",
                             on_click=EventoState.salvar_edicao_atividade,
                             style=STYLE_BUTTON_CHIP,
                         ),
@@ -334,68 +864,188 @@ def editor_atividades_admin() -> rx.Component:
                     spacing="3",
                     width="100%",
                 ),
-                background="rgba(10, 16, 35, 0.95)",
-                border="1.5px solid rgba(0, 173, 181, 0.5)",
+                background="rgba(15, 23, 42, 0.9)",
+                border="1px solid rgba(0, 173, 181, 0.3)",
                 border_radius="14px",
-                padding="1.25rem",
                 width="100%",
-                box_shadow="0 8px 30px rgba(0, 0, 0, 0.5)",
-                margin_y="0.5rem",
+                margin_bottom="1rem",
             ),
+            rx.fragment(),
         ),
-        # Lista / Cards das Atividades Salvas
+        # Lista de Atividades Atuais
         rx.box(
-            rx.vstack(
-                rx.foreach(
-                    EventoState.admin_atividades,
-                    lambda at: rx.card(
-                        rx.hstack(
-                            rx.badge(at["dia"], color_scheme="indigo", variant="surface", size="1"),
-                            rx.badge(at["horario"], color_scheme="cyan", variant="solid", size="1"),
-                            rx.vstack(
-                                rx.text(at["titulo"], size="2", weight="bold", color="white"),
-                                rx.hstack(
-                                    rx.text(at["palestrante"], size="1", color=COLOR_CYAN_LIGHT),
-                                    rx.text("•", size="1", color="var(--gray-8)"),
-                                    rx.text(at["local"], size="1", color="var(--gray-9)"),
-                                    spacing="1",
-                                    align="center",
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell("Dia"),
+                        rx.table.column_header_cell("Horário"),
+                        rx.table.column_header_cell("Tipo"),
+                        rx.table.column_header_cell("Tema / Atividade"),
+                        rx.table.column_header_cell("Responsável Delegado"),
+                        rx.table.column_header_cell("Ação"),
+                    )
+                ),
+                rx.table.body(
+                    rx.foreach(
+                        EventoState.admin_atividades,
+                        lambda a: rx.table.row(
+                            rx.table.cell(rx.badge(a["dia"], color_scheme="indigo", size="1")),
+                            rx.table.cell(rx.text(a["horario"], size="2", weight="bold", color="white")),
+                            rx.table.cell(rx.badge(a["tipo"], color_scheme="cyan", variant="surface", size="1")),
+                            rx.table.cell(
+                                rx.vstack(
+                                    rx.text(a["titulo"], size="2", weight="bold", color="white"),
+                                    rx.text(a["local"], size="1", color="var(--gray-9)"),
+                                    spacing="0",
                                 ),
-                                spacing="0",
-                                align="start",
-                                flex="1",
                             ),
-                            rx.button(
-                                rx.hstack(
-                                    rx.icon(tag="pencil", size=13),
-                                    rx.text("Editar", size="1"),
-                                    spacing="1",
-                                    align="center",
+                            rx.table.cell(rx.text(a["palestrante"], size="2", color="var(--gray-11)")),
+                            rx.table.cell(
+                                rx.button(
+                                    rx.hstack(
+                                        rx.icon(tag="pencil", size=12),
+                                        rx.text("Editar", size="1"),
+                                        spacing="1",
+                                        align="center",
+                                    ),
+                                    size="1",
+                                    variant="surface",
+                                    color_scheme="cyan",
+                                    on_click=EventoState.abrir_edicao_atividade(a["id"]),
+                                    style=STYLE_BUTTON_CHIP,
                                 ),
-                                size="1",
-                                variant="surface",
-                                color_scheme="cyan",
-                                on_click=EventoState.abrir_edicao_atividade(at["id"]),
-                                style=STYLE_BUTTON_CHIP,
                             ),
                             align="center",
-                            width="100%",
-                            spacing="3",
                         ),
-                        background="rgba(15, 23, 42, 0.7)",
-                        border="1px solid rgba(255, 255, 255, 0.06)",
-                        padding="0.75rem",
-                        width="100%",
                     ),
                 ),
-                spacing="2",
                 width="100%",
+                variant="surface",
             ),
             width="100%",
-            max_height="450px",
-            overflow_y="auto",
+            overflow_x="auto",
+            border_radius="12px",
+            border="1px solid rgba(255, 255, 255, 0.08)",
         ),
         spacing="3",
+        width="100%",
+    )
+
+
+def seguranca_admin_view() -> rx.Component:
+    """Card de segurança e alteração da própria senha do Super Admin."""
+    return rx.box(
+        rx.vstack(
+            rx.hstack(
+                rx.icon(tag="shield-check", size=24, color="#ef4444"),
+                rx.vstack(
+                    rx.heading("Segurança da Conta Super Admin", size="4", weight="bold", color="white"),
+                    rx.text(
+                        "Altere com segurança sua própria credencial de acesso master ao sistema.",
+                        size="2",
+                        color="var(--gray-10)",
+                    ),
+                    spacing="0",
+                    align="start",
+                ),
+                align="center",
+                spacing="2",
+            ),
+            rx.divider(color_scheme="gray", opacity="0.15"),
+            rx.grid(
+                rx.vstack(
+                    rx.text("Nova Senha do Administrador", size="2", weight="bold", color="white"),
+                    rx.input(
+                        placeholder="Digite a nova senha (mínimo 6 caracteres)",
+                        type="password",
+                        value=EventoState.admin_propria_senha_input,
+                        on_change=EventoState.set_admin_propria_senha,
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="1",
+                    width="100%",
+                ),
+                rx.vstack(
+                    rx.text("Confirmar Nova Senha", size="2", weight="bold", color="white"),
+                    rx.input(
+                        placeholder="Repita a nova senha",
+                        type="password",
+                        value=EventoState.admin_propria_senha_confirm,
+                        on_change=EventoState.set_admin_propria_senha_confirm,
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="1",
+                    width="100%",
+                ),
+                columns=rx.breakpoints(initial="1", sm="2"),
+                spacing="4",
+                width="100%",
+            ),
+            rx.button(
+                rx.hstack(
+                    rx.icon(tag="lock", size=16),
+                    rx.text("Atualizar Minha Senha de Administrador"),
+                    spacing="1",
+                    align="center",
+                ),
+                size="3",
+                color_scheme="red",
+                variant="solid",
+                on_click=EventoState.salvar_propria_senha_admin,
+                style=STYLE_BUTTON_CHIP,
+            ),
+            rx.divider(color_scheme="gray", opacity="0.15"),
+            # Exportação de Dados e Documentos Oficiais
+            rx.vstack(
+                rx.heading("Exportação Oficial de Dados e Relatórios", size="3", weight="bold", color="white"),
+                rx.text(
+                    "Baixe a relação completa de participantes cadastrados no banco SQLite WAL para conferência offline ou impressão.",
+                    size="2",
+                    color="var(--gray-10)",
+                ),
+                rx.hstack(
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="file-spreadsheet", size=16),
+                            rx.text("Baixar Planilha (CSV)"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        size="2",
+                        color_scheme="green",
+                        variant="surface",
+                        on_click=EventoState.exportar_inscritos_csv,
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="file-down", size=16),
+                            rx.text("Baixar Relatório Oficial (PDF)"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        size="2",
+                        color_scheme="cyan",
+                        variant="solid",
+                        on_click=EventoState.exportar_inscritos_pdf,
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    spacing="3",
+                    align="center",
+                ),
+                spacing="2",
+                align="start",
+                width="100%",
+            ),
+            spacing="4",
+            width="100%",
+        ),
+        padding="1.5rem",
+        border_radius="14px",
+        background="rgba(15, 23, 42, 0.75)",
+        border="1px solid rgba(255, 255, 255, 0.08)",
         width="100%",
     )
 
@@ -403,6 +1053,11 @@ def editor_atividades_admin() -> rx.Component:
 def painel_admin_view() -> rx.Component:
     """Componente completo de renderização do Painel de Administração."""
     return rx.box(
+        # Modal de alteração de senha de inscrito
+        modal_alterar_senha_inscrito(),
+        # Modal de visualização de carteirinha de participante
+        modal_carteirinha_admin(),
+
         rx.vstack(
             # Título e Badges
             rx.hstack(
@@ -423,7 +1078,7 @@ def painel_admin_view() -> rx.Component:
                 spacing="3",
                 width="100%",
             ),
-            # Abas do Admin: Inscritos vs Editor de Grade
+            # Abas do Admin: Inscritos vs Editor de Grade vs Minha Conta/Segurança
             rx.tabs.root(
                 rx.tabs.list(
                     rx.tabs.trigger(
@@ -438,11 +1093,20 @@ def painel_admin_view() -> rx.Component:
                     rx.tabs.trigger(
                         rx.hstack(
                             rx.icon(tag="calendar", size=14),
-                            rx.text("Editor de Palestras & Grade", size="2"),
+                            rx.text("Editor & Delegação de Grade", size="2"),
                             spacing="1",
                             align="center",
                         ),
                         value="grade",
+                    ),
+                    rx.tabs.trigger(
+                        rx.hstack(
+                            rx.icon(tag="shield", size=14),
+                            rx.text("Segurança & Minha Senha", size="2"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        value="seguranca",
                     ),
                     size="2",
                 ),
@@ -454,6 +1118,11 @@ def painel_admin_view() -> rx.Component:
                 rx.tabs.content(
                     editor_atividades_admin(),
                     value="grade",
+                    padding_top="1.5rem",
+                ),
+                rx.tabs.content(
+                    seguranca_admin_view(),
+                    value="seguranca",
                     padding_top="1.5rem",
                 ),
                 default_value="inscritos",

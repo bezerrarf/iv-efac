@@ -78,3 +78,14 @@ class SQLiteUsuarioRepository(UsuarioRepositoryProtocol):
                 session.refresh(usuario)
                 return usuario
             return None
+
+    def update_senha(self, user_id: int, nova_senha_hash: str) -> Optional[Usuario]:
+        with self._session_factory() as session:
+            usuario = session.get(Usuario, user_id)
+            if usuario:
+                usuario.senha_hash = nova_senha_hash
+                session.add(usuario)
+                session.commit()
+                session.refresh(usuario)
+                return usuario
+            return None

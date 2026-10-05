@@ -184,3 +184,50 @@ def test_listar_inscritos_com_filtro(controller: UsuarioController):
     filtro_inst = controller.listar_inscritos("Copenhague")
     assert len(filtro_inst) == 1
     assert filtro_inst[0].nome == "Niels Bohr"
+
+
+def test_alterar_senha_sucesso_e_validacao(controller: UsuarioController):
+    res_cad = controller.cadastrar(
+        nome="Richard Feynman",
+        email="feynman@caltech.edu",
+        senha="senha_antiga_123",
+        instituicao="Caltech",
+    )
+    user_id = res_cad.dado.id
+
+    # Teste de validação (senha muito curta)
+    res_curta = controller.alterar_senha(user_id, "12345")
+    assert not res_curta.sucesso
+    assert "mínimo 6" in res_curta.mensagem
+
+    # Teste de sucesso
+    res_alt = controller.alterar_senha(user_id, "Quantum_Electrodynamics_2026!")
+    assert res_alt.sucesso
+    assert "atualizada com sucesso" in res_alt.mensagem
+
+    # Autenticar com a nova senha
+    res_login_novo = controller.autenticar("feynman@caltech.edu", "Quantum_Electrodynamics_2026!")
+    assert res_login_novo.sucesso
+
+    # Tentativa com senha antiga deve falhar
+    res_login_velho = controller.autenticar("feynman@caltech.edu", "senha_antiga_123")
+    assert not res_login_velho.sucesso
+
+
+def test_export_service_csv_e_pdf(controller: UsuarioController):
+    from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
+
+    controller.cadastrar(nome="Ada Lovelace", email="ada@analytical.uk", senha="bernoulli_numbers", instituicao="London")
+    usuarios = controller.listar_inscritos()
+    stats = controller.obter_estatisticas()
+
+    # Validação do CSV
+    csv_str = gerar_csv_inscritos(usuarios)
+    assert "Ada Lovelace" in csv_str
+    assert "ada@analytical.uk" in csv_str
+    assert "London" in csv_str
+
+    # Validação do PDF
+    pdf_bytes = gerar_pdf_inscritos(usuarios, stats)
+    assert len(pdf_bytes) > 500
+    assert pdf_bytes.startswith(b"%PDF-")

@@ -374,8 +374,7 @@ def cartao_identificacao_digital() -> rx.Component:
                 ),
                 # Rodapé de Chancela e Apoio
                 rx.hstack(
-                    rx.text("Fomento:", size="1", color="var(--gray-9)"),
-                    rx.badge("FUNCAP • Edital 03/2026", color_scheme="gray", variant="soft", size="1"),
+                    rx.badge("Fomento FUNCAP", color_scheme="cyan", variant="soft", size="1"),
                     rx.spacer(),
                     rx.text("Documento Oficial de Identificação Acadêmica", size="1", color="var(--gray-9)"),
                     align="center",
@@ -410,7 +409,7 @@ def cartao_identificacao_digital() -> rx.Component:
                     variant=rx.cond(EventoState.badge_modo == "participante", "solid", "outline"),
                     color_scheme="cyan",
                     size="2",
-                    on_click=lambda: EventoState.set_badge_modo("participante"),
+                    on_click=EventoState.set_badge_modo("participante"),
                     style=STYLE_BUTTON_CHIP,
                 ),
                 rx.button(
@@ -423,7 +422,7 @@ def cartao_identificacao_digital() -> rx.Component:
                     variant=rx.cond(EventoState.badge_modo == "palestrante", "solid", "outline"),
                     color_scheme="indigo",
                     size="2",
-                    on_click=lambda: EventoState.set_badge_modo("palestrante"),
+                    on_click=EventoState.set_badge_modo("palestrante"),
                     style=STYLE_BUTTON_CHIP,
                 ),
                 # Botão de Impressão / Salvar PDF
@@ -445,65 +444,164 @@ def cartao_identificacao_digital() -> rx.Component:
                 justify="center",
                 width="100%",
             ),
-            # Inserção de Foto / Presets
+            # Inserção de Foto / Upload de Celular / PC / Link da Internet / Presets
             rx.box(
                 rx.vstack(
                     rx.hstack(
-                        rx.icon(tag="image", size=16, color=COLOR_CYAN),
-                        rx.text("Personalizar Foto do Cartão de Identificação", size="2", weight="bold", color="white"),
+                        rx.icon(tag="image", size=18, color=COLOR_CYAN),
+                        rx.heading("Foto da Carteirinha Digital do Participante", size="3", weight="bold", color="white"),
                         align="center",
                         spacing="2",
                     ),
-                    rx.hstack(
-                        rx.input(
-                            placeholder="Cole o link ou URL da sua foto (Ex: https://...)",
-                            value=EventoState.badge_foto_input,
-                            on_change=EventoState.set_badge_foto_input,
-                            size="2",
-                            flex="1",
-                        ),
-                        rx.button(
-                            "Aplicar Foto",
-                            size="2",
-                            color_scheme="cyan",
-                            on_click=EventoState.salvar_foto_perfil,
-                            style=STYLE_BUTTON_CHIP,
-                        ),
-                        spacing="2",
-                        width="100%",
+                    rx.text(
+                        "Escolha uma foto sua enviada do computador, celular ou dispositivo móvel, ou cole um link da internet.",
+                        size="1",
+                        color="var(--gray-10)",
                     ),
-                    rx.hstack(
-                        rx.text("Ou escolha um avatar temático:", size="1", color="var(--gray-9)"),
-                        *[
-                            rx.tooltip(
-                                rx.button(
-                                    rx.hstack(
-                                        rx.icon(tag=preset["icone"], size=12),
-                                        rx.text(preset["nome"], size="1"),
+                    rx.tabs.root(
+                        rx.tabs.list(
+                            rx.tabs.trigger(
+                                rx.hstack(
+                                    rx.icon(tag="smartphone", size=13),
+                                    rx.text("Do Computador ou Celular", size="1"),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                value="upload",
+                            ),
+                            rx.tabs.trigger(
+                                rx.hstack(
+                                    rx.icon(tag="link", size=13),
+                                    rx.text("Link da Internet (URL)", size="1"),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                value="link",
+                            ),
+                            rx.tabs.trigger(
+                                rx.hstack(
+                                    rx.icon(tag="sparkles", size=13),
+                                    rx.text("Avatares Temáticos", size="1"),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                value="presets",
+                            ),
+                            size="1",
+                        ),
+                        rx.tabs.content(
+                            # Upload do PC ou Celular
+                            rx.vstack(
+                                rx.upload(
+                                    rx.vstack(
+                                        rx.icon(tag="upload-cloud", size=24, color=COLOR_CYAN),
+                                        rx.text("Clique para escolher uma imagem do seu Computador ou Celular", size="2", weight="bold", color="white"),
+                                        rx.text("Suporta fotos da galeria, câmera do celular ou arquivos (JPG, PNG, WEBP)", size="1", color="var(--gray-9)"),
                                         spacing="1",
                                         align="center",
                                     ),
-                                    size="1",
-                                    variant="surface",
-                                    color_scheme="gray",
-                                    on_click=EventoState.definir_avatar_preset(preset["url"]),
+                                    id="upload_foto_carteirinha",
+                                    accept={"image/*": [".jpg", ".jpeg", ".png", ".webp"]},
+                                    max_files=1,
+                                    border="1.5px dashed rgba(0, 173, 181, 0.4)",
+                                    padding="1.25rem",
+                                    border_radius="10px",
+                                    background="rgba(15, 23, 42, 0.5)",
+                                    _hover={"border_color": COLOR_CYAN, "background": "rgba(0, 173, 181, 0.08)"},
+                                    cursor="pointer",
+                                    width="100%",
+                                ),
+                                rx.button(
+                                    rx.hstack(
+                                        rx.icon(tag="check", size=14),
+                                        rx.text("Confirmar e Salvar Foto no Cartão", size="1"),
+                                        spacing="1",
+                                        align="center",
+                                    ),
+                                    size="2",
+                                    color_scheme="cyan",
+                                    on_click=EventoState.handle_upload_foto(rx.upload_files(upload_id="upload_foto_carteirinha")),
                                     style=STYLE_BUTTON_CHIP,
                                 ),
-                                content=f"Usar avatar {preset['nome']}",
-                            )
-                            for preset in AVATAR_PRESETS
-                        ],
-                        spacing="2",
-                        wrap="wrap",
-                        align="center",
+                                spacing="2",
+                                align="center",
+                                width="100%",
+                                padding_top="0.5rem",
+                            ),
+                            value="upload",
+                        ),
+                        rx.tabs.content(
+                            # Link da Internet
+                            rx.vstack(
+                                rx.text("Cole o endereço ou URL direta da sua foto na internet:", size="1", color="var(--gray-10)"),
+                                rx.hstack(
+                                    rx.input(
+                                        placeholder="Ex: https://meusite.com/minha_foto.jpg",
+                                        value=EventoState.badge_foto_input,
+                                        on_change=EventoState.set_badge_foto_input,
+                                        size="2",
+                                        flex="1",
+                                    ),
+                                    rx.button(
+                                        "Aplicar Link",
+                                        size="2",
+                                        color_scheme="cyan",
+                                        on_click=EventoState.salvar_foto_perfil,
+                                        style=STYLE_BUTTON_CHIP,
+                                    ),
+                                    spacing="2",
+                                    width="100%",
+                                ),
+                                spacing="2",
+                                width="100%",
+                                padding_top="0.5rem",
+                            ),
+                            value="link",
+                        ),
+                        rx.tabs.content(
+                            # Presets Temáticos
+                            rx.vstack(
+                                rx.text("Selecione um dos avatares temáticos oficiais do simpósio:", size="1", color="var(--gray-10)"),
+                                rx.hstack(
+                                    *[
+                                        rx.tooltip(
+                                            rx.button(
+                                                rx.hstack(
+                                                    rx.icon(tag=preset["icone"], size=12),
+                                                    rx.text(preset["nome"], size="1"),
+                                                    spacing="1",
+                                                    align="center",
+                                                ),
+                                                size="1",
+                                                variant="surface",
+                                                color_scheme="cyan",
+                                                on_click=EventoState.definir_avatar_preset(preset["url"]),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                            content=f"Usar avatar {preset['nome']}",
+                                        )
+                                        for preset in AVATAR_PRESETS
+                                    ],
+                                    spacing="2",
+                                    wrap="wrap",
+                                    align="center",
+                                ),
+                                spacing="2",
+                                width="100%",
+                                padding_top="0.5rem",
+                            ),
+                            value="presets",
+                        ),
+                        default_value="upload",
+                        width="100%",
                     ),
-                    spacing="2",
+                    spacing="3",
                     width="100%",
                 ),
                 background="rgba(15, 23, 42, 0.7)",
                 border="1px solid rgba(255, 255, 255, 0.08)",
                 border_radius="12px",
-                padding="1rem",
+                padding="1.25rem",
                 width="100%",
                 max_width="620px",
             ),

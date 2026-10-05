@@ -197,6 +197,26 @@ class UsuarioController:
             dado=atualizado,
         )
 
+    def alterar_senha(self, user_id: int, nova_senha: str) -> ControllerResult[Usuario]:
+        """Permite alterar a senha de qualquer participante ou a senha do próprio administrador."""
+        if not nova_senha or len(nova_senha.strip()) < 6:
+            return ControllerResult(
+                sucesso=False,
+                mensagem="A nova senha deve possuir no mínimo 6 caracteres.",
+            )
+
+        usuario = self._repository.find_by_id(user_id)
+        if not usuario:
+            return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
+
+        hash_novo = self._hasher.hash(nova_senha.strip())
+        atualizado = self._repository.update_senha(user_id, hash_novo)
+        return ControllerResult(
+            sucesso=True,
+            mensagem=f"Senha de {usuario.nome} atualizada com sucesso no banco de dados!",
+            dado=atualizado,
+        )
+
     def obter_estatisticas(self) -> dict:
         """Calcula métricas de vagas e inscritos."""
         total = self._repository.count()

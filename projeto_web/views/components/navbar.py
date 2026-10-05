@@ -15,7 +15,7 @@ from projeto_web.styles.theme import (
 
 
 def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
-    """Item do menu superior com indicador visual cósmico de tela ativa."""
+    """Item do menu superior com indicador visual cósmico de tela ativa e roteamento universal."""
     is_ativa = EventoState.tela_ativa == chave
 
     return rx.button(
@@ -34,7 +34,7 @@ def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
         radius="large",
         padding_x="0.85rem",
         padding_y="0.35rem",
-        on_click=lambda: EventoState.set_tela(chave),
+        on_click=EventoState.navegar_para_tela(chave),
         color=rx.cond(
             is_ativa,
             COLOR_CYAN,
@@ -132,13 +132,13 @@ def menu_mobile_telas() -> rx.Component:
             )
         ),
         rx.menu.content(
-            rx.menu.item("Eixos Temáticos", on_click=lambda: EventoState.set_tela("eixos")),
-            rx.menu.item("Palestrantes", on_click=lambda: EventoState.set_tela("palestrantes")),
-            rx.menu.item("Programação Oficial", on_click=lambda: EventoState.set_tela("programacao")),
-            rx.menu.item("Submissões de Trabalhos", on_click=lambda: EventoState.set_tela("submissoes")),
+            rx.menu.item("Eixos Temáticos", on_click=EventoState.navegar_para_tela("eixos")),
+            rx.menu.item("Palestrantes", on_click=EventoState.navegar_para_tela("palestrantes")),
+            rx.menu.item("Programação Oficial", on_click=EventoState.navegar_para_tela("programacao")),
+            rx.menu.item("Submissões de Trabalhos", on_click=EventoState.navegar_para_tela("submissoes")),
             rx.menu.item("Edital Oficial (PDF em breve)", disabled=True),
-            rx.menu.item("Localização", on_click=lambda: EventoState.set_tela("local")),
-            rx.menu.item("Sobre o Evento", on_click=lambda: EventoState.set_tela("sobre")),
+            rx.menu.item("Localização", on_click=EventoState.navegar_para_tela("local")),
+            rx.menu.item("Sobre o Evento", on_click=EventoState.navegar_para_tela("sobre")),
             rx.menu.separator(),
             rx.menu.item("Garantir Inscrição", on_click=rx.redirect("/inscricao")),
             background="rgba(15, 23, 42, 0.98)",
@@ -193,7 +193,7 @@ def navbar() -> rx.Component:
                     spacing="2",
                 ),
                 href="/",
-                on_click=lambda: EventoState.set_tela("inicio"),
+                on_click=EventoState.set_tela("inicio"),
                 style=STYLE_BUTTON_CHIP,
             ),
             # Navegação no Topo: Telas Principais (Visível a partir de Desktop / md/lg)
@@ -214,28 +214,84 @@ def navbar() -> rx.Component:
                 rx.cond(
                     EventoState.is_logged_in,
                     rx.hstack(
-                        rx.cond(
-                            EventoState.is_admin,
-                            rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
-                            rx.cond(
-                                EventoState.is_supervisor,
-                                rx.badge("SUPERVISOR", color_scheme="violet", variant="solid", size="1"),
-                                rx.fragment(),
+                        # Botão com nome de acesso direcionando diretamente para a área do usuário
+                        rx.tooltip(
+                            rx.link(
+                                rx.box(
+                                    rx.hstack(
+                                        rx.box(
+                                            rx.cond(
+                                                EventoState.user_foto_url != "",
+                                                rx.image(
+                                                    src=EventoState.user_foto_url,
+                                                    width="26px",
+                                                    height="26px",
+                                                    border_radius="50%",
+                                                    object_fit="cover",
+                                                    border="1.5px solid #00ADB5",
+                                                ),
+                                                rx.icon(tag="user", size=15, color="#00ADB5"),
+                                            ),
+                                            display="grid",
+                                            place_items="center",
+                                        ),
+                                        rx.vstack(
+                                            rx.text(
+                                                EventoState.user_nome,
+                                                size="2",
+                                                weight="bold",
+                                                color="white",
+                                                max_width="140px",
+                                                overflow="hidden",
+                                                text_overflow="ellipsis",
+                                                white_space="nowrap",
+                                            ),
+                                            rx.hstack(
+                                                rx.cond(
+                                                    EventoState.is_admin,
+                                                    rx.badge("Super Admin", color_scheme="red", variant="solid", size="1"),
+                                                    rx.cond(
+                                                        EventoState.is_supervisor,
+                                                        rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1"),
+                                                        rx.badge("Participante", color_scheme="cyan", variant="surface", size="1"),
+                                                    ),
+                                                ),
+                                                rx.text(EventoState.user_codigo, size="1", color="var(--gray-9)"),
+                                                spacing="1",
+                                                align="center",
+                                            ),
+                                            spacing="0",
+                                            align="start",
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                    ),
+                                    padding="0.3rem 0.75rem",
+                                    border_radius="10px",
+                                    background="rgba(15, 23, 42, 0.75)",
+                                    border="1px solid rgba(0, 173, 181, 0.35)",
+                                    box_shadow="0 2px 10px rgba(0, 173, 181, 0.15)",
+                                    _hover={
+                                        "background": "rgba(0, 173, 181, 0.18)",
+                                        "border_color": "#00ADB5",
+                                        "transform": "translateY(-1px)",
+                                    },
+                                    transition="all 0.18s ease",
+                                    cursor="pointer",
+                                    id="btn-nav-usuario-area",
+                                ),
+                                href="/inscricao",
                             ),
+                            content="Clique para ir diretamente à sua Área de Participante / Painel Administrativo",
                         ),
-                        rx.badge(
+                        rx.button(
                             rx.hstack(
-                                rx.icon(tag="circle-check", size=14),
-                                rx.text(EventoState.user_codigo, size="1"),
+                                rx.icon(tag="log-out", size=14),
+                                rx.text("Sair", size="1"),
                                 spacing="1",
                                 align="center",
                             ),
-                            color_scheme="green",
-                            variant="surface",
-                        ),
-                        rx.button(
-                            "Sair",
-                            size="2",
+                            size="1",
                             variant="ghost",
                             color_scheme="red",
                             on_click=EventoState.logout,

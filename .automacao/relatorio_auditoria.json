@@ -1,0 +1,1428 @@
+{
+  "inicio": "2026-10-04T13:45:47.497521",
+  "base_url": "http://localhost:3000",
+  "rotas_auditadas": [
+    {
+      "rota": "/",
+      "status": 200,
+      "latencia_ms": 3765.43,
+      "titulo": "IV EFAC • Encontro de Física e Astronomia do Cariri (UFCA)"
+    },
+    {
+      "rota": "/cronograma",
+      "status": 200,
+      "latencia_ms": 933.68,
+      "titulo": "Programação Oficial • IV EFAC 2026"
+    }
+  ],
+  "console_logs": [
+    {
+      "tipo": "log",
+      "texto": "💿 Hey developer 👋. You can provide a way better UX than this when your app is loading JS modules and/or running `clientLoader` functions. Check out https://reactrouter.com/start/framework/route-module#hydratefallback for more information."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connecting..."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connected."
+    },
+    {
+      "tipo": "log",
+      "texto": "Disconnect websocket on page navigation"
+    },
+    {
+      "tipo": "log",
+      "texto": "💿 Hey developer 👋. You can provide a way better UX than this when your app is loading JS modules and/or running `clientLoader` functions. Check out https://reactrouter.com/start/framework/route-module#hydratefallback for more information."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connecting..."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connected."
+    },
+    {
+      "tipo": "log",
+      "texto": "Disconnect websocket on page navigation"
+    },
+    {
+      "tipo": "log",
+      "texto": "💿 Hey developer 👋. You can provide a way better UX than this when your app is loading JS modules and/or running `clientLoader` functions. Check out https://reactrouter.com/start/framework/route-module#hydratefallback for more information."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connecting..."
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] connected."
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] css hot updated: /styles/__reflex_global_styles.css"
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] css hot updated: /styles/__reflex_global_styles.css"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] css hot updated: /styles/__reflex_global_styles.css"
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] css hot updated: /styles/__reflex_global_styles.css"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "tipo": "debug",
+      "texto": "[vite] css hot updated: /styles/__reflex_global_styles.css"
+    },
+    {
+      "tipo": "error",
+      "texto": "WebSocket connection to 'ws://localhost:8000/_event/?token=d34c32f8-ff77-479d-9438-33e3be7b92c1&EIO=4&transport=websocket' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED"
+    }
+  ],
+  "rede_requisicoes": [
+    {
+      "url": "http://localhost:3000/",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/entry.client.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/root.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/browser-manifest",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@react-router/critical.css?pathname=/",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/hmr-runtime",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/compiler/compiler.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/components/reflex/radix_themes_color_mode_provider.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/components/Errorboundary_errorboundary_31a7648b7b25a2edcd5686e44d996c14.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/inject-hmr-runtime",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/theme.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/app.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/react-theme.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@emotion_react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/_document.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@vite/client",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/state.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@radix-ui_themes.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/rolldown-runtime-DC62tzP2.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_wifi-off__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context-registry.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-error-boundary.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/sonner.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/env.json?import",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?url",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/vite/dist/client/env.mjs",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/reflex.json?import",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/throttle.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/universal-cookie.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/debounce.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/socket__io-client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/upload.js",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/createLucideIcon-Xiw-kJAu.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react_jsx-runtime.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/development-d3l9VAl1.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/Icon-B05YDxnt.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/json5.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router_dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/routes/_index.jsx?import",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_map-pin__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_orbit__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_users__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_calendar__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_file-text__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_info__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_menu__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_arrow-right__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/projeto_web/views/pages/home.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_circle-check__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_telescope__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_disc__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_graduation-cap__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_upload__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_plane__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_bus__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_radio__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_cpu__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_award__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/fundo_cosmico.jpeg",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/cronograma",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/browser-manifest",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/entry.client.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/root.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@react-router/critical.css?pathname=/cronograma",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@radix-ui_themes.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@emotion_react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/development-d3l9VAl1.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/rolldown-runtime-DC62tzP2.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react_jsx-runtime.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/inject-hmr-runtime",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@vite/client",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/hmr-runtime",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/components/Errorboundary_errorboundary_31a7648b7b25a2edcd5686e44d996c14.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-error-boundary.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/components/reflex/radix_themes_color_mode_provider.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/compiler/compiler.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/sonner.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/theme.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/app.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_wifi-off__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/createLucideIcon-Xiw-kJAu.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/Icon-B05YDxnt.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/react-theme.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/_document.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/state.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/socket__io-client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/universal-cookie.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/vite/dist/client/env.mjs",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context-registry.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/env.json?import",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?url",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/reflex.json?import",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/debounce.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/throttle.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/upload.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/json5.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router_dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/routes/[cronograma]._index.jsx?import",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_orbit__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_users__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_calendar__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_file-text__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_map-pin__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_info__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_circle-check__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_menu__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_telescope__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/projeto_web/views/pages/cronograma.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/fundo_cosmico.jpeg",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/inscricao",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/browser-manifest",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/entry.client.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/root.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@react-router/critical.css?pathname=/inscricao",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@radix-ui_themes.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/@emotion_react.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/development-d3l9VAl1.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/rolldown-runtime-DC62tzP2.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react_jsx-runtime.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/inject-hmr-runtime",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@vite/client",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/@id/__x00__virtual:react-router/hmr-runtime",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/components/Errorboundary_errorboundary_31a7648b7b25a2edcd5686e44d996c14.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/components/reflex/radix_themes_color_mode_provider.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-error-boundary.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/compiler/compiler.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/sonner.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/theme.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/reflex/app.jsx",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_wifi-off__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/createLucideIcon-Xiw-kJAu.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/Icon-B05YDxnt.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/react-theme.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/_document.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/state.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/socket__io-client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/universal-cookie.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/vite/dist/client/env.mjs",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/context-registry.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/env.json?import",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?url",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/reflex.json?import",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/debounce.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/throttle.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/utils/helpers/upload.js",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/json5.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-dom_client.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-router_dom.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app/routes/[inscricao]._index.jsx?import",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_orbit__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_users__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_calendar__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_file-text__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_map-pin__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_info__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_circle-check__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_menu__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_award__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_telescope__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_building__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_presentation__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_file-down__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dist_esm_icons_layout-grid__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/app_components/projeto_web/views/pages/inscricao.jsx",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/react-debounce-input.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/node_modules/.vite/deps/lucide-react_dynamic__mjs.js?v=ef57540f",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/fundo_cosmico.jpeg",
+      "status": 304,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?t=1791132364576",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?t=1791132364924",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?t=1791132366706",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?t=1791132366971",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    },
+    {
+      "url": "http://localhost:3000/styles/__reflex_global_styles.css?t=1791132369172",
+      "status": 200,
+      "metodo": "GET",
+      "content_type": ""
+    }
+  ],
+  "testes_usuario": {},
+  "banco_sqlite": {
+    "status": "OK",
+    "arquivo": "/home/ramon_bezerra/Projects/Python_Lang/Projeto Web/evento.db",
+    "journal_mode": "wal",
+    "total_usuarios": 12,
+    "ultimos_cadastros": [
+      {
+        "id": 12,
+        "nome": "Dra. Vera Rubin Teste 1791132361",
+        "email": "dr.***@ufca.edu.br",
+        "email_completo": "dr.rubin.teste.1791132361@ufca.edu.br",
+        "instituicao": "UFCA / Carnegie Institution",
+        "modalidade": "Online",
+        "area": "Ciência de Dados / IA",
+        "codigo_inscricao": "ASTRO-3B950C",
+        "criado_em": "2026-10-04 16:46:02.982523"
+      },
+      {
+        "id": 11,
+        "nome": "Ramon F Bezerra",
+        "email": "bez***@live.com",
+        "email_completo": "bezerrarf@live.com",
+        "instituicao": "ufca",
+        "modalidade": "Presencial",
+        "area": "Estudante / Entusiasta",
+        "codigo_inscricao": "ASTRO-53EA39",
+        "criado_em": "2026-09-16 13:07:10.242224"
+      },
+      {
+        "id": 10,
+        "nome": "Johannes Kepler",
+        "email": "kep***@telescopio.org",
+        "email_completo": "kepler_a328dff0@telescopio.org",
+        "instituicao": "Universidade de Graz",
+        "modalidade": "Presencial",
+        "area": "Astrofísica / Modelagem Matemática",
+        "codigo_inscricao": "ASTRO-EC482F",
+        "criado_em": "2026-09-16 12:58:44.205457"
+      },
+      {
+        "id": 9,
+        "nome": "Carl Sagan",
+        "email": "car***@cosmos.org",
+        "email_completo": "carl_sagan_96396fa3@cosmos.org",
+        "instituicao": "Cornell University",
+        "modalidade": "Online",
+        "area": "Cosmologia",
+        "codigo_inscricao": "ASTRO-607DF2",
+        "criado_em": "2026-09-16 12:58:43.979225"
+      },
+      {
+        "id": 8,
+        "nome": "Dra. Vera Rubin",
+        "email": "ast***@observatorio.org",
+        "email_completo": "astro_test_20e7ac06@observatorio.org",
+        "instituicao": "Observatório Vera Rubin",
+        "modalidade": "Presencial",
+        "area": "Astrofísica Observacional",
+        "codigo_inscricao": "ASTRO-6AC8DF",
+        "criado_em": "2026-09-16 12:58:43.896393"
+      },
+      {
+        "id": 7,
+        "nome": "Johannes Kepler",
+        "email": "kep***@telescopio.org",
+        "email_completo": "kepler_63b1dc52@telescopio.org",
+        "instituicao": "Universidade de Graz",
+        "modalidade": "Presencial",
+        "area": "Astrofísica / Modelagem Matemática",
+        "codigo_inscricao": "ASTRO-F45375",
+        "criado_em": "2026-09-16 12:58:30.388010"
+      },
+      {
+        "id": 6,
+        "nome": "Carl Sagan",
+        "email": "car***@cosmos.org",
+        "email_completo": "carl_sagan_2615cdf5@cosmos.org",
+        "instituicao": "Cornell University",
+        "modalidade": "Online",
+        "area": "Cosmologia",
+        "codigo_inscricao": "ASTRO-407B69",
+        "criado_em": "2026-09-16 12:58:29.986575"
+      },
+      {
+        "id": 5,
+        "nome": "Dra. Vera Rubin",
+        "email": "ast***@observatorio.org",
+        "email_completo": "astro_test_9e80c500@observatorio.org",
+        "instituicao": "Observatório Vera Rubin",
+        "modalidade": "Presencial",
+        "area": "Astrofísica Observacional",
+        "codigo_inscricao": "ASTRO-DFBF0E",
+        "criado_em": "2026-09-16 12:58:29.902517"
+      },
+      {
+        "id": 4,
+        "nome": "Carl Sagan",
+        "email": "car***@cosmos.org",
+        "email_completo": "carl_sagan_33d076d3@cosmos.org",
+        "instituicao": "Cornell University",
+        "modalidade": "Online",
+        "area": "Cosmologia",
+        "codigo_inscricao": "ASTRO-71F36C",
+        "criado_em": "2026-09-16 12:56:54.372033"
+      },
+      {
+        "id": 3,
+        "nome": "Dra. Vera Rubin",
+        "email": "ast***@observatorio.org",
+        "email_completo": "astro_test_d84265d2@observatorio.org",
+        "instituicao": "Observatório Vera Rubin",
+        "modalidade": "Presencial",
+        "area": "Astrofísica Observacional",
+        "codigo_inscricao": "ASTRO-F45488",
+        "criado_em": "2026-09-16 12:56:54.286046"
+      },
+      {
+        "id": 2,
+        "nome": "Carl Sagan",
+        "email": "car***@cosmos.org",
+        "email_completo": "carl_sagan_44865cb9@cosmos.org",
+        "instituicao": "Cornell University",
+        "modalidade": "Online",
+        "area": "Cosmologia",
+        "codigo_inscricao": "ASTRO-8F8DB0",
+        "criado_em": "2026-09-16 12:56:37.058813"
+      },
+      {
+        "id": 1,
+        "nome": "Dra. Vera Rubin",
+        "email": "ast***@observatorio.org",
+        "email_completo": "astro_test_63d724fb@observatorio.org",
+        "instituicao": "Observatório Vera Rubin",
+        "modalidade": "Presencial",
+        "area": "Astrofísica Observacional",
+        "codigo_inscricao": "ASTRO-31D045",
+        "criado_em": "2026-09-16 12:56:36.972324"
+      }
+    ]
+  },
+  "screenshots": [
+    "01_home_inicio.png",
+    "02_home_eixos.png",
+    "03_home_palestrantes.png",
+    "04_home_programacao.png",
+    "05_home_submissoes.png",
+    "06_home_local.png",
+    "07_home_sobre.png",
+    "08_cronograma_expandido.png",
+    "09_portal_inscricao.png",
+    "10_formulario_preenchido.png",
+    "11_pos_cadastro.png",
+    "13_modalidade_alternada.png"
+  ],
+  "fim": "2026-10-04T13:46:09.666368"
+}

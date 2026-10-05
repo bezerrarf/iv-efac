@@ -41,4 +41,6 @@ cloudflared.exe
 Thumbs.db
 
 # Testes Locais e Automacoes
-.automacao/
+.automacao/downloads/
+.automacao/screenshots_conferencia/
+.automacao/*.log

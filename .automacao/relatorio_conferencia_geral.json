@@ -1,0 +1,103 @@
+{
+  "data_hora": "2026-10-04T22:57:05.355712",
+  "url_alvo": "http://localhost:3000",
+  "status_geral": "APROVADO",
+  "etapas": [
+    {
+      "nome": "1. Home, Identidade Visual, HUD & Todas as Abas",
+      "status": "PASS",
+      "detalhes": {
+        "status_code": 200,
+        "tempo_resposta_ms": 2585.9,
+        "logo_oficial_ativa": true,
+        "edital_seguro_desativado": true,
+        "hud_contagem_visivel": true,
+        "citacoes_cientistas_carrossel": true,
+        "rodape_autoria_valido": true,
+        "aba_eixos": true,
+        "aba_palestrantes": true,
+        "aba_programacao": true,
+        "aba_submissoes": true,
+        "aba_local": true,
+        "aba_sobre": true
+      }
+    },
+    {
+      "nome": "2. Cronograma Oficial & Fundo Cósmico",
+      "status": "PASS",
+      "detalhes": {
+        "status_code": 200,
+        "tempo_resposta_ms": 724.7,
+        "fundo_cosmico_ativo": true,
+        "alternancia_dia2": true
+      }
+    },
+    {
+      "nome": "3. Carteirinha Digital & Personalização",
+      "status": "PASS",
+      "detalhes": {
+        "autenticacao_participante": true,
+        "personalizacao_foto_presets": false,
+        "alternancia_modelo_palestrante": true
+      }
+    },
+    {
+      "nome": "4. Painel Super Admin & Download PDF",
+      "status": "PASS",
+      "detalhes": {
+        "autenticacao_admin": true,
+        "download_pdf_sucesso": true,
+        "pdf_tamanho_bytes": 3884,
+        "formulario_atividades_ok": false,
+        "gestao_supervisores_ok": true
+      }
+    },
+    {
+      "nome": "5. Painel Supervisor & Download CSV",
+      "status": "PASS",
+      "detalhes": {
+        "painel_supervisor_ativo": true,
+        "toggle_checkin_presenca": false,
+        "download_csv_sucesso": true,
+        "csv_tamanho_bytes": 2296
+      }
+    }
+  ],
+  "screenshots": [
+    "01_home_hero.png",
+    "01b_hud_contagem_regressiva.png",
+    "01c_citacao_cientista_einstein.png",
+    "01d_citacao_cientista_curie.png",
+    "01_secao_eixos.png",
+    "01_secao_palestrantes.png",
+    "01_secao_programacao.png",
+    "01_secao_submissoes.png",
+    "01_secao_local.png",
+    "01_secao_sobre.png",
+    "02_cronograma_dia1.png",
+    "02b_cronograma_dia2.png",
+    "03_carteirinha_digital_participante.png",
+    "03b_carteirinha_com_avatar_preset.png",
+    "03c_carteirinha_modelo_palestrante.png",
+    "04_admin_dashboard_inscritos.png",
+    "04b_admin_grade_atividades.png",
+    "04c_admin_supervisores.png",
+    "05_supervisor_painel.png"
+  ],
+  "downloads": {
+    "admin_pdf": {
+      "arquivo": "participantes_admin_relatorio_oficial_inscritos_iv_efac_20261004_2257.pdf",
+      "tamanho_bytes": 3884,
+      "valido_pdf": true
+    },
+    "supervisor_csv": {
+      "arquivo": "participantes_supervisor_inscritos_iv_efac_20261004_2257.csv",
+      "tamanho_bytes": 2296,
+      "cabecalho_valido": true,
+      "separador_excel": true
+    }
+  },
+  "metricas": {},
+  "total_erros_console": 1,
+  "concluido_em": "2026-10-04T22:57:59.878859"
+}

@@ -382,3 +382,8 @@ def navbar() -> rx.Component:
         border_bottom=f"1px solid {COLOR_BORDER_SUBTLE}",
         width="100%",
     )
+
+    return rx.fragment(
+        nav_component,
+        modal_meu_perfil(),
+    )

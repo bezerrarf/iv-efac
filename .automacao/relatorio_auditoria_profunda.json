@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-10-06 13:07:42",
+  "target_url": "http://localhost:3000",
+  "etapas": {
+    "home": {
+      "status_http": 200,
+      "titulo": "IV EFAC • Encontro de Física e Astronomia do Cariri (UFCA)",
+      "hud_contagem": false,
+      "carrossel_cientifico": false,
+      "botao_carrossel_clicado": false,
+      "screenshot": "profundo_01_home_carrossel.png",
+      "ok": false
+    },
+    "cronograma": {
+      "status_http": 200,
+      "titulo": "Programação Oficial • IV EFAC 2026",
+      "abas_dia1_dia2": true,
+      "screenshot": "profundo_02_cronograma_dia2.png",
+      "ok": true
+    },
+    "inscricao_e_hub": {
+      "status_http": 200,
+      "titulo": "Inscrição & Credencial Oficial • IV EFAC 2026",
+      "login_admin": false,
+      "rotulo_admin_unificado": false,
+      "modelos_submissao": false,
+      "botao_carteirinha_png": false,
+      "modal_perfil_aberto": false,
+      "screenshot": "profundo_04_admin_hub_autenticado.png",
+      "ok": false
+    }
+  },
+  "console_logs": [
+    "[log] Disconnect websocket on page navigation",
+    "[log] Disconnect websocket on page navigation"
+  ],
+  "console_errors": [],
+  "page_errors": [
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.",
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.",
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+  ],
+  "falhas_de_rede": [],
+  "status_final": "PARCIAL_OU_FALHA"
+}

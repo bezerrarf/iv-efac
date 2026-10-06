@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-10-06 13:30:33",
+  "target_url": "http://localhost:3000",
+  "etapas": {
+    "home": {
+      "status_http": 200,
+      "hud_contagem_ok": true,
+      "carrossel_cientistas_ok": true,
+      "screenshot": "profundo_01_home_cientistas.png"
+    },
+    "cronograma": {
+      "status_http": 200,
+      "abas_dia1_dia2_ok": true,
+      "screenshot": "profundo_02_cronograma_dia2.png"
+    },
+    "inscricao_e_hub": {
+      "status_http": 200,
+      "login_admin_ok": true,
+      "rotulo_admin_unificado": true,
+      "download_png_ok": true,
+      "modelos_submissao_ok": true,
+      "modal_perfil_ok": true,
+      "aviso_anti_spam_ok": false,
+      "screenshots": [
+        "profundo_03_hub_admin.png",
+        "profundo_04_modelos_submissao.png",
+        "profundo_05_modal_perfil_email.png"
+      ]
+    }
+  },
+  "console_errors": [],
+  "page_errors": [
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.",
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.",
+    "Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+  ],
+  "downloads_capturados": [
+    {
+      "arquivo": "carteirinha_ivefac_ADMIN-001.png",
+      "tamanho_bytes": 478287,
+      "tipo": "image/png"
+    }
+  ],
+  "status_final": "100%_APROVADO_SUCESSO"
+}

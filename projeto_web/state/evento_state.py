@@ -40,6 +40,7 @@ class EventoState(rx.State):
     user_foto_url: str = ""
     user_presenca: bool = False
     usuario_logado_email_confirmado: bool = False
+    email_confirmado: bool = False
     is_admin: bool = False
     is_supervisor: bool = False
 
@@ -323,6 +324,7 @@ class EventoState(rx.State):
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
         self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
+        self.email_confirmado = self.usuario_logado_email_confirmado
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
@@ -362,6 +364,7 @@ class EventoState(rx.State):
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
         self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
+        self.email_confirmado = self.usuario_logado_email_confirmado
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
@@ -801,6 +804,7 @@ class EventoState(rx.State):
         self.user_foto_url = ""
         self.user_presenca = False
         self.usuario_logado_email_confirmado = False
+        self.email_confirmado = False
         self.modal_perfil_aberto = False
         self.modal_confirmacao_email_aberto = False
         self.is_admin = False
@@ -910,6 +914,7 @@ class EventoState(rx.State):
         self.feedback_tipo = "success" if res.sucesso else "error"
         if res.sucesso:
             self.usuario_logado_email_confirmado = True
+            self.email_confirmado = True
             self.modal_confirmacao_email_aberto = False
 
     def confirmar_email_direto(self):
@@ -921,6 +926,7 @@ class EventoState(rx.State):
         self.feedback_tipo = "success" if res.sucesso else "error"
         if res.sucesso:
             self.usuario_logado_email_confirmado = True
+            self.email_confirmado = True
             self.modal_confirmacao_email_aberto = False
 
     # --- Emissão da Carteirinha Oficial em Imagem PNG de Alta Resolução ---

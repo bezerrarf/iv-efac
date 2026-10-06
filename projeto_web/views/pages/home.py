@@ -244,7 +244,7 @@ def display_hud_contagem() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.hstack(
-                        rx.icon(tag=EventoState.frase_cientista_icone, size=rx.breakpoints(initial=20, sm=22), color=EventoState.frase_cientista_cor),
+                        rx.icon(tag=EventoState.frase_cientista_icone, size=22, color=EventoState.frase_cientista_cor),
                         rx.vstack(
                             rx.text(EventoState.frase_cientista_autor, size="2", weight="bold", color="white"),
                             rx.text(EventoState.frase_cientista_area, size="1", color=EventoState.frase_cientista_cor),

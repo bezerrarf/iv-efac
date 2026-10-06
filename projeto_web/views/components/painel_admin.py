@@ -1,10 +1,10 @@
 """Painel Administrativo Oficial do IV EFAC (View - UI/UX Pro Max).
-Exclusivo para o Super Administrador Geral do Evento.
+Exclusivo para o Administrador Geral do Evento.
 Permite:
 1. Analisar participantes inscritos e estatísticas globais em tempo real.
 2. Criar, alterar e delegar manualmente dias, horários, temas e responsáveis de palestras.
 3. Conceder e revogar poderes de Supervisor para qualquer participante.
-4. Alterar a senha de qualquer participante e a sua própria senha de Super Admin.
+4. Alterar a senha de qualquer participante e a sua própria senha de Admin.
 5. Inspecionar, gerar e emitir a Carteirinha Oficial de qualquer inscrito.
 6. Exportar a relação completa de inscritos em formatos CSV e PDF oficial.
 """
@@ -211,15 +211,15 @@ def modal_carteirinha_admin() -> rx.Component:
                         rx.spacer(),
                         rx.button(
                             rx.hstack(
-                                rx.icon(tag="printer", size=14),
-                                rx.text("Imprimir"),
+                                rx.icon(tag="download", size=14),
+                                rx.text("Baixar Imagem (PNG)"),
                                 spacing="1",
                                 align="center",
                             ),
                             size="1",
-                            variant="outline",
-                            color_scheme="green",
-                            on_click=rx.call_script("window.print()"),
+                            variant="solid",
+                            color_scheme="cyan",
+                            on_click=EventoState.baixar_carteirinha_admin_png,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
@@ -272,15 +272,15 @@ def modal_carteirinha_admin() -> rx.Component:
                                             border="2.5px solid #00ADB5",
                                             box_shadow="0 0 16px rgba(0, 173, 181, 0.4)",
                                         ),
-                                        rx.box(
-                                            rx.icon(tag="user", size=38, color="#00ADB5"),
+                                        rx.image(
+                                            src="/favicon.png",
+                                            alt="Soldadinho do Araripe",
                                             width="95px",
                                             height="95px",
                                             border_radius="50%",
-                                            background="rgba(15, 23, 42, 0.9)",
-                                            border="2px dashed rgba(0, 173, 181, 0.5)",
-                                            display="grid",
-                                            place_items="center",
+                                            object_fit="cover",
+                                            border="2.5px solid #00ADB5",
+                                            box_shadow="0 0 16px rgba(0, 173, 181, 0.4)",
                                         ),
                                     ),
                                     display="grid",
@@ -467,7 +467,7 @@ def tabela_inscritos_admin() -> rx.Component:
                             rx.table.cell(
                                 rx.cond(
                                     u["role"] == "admin",
-                                    rx.badge("Super Admin", color_scheme="red", variant="solid", size="1"),
+                                    rx.badge("Admin", color_scheme="red", variant="solid", size="1"),
                                     rx.cond(
                                         u["is_supervisor"],
                                         rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1"),
@@ -933,13 +933,13 @@ def editor_atividades_admin() -> rx.Component:
 
 
 def seguranca_admin_view() -> rx.Component:
-    """Card de segurança e alteração da própria senha do Super Admin."""
+    """Card de segurança e alteração da própria senha do Admin."""
     return rx.box(
         rx.vstack(
             rx.hstack(
                 rx.icon(tag="shield-check", size=24, color="#ef4444"),
                 rx.vstack(
-                    rx.heading("Segurança da Conta Super Admin", size="4", weight="bold", color="white"),
+                    rx.heading("Segurança da Conta Admin", size="4", weight="bold", color="white"),
                     rx.text(
                         "Altere com segurança sua própria credencial de acesso master ao sistema.",
                         size="2",
@@ -1061,7 +1061,7 @@ def painel_admin_view() -> rx.Component:
         rx.vstack(
             # Título e Badges
             rx.hstack(
-                rx.badge("Acesso Exclusivo Super Admin", color_scheme="red", variant="solid", size="2"),
+                rx.badge("Acesso Exclusivo Admin", color_scheme="red", variant="solid", size="2"),
                 rx.badge("Controle Total do Evento", color_scheme="cyan", variant="soft", size="2"),
                 spacing="2",
                 align="center",

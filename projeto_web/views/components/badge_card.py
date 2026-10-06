@@ -425,18 +425,18 @@ def cartao_identificacao_digital() -> rx.Component:
                     on_click=EventoState.set_badge_modo("palestrante"),
                     style=STYLE_BUTTON_CHIP,
                 ),
-                # Botão de Impressão / Salvar PDF
+                # Botão de Download da Imagem Oficial em Alta Resolução (PNG)
                 rx.button(
                     rx.hstack(
-                        rx.icon(tag="printer", size=14),
-                        rx.text("Imprimir / Salvar Crachá", size="2"),
+                        rx.icon(tag="download", size=14),
+                        rx.text("Baixar Imagem da Carteirinha (PNG)", size="2"),
                         spacing="1",
                         align="center",
                     ),
-                    variant="outline",
-                    color_scheme="green",
+                    variant="solid",
+                    color_scheme="cyan",
                     size="2",
-                    on_click=rx.call_script("window.print()"),
+                    on_click=EventoState.baixar_minha_carteirinha_png,
                     style=STYLE_BUTTON_CHIP,
                 ),
                 spacing="2",

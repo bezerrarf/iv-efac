@@ -1,3 +1,4 @@
+from projeto_web.views.components.modal_perfil import modal_meu_perfil
 """Barra de navegação acadêmica oficial do IV EFAC (View - UI/UX Pro Max).
 Pure Deep Cosmic Dark Theme. Adaptável a todas as telas (Desktop, Tablet e Mobile).
 """
@@ -149,7 +150,7 @@ def menu_mobile_telas() -> rx.Component:
 
 
 def navbar() -> rx.Component:
-    return rx.box(
+    nav_component = rx.box(
         rx.hstack(
             # Marca / Logo oficial do evento (WhatsApp Image 2026-10-03 at 15.58.16)
             rx.link(
@@ -249,7 +250,7 @@ def navbar() -> rx.Component:
                                             rx.hstack(
                                                 rx.cond(
                                                     EventoState.is_admin,
-                                                    rx.badge("Super Admin", color_scheme="red", variant="solid", size="1"),
+                                                    rx.badge("Admin", color_scheme="red", variant="solid", size="1"),
                                                     rx.cond(
                                                         EventoState.is_supervisor,
                                                         rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1"),
@@ -283,6 +284,22 @@ def navbar() -> rx.Component:
                                 href="/inscricao",
                             ),
                             content="Clique para ir diretamente à sua Área de Participante / Painel Administrativo",
+                        ),
+                        rx.tooltip(
+                            rx.button(
+                                rx.hstack(
+                                    rx.icon(tag="user-cog", size=14),
+                                    rx.text("Perfil", size="1"),
+                                    spacing="1",
+                                    align="center",
+                                ),
+                                size="1",
+                                variant="surface",
+                                color_scheme="cyan",
+                                on_click=EventoState.abrir_modal_perfil,
+                                style=STYLE_BUTTON_CHIP,
+                            ),
+                            content="Editar perfil, alterar senha e confirmar e-mail",
                         ),
                         rx.button(
                             rx.hstack(

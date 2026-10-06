@@ -26,6 +26,10 @@ def _exec_migration(engine_instance):
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN foto_url VARCHAR;")
                 if "presenca_confirmada" not in cols:
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN presenca_confirmada BOOLEAN DEFAULT 0;")
+                if "email_confirmado" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN email_confirmado BOOLEAN DEFAULT 0;")
+                if "codigo_confirmacao" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_confirmacao VARCHAR;")
         except Exception:
             pass
 
@@ -49,13 +53,21 @@ def _seed_admin_and_schedule():
                 codigo_inscricao="ADMIN-001",
                 role="admin",
                 presenca_confirmada=True,
+                email_confirmado=True,
             )
             session.add(novo_admin)
             session.commit()
-        elif admin.role != "admin":
-            admin.role = "admin"
-            session.add(admin)
-            session.commit()
+        else:
+            changed = False
+            if admin.role != "admin":
+                admin.role = "admin"
+                changed = True
+            if not getattr(admin, "email_confirmado", False):
+                admin.email_confirmado = True
+                changed = True
+            if changed:
+                session.add(admin)
+                session.commit()
 
         # 2. Grade de Programação Inicial
         stmt_ativ = select(AtividadeModel)

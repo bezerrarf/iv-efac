@@ -240,11 +240,11 @@ def display_hud_contagem() -> rx.Component:
                 color="var(--gray-10)",
                 line_height="1.5",
             ),
-            # Card com Mensagem Inspiradora do Cientista
+            # Card com Mensagem Inspiradora do Cientista (Carrossel Automático com intervalo de 10s)
             rx.box(
                 rx.vstack(
                     rx.hstack(
-                        rx.icon(tag="sparkles", size=22, color=EventoState.frase_cientista_cor),
+                        rx.icon(tag=EventoState.frase_cientista_icone, size=rx.breakpoints(initial=20, sm=22), color=EventoState.frase_cientista_cor),
                         rx.vstack(
                             rx.text(EventoState.frase_cientista_autor, size="2", weight="bold", color="white"),
                             rx.text(EventoState.frase_cientista_area, size="1", color=EventoState.frase_cientista_cor),
@@ -289,6 +289,7 @@ def display_hud_contagem() -> rx.Component:
                                 spacing="1",
                                 align="center",
                             ),
+                            id="btn-proxima-frase-cientista",
                             size="1",
                             variant="outline",
                             color_scheme="cyan",
@@ -304,7 +305,7 @@ def display_hud_contagem() -> rx.Component:
                     align="start",
                     width="100%",
                 ),
-                padding="1rem 1.25rem",
+                padding=rx.breakpoints(initial="0.75rem 0.9rem", sm="1rem 1.25rem"),
                 border_radius="14px",
                 background="rgba(15, 23, 42, 0.8)",
                 border="1px solid rgba(0, 173, 181, 0.25)",
@@ -312,6 +313,18 @@ def display_hud_contagem() -> rx.Component:
                 width="100%",
                 max_width="580px",
             ),
+            # Script de transição automática do carrossel a cada 10 segundos
+            rx.script("""
+                if (!window._cientistas_carousel_active) {
+                    window._cientistas_carousel_active = true;
+                    setInterval(function() {
+                        var btn = document.getElementById("btn-proxima-frase-cientista");
+                        if (btn) {
+                            btn.click();
+                        }
+                    }, 10000);
+                }
+            """),
             spacing="2",
             align="start",
         ),

@@ -1,0 +1,22 @@
+# =========================================================================================================================
+# INSTRUÇÕES PARA ADICIONAR NOVAS FRASES DE CIENTISTAS:
+# 1. Cada citação deve ser inserida em UMA ÚNICA LINHA seguindo rigorosamente o padrão separado por barras verticais (|):
+#    AUTOR | ÁREA / TÍTULO | ÍCONE | COR HEX | FRASE INSPIRADORA
+#
+# 2. Ícones disponíveis para uso:
+#    atom, sparkles, cpu, zap, code, telescope, orbit, rocket, flask, compass, award, lightbulb, globe, book-open
+#
+# 3. Cores em formato Hexadecimal (sugestões da paleta cósmica):
+#    #00ADB5 (Ciano Oficial), #38bdf8 (Azul Céu), #818cf8 (Índigo), #a855f7 (Roxo), #f43f5e (Rosa), #eab308 (Dourado), #10b981 (Esmeralda)
+#
+# 4. Linhas que começam com '#' são tratadas como comentários e linhas vazias são ignoradas automaticamente.
+# =========================================================================================================================
+
+Albert Einstein | Física Teórica • Prêmio Nobel | atom | #00ADB5 | A imaginação é mais importante que o conhecimento. O conhecimento é limitado, enquanto a imaginação abraça o mundo inteiro, estimulando o progresso.
+Marie Curie | Física & Química • 2x Prêmio Nobel | sparkles | #f43f5e | Nada na vida deve ser temido, somente compreendido. Agora é o momento de compreender mais, para que possamos temer menos. Aproveite as descobertas do simpósio!
+Alan Turing | Pioneiro da Ciência da Computação & Matemática | cpu | #818cf8 | Às vezes são as pessoas de quem ninguém espera nada que fazem as coisas que ninguém jamais poderia imaginar. Dedique-se e transforme suas ideias em realidade.
+Richard Feynman | Física Quântica • Prêmio Nobel | zap | #eab308 | Para aqueles que não conhecem matemática, é difícil sentir a beleza mais profunda da natureza. Se você quer aprender sobre o universo, mergulhe na física e na matemática.
+Ada Lovelace | Pioneira da Computação & Matemática | code | #a855f7 | O motor analítico tece padrões algébricos tal como o tear de Jacquard tece flores e folhas. A computação é uma extensão ilimitada da nossa inteligência.
+Carl Sagan | Astrofísica & Divulgação Científica | telescope | #38bdf8 | Diante da vastidão do cosmos e da imensidão do tempo, é uma alegria compartilhar um planeta e uma era com mentes tão brilhantes. Aproveite cada minuto do IV EFAC!
+Stephen Hawking | Cosmologia Teórica & Gravitação | orbit | #06b6d4 | Lembre-se sempre de olhar para cima, para as estrelas, e não para baixo, para os seus pés. Seja curioso e nunca desista de compreender as leis do universo.
+Katherine Johnson | Matemática Orbital • Trajetórias da NASA | rocket | #10b981 | Tudo na natureza é física e matemática aplicada. Apaixone-se pelo que você estuda e dê o seu melhor em cada cálculo e observação.

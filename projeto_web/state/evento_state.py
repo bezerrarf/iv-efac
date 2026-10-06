@@ -1,3 +1,4 @@
+from projeto_web.core.quotes_service import carregar_frases_cientistas
 """Ponte reativa (Reflex State) que consome os Controllers (MVC)."""
 
 from typing import List, Dict, Any, Optional
@@ -38,8 +39,25 @@ class EventoState(rx.State):
     user_role: str = "participante"  # 'participante', 'supervisor', 'admin'
     user_foto_url: str = ""
     user_presenca: bool = False
+    usuario_logado_email_confirmado: bool = False
     is_admin: bool = False
     is_supervisor: bool = False
+
+    # Gestão de Perfil do Participante
+    modal_perfil_aberto: bool = False
+    perfil_nome_input: str = ""
+    perfil_instituicao_input: str = ""
+    perfil_modalidade_input: str = "Presencial"
+
+    # Gestão de Senha Pessoal
+    minha_senha_atual_input: str = ""
+    minha_nova_senha_input: str = ""
+    minha_nova_senha_confirm: str = ""
+
+    # Confirmação de E-mail
+    modal_confirmacao_email_aberto: bool = False
+    codigo_email_input: str = ""
+    codigo_email_enviado_preview: str = "" 
 
     # --- Formulário de Cadastro ---
     cad_nome: str = ""
@@ -134,64 +152,7 @@ class EventoState(rx.State):
     evento_iniciado_preview: bool = False
     frase_cientista_indice: int = 0
 
-    FRASES_CIENTISTAS: List[Dict[str, str]] = [
-        {
-            "autor": "Albert Einstein",
-            "area": "Física Teórica • Prêmio Nobel",
-            "frase": "A imaginação é mais importante que o conhecimento. O conhecimento é limitado, enquanto a imaginação abraça o mundo inteiro, estimulando o progresso.",
-            "icone": "atom",
-            "cor": "#00ADB5",
-        },
-        {
-            "autor": "Marie Curie",
-            "area": "Física & Química • 2x Prêmio Nobel",
-            "frase": "Nada na vida deve ser temido, somente compreendido. Agora é o momento de compreender mais, para que possamos temer menos. Aproveite as descobertas do simpósio!",
-            "icone": "sparkles",
-            "cor": "#f43f5e",
-        },
-        {
-            "autor": "Alan Turing",
-            "area": "Pioneiro da Ciência da Computação & Matemática",
-            "frase": "Às vezes são as pessoas de quem ninguém espera nada que fazem as coisas que ninguém jamais poderia imaginar. Dedique-se e transforme suas ideias em realidade.",
-            "icone": "cpu",
-            "cor": "#818cf8",
-        },
-        {
-            "autor": "Richard Feynman",
-            "area": "Física Quântica • Prêmio Nobel",
-            "frase": "Para aqueles que não conhecem matemática, é difícil sentir a beleza mais profunda da natureza. Se você quer aprender sobre o universo, mergulhe na física e na matemática.",
-            "icone": "zap",
-            "cor": "#eab308",
-        },
-        {
-            "autor": "Ada Lovelace",
-            "area": "Pioneira da Computação & Matemática",
-            "frase": "O motor analítico tece padrões algébricos tal como o tear de Jacquard tece flores e folhas. A computação é uma extensão ilimitada da nossa inteligência.",
-            "icone": "code",
-            "cor": "#a855f7",
-        },
-        {
-            "autor": "Carl Sagan",
-            "area": "Astrofísica & Divulgação Científica",
-            "frase": "Diante da vastidão do cosmos e da imensidão do tempo, é uma alegria compartilhar um planeta e uma era com mentes tão brilhantes. Aproveite cada minuto do IV EFAC!",
-            "icone": "telescope",
-            "cor": "#38bdf8",
-        },
-        {
-            "autor": "Stephen Hawking",
-            "area": "Cosmologia Teórica & Gravitação",
-            "frase": "Lembre-se sempre de olhar para cima, para as estrelas, e não para baixo, para os seus pés. Seja curioso e nunca desista de compreender as leis do universo.",
-            "icone": "orbit",
-            "cor": "#06b6d4",
-        },
-        {
-            "autor": "Katherine Johnson",
-            "area": "Matemática Orbital • Trajetórias da NASA",
-            "frase": "Tudo na natureza é física e matemática aplicada. Apaixone-se pelo que você estuda e dê o seu melhor em cada cálculo e observação.",
-            "icone": "rocket",
-            "cor": "#10b981",
-        },
-    ]
+    FRASES_CIENTISTAS: List[Dict[str, str]] = carregar_frases_cientistas()
 
     def alternar_preview_evento_iniciado(self):
         """Alterna entre o relógio de contagem e a mensagem comemorativa com frases dos cientistas."""
@@ -224,6 +185,11 @@ class EventoState(rx.State):
     def frase_cientista_cor(self) -> str:
         idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
         return self.FRASES_CIENTISTAS[idx]["cor"]
+
+    @rx.var
+    def frase_cientista_icone(self) -> str:
+        idx = self.frase_cientista_indice % len(self.FRASES_CIENTISTAS)
+        return self.FRASES_CIENTISTAS[idx].get("icone", "sparkles")
 
     @rx.var
     def frase_cientista_paginacao(self) -> str:
@@ -356,6 +322,7 @@ class EventoState(rx.State):
         self.user_role = getattr(usuario, "role", "participante")
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
+        self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
@@ -394,6 +361,7 @@ class EventoState(rx.State):
         self.user_role = getattr(usuario, "role", "participante")
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
+        self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
@@ -495,7 +463,7 @@ class EventoState(rx.State):
                 self.feedback_tipo = "error"
                 return
 
-    # --- Ações do Super Admin ---
+    # --- Ações do Admin ---
     def carregar_painel_admin(self):
         """Carrega e filtra a lista de inscritos e calcula métricas para o admin."""
         usuarios = _usuario_controller.listar_inscritos(self.admin_filtro_busca)
@@ -587,7 +555,7 @@ class EventoState(rx.State):
         self.admin_propria_senha_confirm = val
 
     def salvar_propria_senha_admin(self):
-        """Super Admin altera com segurança a sua própria credencial de acesso."""
+        """Admin altera com segurança a sua própria credencial de acesso."""
         if not self.is_admin or not self.user_id:
             return
         if not self.admin_propria_senha_input or len(self.admin_propria_senha_input.strip()) < 6:
@@ -832,6 +800,9 @@ class EventoState(rx.State):
         self.user_role = "participante"
         self.user_foto_url = ""
         self.user_presenca = False
+        self.usuario_logado_email_confirmado = False
+        self.modal_perfil_aberto = False
+        self.modal_confirmacao_email_aberto = False
         self.is_admin = False
         self.is_supervisor = False
         self.admin_inscritos = []
@@ -839,3 +810,152 @@ class EventoState(rx.State):
         self.is_editing_atividade = False
         self.feedback_msg = "Sessão encerrada com sucesso."
         self.feedback_tipo = "info"
+
+
+    # --- Gestão de Perfil, Senha e Confirmação de E-mail ---
+    def abrir_modal_perfil(self):
+        """Abre o modal de edição de perfil e sincroniza os campos atuais."""
+        if not self.is_logged_in:
+            return
+        self.perfil_nome_input = self.user_nome
+        self.perfil_instituicao_input = self.user_instituicao
+        self.perfil_modalidade_input = self.user_modalidade
+        self.minha_senha_atual_input = ""
+        self.minha_nova_senha_input = ""
+        self.minha_nova_senha_confirm = ""
+        self.modal_perfil_aberto = True
+
+    def fechar_modal_perfil(self):
+        self.modal_perfil_aberto = False
+
+    def set_perfil_nome(self, val: str):
+        self.perfil_nome_input = val
+
+    def set_perfil_instituicao(self, val: str):
+        self.perfil_instituicao_input = val
+
+    def set_perfil_modalidade(self, val: str):
+        self.perfil_modalidade_input = val
+
+    def salvar_meu_perfil(self):
+        """Salva as alterações de perfil no banco de dados."""
+        if not self.is_logged_in or not self.user_id:
+            return
+        res = _usuario_controller.atualizar_perfil(
+            user_id=self.user_id,
+            nome=self.perfil_nome_input,
+            instituicao=self.perfil_instituicao_input,
+            modalidade=self.perfil_modalidade_input,
+        )
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso and res.dado:
+            self.user_nome = res.dado.nome
+            self.user_instituicao = res.dado.instituicao
+            self.user_modalidade = res.dado.modalidade
+            self.modal_perfil_aberto = False
+
+    def set_minha_senha_atual(self, val: str):
+        self.minha_senha_atual_input = val
+
+    def set_minha_nova_senha(self, val: str):
+        self.minha_nova_senha_input = val
+
+    def set_minha_nova_senha_confirm(self, val: str):
+        self.minha_nova_senha_confirm = val
+
+    def salvar_minha_nova_senha(self):
+        """Altera com segurança a senha do usuário logado (participante ou admin)."""
+        if not self.is_logged_in or not self.user_id:
+            return
+        res = _usuario_controller.alterar_minha_senha(
+            user_id=self.user_id,
+            senha_atual=self.minha_senha_atual_input,
+            nova_senha=self.minha_nova_senha_input,
+            confirma_senha=self.minha_nova_senha_confirm,
+        )
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.minha_senha_atual_input = ""
+            self.minha_nova_senha_input = ""
+            self.minha_nova_senha_confirm = ""
+
+    def abrir_confirmacao_email(self):
+        self.modal_confirmacao_email_aberto = True
+        self.codigo_email_input = ""
+
+    def fechar_confirmacao_email(self):
+        self.modal_confirmacao_email_aberto = False
+
+    def set_codigo_email(self, val: str):
+        self.codigo_email_input = val
+
+    def solicitar_codigo_email(self):
+        """Gera um código de confirmação com orientações anti-spam."""
+        if not self.is_logged_in or not self.user_id:
+            return
+        res = _usuario_controller.gerar_codigo_confirmacao(self.user_id)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso and res.dado:
+            self.codigo_email_enviado_preview = res.dado
+
+    def confirmar_email_codigo(self):
+        """Valida o código digitado pelo participante e libera as submissões."""
+        if not self.is_logged_in or not self.user_id:
+            return
+        res = _usuario_controller.confirmar_email(self.user_id, self.codigo_email_input)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.usuario_logado_email_confirmado = True
+            self.modal_confirmacao_email_aberto = False
+
+    def confirmar_email_direto(self):
+        """Confirmação direta de e-mail com 1 clique."""
+        if not self.is_logged_in or not self.user_id:
+            return
+        res = _usuario_controller.confirmar_email(self.user_id)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.usuario_logado_email_confirmado = True
+            self.modal_confirmacao_email_aberto = False
+
+    # --- Emissão da Carteirinha Oficial em Imagem PNG de Alta Resolução ---
+    def baixar_minha_carteirinha_png(self):
+        """Gera e baixa a imagem oficial PNG da carteirinha do participante logado."""
+        if not self.is_logged_in:
+            return
+        from projeto_web.core.badge_service import BadgeService
+        img_bytes = BadgeService.gerar_imagem_carteirinha(
+            nome=self.user_nome,
+            email=self.user_email,
+            instituicao=self.user_instituicao,
+            modalidade=self.user_modalidade,
+            role=self.user_role,
+            codigo=self.user_codigo,
+            email_confirmado=self.usuario_logado_email_confirmado,
+            foto_url=self.user_foto_url or None,
+            base_assets_path="assets",
+        )
+        cod_clean = self.user_codigo.replace(" ", "_")
+        return rx.download(data=img_bytes, filename=f"carteirinha_ivefac_{cod_clean}.png")
+
+    def baixar_carteirinha_admin_png(self):
+        """Gera e baixa a imagem PNG da carteirinha selecionada pelo Admin."""
+        from projeto_web.core.badge_service import BadgeService
+        img_bytes = BadgeService.gerar_imagem_carteirinha(
+            nome=self.admin_carteirinha_nome,
+            email=self.admin_carteirinha_email,
+            instituicao=self.admin_carteirinha_inst,
+            modalidade=self.admin_carteirinha_mod,
+            role=self.admin_carteirinha_role,
+            codigo=self.admin_carteirinha_cod,
+            email_confirmado=True,
+            foto_url=self.admin_carteirinha_foto or None,
+            base_assets_path="assets",
+        )
+        cod_clean = (self.admin_carteirinha_cod or "001").replace(" ", "_")
+        return rx.download(data=img_bytes, filename=f"carteirinha_ivefac_{cod_clean}.png")

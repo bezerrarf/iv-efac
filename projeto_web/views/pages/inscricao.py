@@ -29,22 +29,24 @@ from projeto_web.styles.theme import (
 
 
 def templates_pos_inscricao() -> rx.Component:
-    """Seção de templates liberada exclusivamente para participantes inscritos."""
-    return rx.box(
+    """Seção de templates e submissão liberada após a confirmação do e-mail."""
+    conteudo_liberado = rx.vstack(
+        rx.hstack(
+            rx.icon(tag="file-down", size=20, color=COLOR_CYAN),
+            rx.heading("Modelos Oficiais de Submissão", size="4", weight="bold", color="white"),
+            rx.spacer(),
+            rx.badge("E-mail Verificado • Submissão Liberada", color_scheme="green", variant="solid", size="1"),
+            align="center",
+            width="100%",
+            spacing="2",
+        ),
+        rx.text(
+            "Diretrizes e arquivos para envio de Resumo Expandido nos Anais do IV EFAC (11 e 12/11/2026).",
+            size="2",
+            color="var(--gray-10)",
+            style=STYLE_TEXT_RESPONSIVE,
+        ),
         rx.vstack(
-            rx.hstack(
-                rx.icon(tag="file-down", size=20, color=COLOR_CYAN),
-                rx.heading("Modelos Oficiais de Submissão", size="4", weight="bold", color="white"),
-                align="center",
-                spacing="2",
-            ),
-            rx.text(
-                "Diretrizes e arquivos para envio de Resumo Expandido nos Anais do IV EFAC (11 e 12/11/2026).",
-                size="2",
-                color="var(--gray-10)",
-                style=STYLE_TEXT_RESPONSIVE,
-            ),
-            rx.vstack(
                 rx.link(
                     rx.card(
                         rx.hstack(
@@ -177,7 +179,7 @@ def logged_in_hub() -> rx.Component:
                         rx.heading(EventoState.user_nome, size="3", weight="bold", color="white"),
                         rx.cond(
                             EventoState.is_admin,
-                            rx.badge("SUPER ADMIN", color_scheme="red", variant="solid", size="1"),
+                            rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
                             rx.cond(
                                 EventoState.is_supervisor,
                                 rx.badge("SUPERVISOR(A)", color_scheme="violet", variant="solid", size="1"),

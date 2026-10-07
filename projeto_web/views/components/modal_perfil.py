@@ -2,6 +2,7 @@
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import (
     COLOR_CYAN,
     COLOR_SURFACE_GLASS,
@@ -13,7 +14,7 @@ from projeto_web.styles.theme import (
 def modal_meu_perfil() -> rx.Component:
     """Modal central de gerenciamento de dados cadastrais, credenciais e e-mail."""
     return rx.cond(
-        EventoState.modal_perfil_aberto,
+        AuthState.modal_perfil_aberto,
         rx.box(
             # Fundo escuro com backdrop blur
             rx.box(
@@ -25,7 +26,7 @@ def modal_meu_perfil() -> rx.Component:
                 background="rgba(2, 6, 23, 0.75)",
                 backdrop_filter="blur(8px)",
                 z_index="1000",
-                on_click=EventoState.fechar_modal_perfil,
+                on_click=AuthState.fechar_modal_perfil,
             ),
             # Conteúdo do Modal
             rx.box(
@@ -37,7 +38,7 @@ def modal_meu_perfil() -> rx.Component:
                             rx.vstack(
                                 rx.heading("Meu Perfil & Segurança", size="4", weight="bold", color="white"),
                                 rx.text(
-                                    f"{EventoState.user_nome} • {EventoState.user_codigo}",
+                                    f"{AuthState.user_nome} • {AuthState.user_codigo}",
                                     size="1",
                                     color="var(--gray-9)",
                                 ),
@@ -53,7 +54,7 @@ def modal_meu_perfil() -> rx.Component:
                             variant="ghost",
                             color_scheme="gray",
                             size="1",
-                            on_click=EventoState.fechar_modal_perfil,
+                            on_click=AuthState.fechar_modal_perfil,
                             cursor="pointer",
                         ),
                         align="center",
@@ -108,8 +109,8 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.text("Nome Completo", size="1", weight="bold", color="white"),
                                     rx.input(
                                         placeholder="Seu nome completo",
-                                        value=EventoState.perfil_nome_input,
-                                        on_change=EventoState.set_perfil_nome,
+                                        value=AuthState.perfil_nome_input,
+                                        on_change=AuthState.set_perfil_nome,
                                         size="2",
                                         width="100%",
                                     ),
@@ -120,8 +121,8 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.text("Instituição de Ensino / Polo", size="1", weight="bold", color="white"),
                                     rx.input(
                                         placeholder="Ex: Universidade Federal do Cariri (UFCA)",
-                                        value=EventoState.perfil_instituicao_input,
-                                        on_change=EventoState.set_perfil_instituicao,
+                                        value=AuthState.perfil_instituicao_input,
+                                        on_change=AuthState.set_perfil_instituicao,
                                         size="2",
                                         width="100%",
                                     ),
@@ -133,17 +134,17 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.hstack(
                                         rx.button(
                                             "Presencial (Brejo Santo)",
-                                            variant=rx.cond(EventoState.perfil_modalidade_input == "Presencial", "solid", "outline"),
+                                            variant=rx.cond(AuthState.perfil_modalidade_input == "Presencial", "solid", "outline"),
                                             color_scheme="cyan",
                                             size="2",
-                                            on_click=EventoState.set_perfil_modalidade("Presencial"),
+                                            on_click=AuthState.set_perfil_modalidade("Presencial"),
                                         ),
                                         rx.button(
                                             "Online (Transmissão)",
-                                            variant=rx.cond(EventoState.perfil_modalidade_input == "Online", "solid", "outline"),
+                                            variant=rx.cond(AuthState.perfil_modalidade_input == "Online", "solid", "outline"),
                                             color_scheme="indigo",
                                             size="2",
-                                            on_click=EventoState.set_perfil_modalidade("Online"),
+                                            on_click=AuthState.set_perfil_modalidade("Online"),
                                         ),
                                         spacing="2",
                                     ),
@@ -161,7 +162,7 @@ def modal_meu_perfil() -> rx.Component:
                                         ),
                                         size="2",
                                         color_scheme="cyan",
-                                        on_click=EventoState.salvar_meu_perfil,
+                                        on_click=AuthState.salvar_meu_perfil,
                                         style=STYLE_BUTTON_CHIP,
                                     ),
                                     width="100%",
@@ -187,8 +188,8 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.input(
                                         placeholder="Digite sua senha atual",
                                         type="password",
-                                        value=EventoState.minha_senha_atual_input,
-                                        on_change=EventoState.set_minha_senha_atual,
+                                        value=AuthState.minha_senha_atual_input,
+                                        on_change=AuthState.set_minha_senha_atual,
                                         size="2",
                                         width="100%",
                                     ),
@@ -200,8 +201,8 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.input(
                                         placeholder="Digite a nova senha",
                                         type="password",
-                                        value=EventoState.minha_nova_senha_input,
-                                        on_change=EventoState.set_minha_nova_senha,
+                                        value=AuthState.minha_nova_senha_input,
+                                        on_change=AuthState.set_minha_nova_senha,
                                         size="2",
                                         width="100%",
                                     ),
@@ -213,8 +214,8 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.input(
                                         placeholder="Repita a nova senha",
                                         type="password",
-                                        value=EventoState.minha_nova_senha_confirm,
-                                        on_change=EventoState.set_minha_nova_senha_confirm,
+                                        value=AuthState.minha_nova_senha_confirm,
+                                        on_change=AuthState.set_minha_nova_senha_confirm,
                                         size="2",
                                         width="100%",
                                     ),
@@ -232,7 +233,7 @@ def modal_meu_perfil() -> rx.Component:
                                         ),
                                         size="2",
                                         color_scheme="green",
-                                        on_click=EventoState.salvar_minha_nova_senha,
+                                        on_click=AuthState.salvar_minha_nova_senha,
                                         style=STYLE_BUTTON_CHIP,
                                     ),
                                     width="100%",
@@ -248,7 +249,7 @@ def modal_meu_perfil() -> rx.Component:
                         rx.tabs.content(
                             rx.vstack(
                                 rx.cond(
-                                    EventoState.usuario_logado_email_confirmado,
+                                    AuthState.usuario_logado_email_confirmado,
                                     rx.card(
                                         rx.vstack(
                                             rx.hstack(
@@ -258,7 +259,7 @@ def modal_meu_perfil() -> rx.Component:
                                                 align="center",
                                             ),
                                             rx.text(
-                                                f"O endereço {EventoState.user_email} está verificado com sucesso no sistema do IV EFAC 2026.",
+                                                f"O endereço {AuthState.user_email} está verificado com sucesso no sistema do IV EFAC 2026.",
                                                 size="2",
                                                 color="white",
                                             ),
@@ -277,7 +278,7 @@ def modal_meu_perfil() -> rx.Component:
                                     rx.vstack(
                                         rx.badge("Confirmação de E-mail Pendente", color_scheme="amber", variant="solid", size="2"),
                                         rx.text(
-                                            f"Para enviar resumos e receber comunicados oficiais, confirme seu e-mail cadastrado ({EventoState.user_email}).",
+                                            f"Para enviar resumos e receber comunicados oficiais, confirme seu e-mail cadastrado ({AuthState.user_email}).",
                                             size="2",
                                             color="var(--gray-11)",
                                         ),
@@ -320,7 +321,7 @@ def modal_meu_perfil() -> rx.Component:
                                                 size="2",
                                                 variant="outline",
                                                 color_scheme="cyan",
-                                                on_click=EventoState.solicitar_codigo_email,
+                                                on_click=AuthState.solicitar_codigo_email,
                                             ),
                                             rx.button(
                                                 rx.hstack(
@@ -331,7 +332,7 @@ def modal_meu_perfil() -> rx.Component:
                                                 ),
                                                 size="2",
                                                 color_scheme="green",
-                                                on_click=EventoState.confirmar_email_direto,
+                                                on_click=AuthState.confirmar_email_direto,
                                             ),
                                             spacing="2",
                                             wrap="wrap",
@@ -341,8 +342,8 @@ def modal_meu_perfil() -> rx.Component:
                                         rx.hstack(
                                             rx.input(
                                                 placeholder="Digite o código de 6 dígitos...",
-                                                value=EventoState.codigo_email_input,
-                                                on_change=EventoState.set_codigo_email,
+                                                value=AuthState.codigo_email_input,
+                                                on_change=AuthState.set_codigo_email,
                                                 size="2",
                                                 flex="1",
                                             ),
@@ -350,7 +351,7 @@ def modal_meu_perfil() -> rx.Component:
                                                 "Validar Código",
                                                 size="2",
                                                 color_scheme="cyan",
-                                                on_click=EventoState.confirmar_email_codigo,
+                                                on_click=AuthState.confirmar_email_codigo,
                                             ),
                                             width="100%",
                                         ),

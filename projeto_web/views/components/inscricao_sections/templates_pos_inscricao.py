@@ -1,5 +1,6 @@
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import *
 
 def templates_pos_inscricao() -> rx.Component:
@@ -133,7 +134,7 @@ def templates_pos_inscricao() -> rx.Component:
                 rx.button(
                     rx.icon(tag="mail-check", size=16),
                     "Confirmar Meu E-mail Agora",
-                    on_click=EventoState.abrir_modal_perfil,
+                    on_click=AuthState.abrir_modal_perfil,
                     color_scheme="amber",
                     size="2",
                     cursor="pointer",
@@ -141,7 +142,7 @@ def templates_pos_inscricao() -> rx.Component:
                 rx.button(
                     rx.icon(tag="check", size=16),
                     "Verificação Direta Instantânea",
-                    on_click=EventoState.confirmar_email_direto,
+                    on_click=AuthState.confirmar_email_direto,
                     variant="soft",
                     color_scheme="green",
                     size="2",
@@ -162,7 +163,7 @@ def templates_pos_inscricao() -> rx.Component:
 
     return rx.box(
         rx.cond(
-            EventoState.email_confirmado,
+            AuthState.email_confirmado,
             conteudo_liberado,
             aviso_bloqueio_email,
         ),

@@ -3,6 +3,7 @@ from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.footer import footer
 from projeto_web.views.components.cosmic_background import cosmic_background
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import COLOR_BG, COLOR_SURFACE_GLASS, COLOR_BORDER_CYAN, STYLE_HEADING_RESPONSIVE, STYLE_TEXT_RESPONSIVE, STYLE_BUTTON_CHIP
 from projeto_web.views.components.inscricao_sections.form_cadastro import form_cadastro
 from projeto_web.views.components.inscricao_sections.form_login import form_login
@@ -34,7 +35,7 @@ def inscricao_page() -> rx.Component:
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
                 rx.cond(
-                    EventoState.is_logged_in,
+                    AuthState.is_logged_in,
                     logged_in_hub(),
                     rx.card(
                         rx.tabs.root(

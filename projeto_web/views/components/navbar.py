@@ -5,6 +5,7 @@ Pure Deep Cosmic Dark Theme. Adaptável a todas as telas (Desktop, Tablet e Mobi
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.state.navigation_state import NavigationState
 from projeto_web.styles.theme import (
     COLOR_NAVBAR_BG,
@@ -214,7 +215,7 @@ def navbar() -> rx.Component:
             # Acessos (Entrar, Inscreva-se e Menu Mobile)
             rx.hstack(
                 rx.cond(
-                    EventoState.is_logged_in,
+                    AuthState.is_logged_in,
                     rx.hstack(
                         # Botão com nome de acesso direcionando diretamente para a área do usuário
                         rx.tooltip(
@@ -223,9 +224,9 @@ def navbar() -> rx.Component:
                                     rx.hstack(
                                         rx.box(
                                             rx.cond(
-                                                EventoState.user_foto_url != "",
+                                                AuthState.user_foto_url != "",
                                                 rx.image(
-                                                    src=EventoState.user_foto_url,
+                                                    src=AuthState.user_foto_url,
                                                     width="26px",
                                                     height="26px",
                                                     border_radius="50%",
@@ -239,7 +240,7 @@ def navbar() -> rx.Component:
                                         ),
                                         rx.vstack(
                                             rx.text(
-                                                EventoState.user_nome,
+                                                AuthState.user_nome,
                                                 size="2",
                                                 weight="bold",
                                                 color="white",
@@ -250,15 +251,15 @@ def navbar() -> rx.Component:
                                             ),
                                             rx.hstack(
                                                 rx.cond(
-                                                    EventoState.is_admin,
+                                                    AuthState.is_admin,
                                                     rx.badge("Admin", color_scheme="red", variant="solid", size="1"),
                                                     rx.cond(
-                                                        EventoState.is_supervisor,
+                                                        AuthState.is_supervisor,
                                                         rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1"),
                                                         rx.badge("Participante", color_scheme="cyan", variant="surface", size="1"),
                                                     ),
                                                 ),
-                                                rx.text(EventoState.user_codigo, size="1", color="var(--gray-9)"),
+                                                rx.text(AuthState.user_codigo, size="1", color="var(--gray-9)"),
                                                 spacing="1",
                                                 align="center",
                                             ),
@@ -297,7 +298,7 @@ def navbar() -> rx.Component:
                                 size="1",
                                 variant="surface",
                                 color_scheme="cyan",
-                                on_click=EventoState.abrir_modal_perfil,
+                                on_click=AuthState.abrir_modal_perfil,
                                 style=STYLE_BUTTON_CHIP,
                             ),
                             content="Editar perfil, alterar senha e confirmar e-mail",
@@ -312,7 +313,7 @@ def navbar() -> rx.Component:
                             size="1",
                             variant="ghost",
                             color_scheme="red",
-                            on_click=EventoState.logout,
+                            on_click=AuthState.logout,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         spacing="2",

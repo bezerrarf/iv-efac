@@ -6,6 +6,7 @@ e suporte a impressão e download direto do crachá.
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import (
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
@@ -43,7 +44,7 @@ AVATAR_PRESETS = [
 
 def badge_photo_element() -> rx.Component:
     """Círculo de foto do participante/palestrante com moldura orbital cósmica e glow ciano."""
-    tem_foto = EventoState.user_foto_url != ""
+    tem_foto = AuthState.user_foto_url != ""
 
     return rx.box(
         # Halo de brilho orbital
@@ -68,8 +69,8 @@ def badge_photo_element() -> rx.Component:
         rx.cond(
             tem_foto,
             rx.image(
-                src=EventoState.user_foto_url,
-                alt=EventoState.user_nome,
+                src=AuthState.user_foto_url,
+                alt=AuthState.user_nome,
                 width="140px",
                 height="140px",
                 border_radius="50%",
@@ -195,7 +196,7 @@ def cartao_identificacao_digital() -> rx.Component:
                                 padding_y="0.2rem",
                             ),
                             rx.cond(
-                                EventoState.is_admin,
+                                AuthState.is_admin,
                                 rx.badge(
                                     rx.hstack(
                                         rx.icon(tag="shield", size=12),
@@ -210,7 +211,7 @@ def cartao_identificacao_digital() -> rx.Component:
                                     padding_y="0.2rem",
                                 ),
                                 rx.cond(
-                                    EventoState.is_supervisor,
+                                    AuthState.is_supervisor,
                                     rx.badge(
                                         rx.hstack(
                                             rx.icon(tag="clipboard-check", size=12),
@@ -245,7 +246,7 @@ def cartao_identificacao_digital() -> rx.Component:
                             rx.cond(
                                 is_palestrante,
                                 EventoState.badge_palestrante_nome,
-                                rx.cond(EventoState.user_nome != "", EventoState.user_nome, "Nome do Participante"),
+                                rx.cond(AuthState.user_nome != "", AuthState.user_nome, "Nome do Participante"),
                             ),
                             size="5",
                             weight="bold",
@@ -257,7 +258,7 @@ def cartao_identificacao_digital() -> rx.Component:
                             rx.cond(
                                 is_palestrante,
                                 EventoState.badge_palestrante_inst,
-                                rx.cond(EventoState.user_instituicao != "", EventoState.user_instituicao, "Universidade / Polo"),
+                                rx.cond(AuthState.user_instituicao != "", AuthState.user_instituicao, "Universidade / Polo"),
                             ),
                             size="2",
                             color="var(--gray-9)",
@@ -275,7 +276,7 @@ def cartao_identificacao_digital() -> rx.Component:
                             rx.cond(
                                 is_palestrante,
                                 EventoState.badge_palestrante_tema,
-                                EventoState.user_area,
+                                AuthState.user_area,
                             ),
                             size="2",
                             weight="bold",
@@ -287,13 +288,13 @@ def cartao_identificacao_digital() -> rx.Component:
                             rx.hstack(
                                 rx.text("Check-in:", size="1", color="var(--gray-9)"),
                                 rx.badge(
-                                    rx.cond(EventoState.user_codigo != "", EventoState.user_codigo, "ASTRO-XXXXXX"),
+                                    rx.cond(AuthState.user_codigo != "", AuthState.user_codigo, "ASTRO-XXXXXX"),
                                     color_scheme="cyan",
                                     variant="soft",
                                     size="1",
                                 ),
                                 rx.badge(
-                                    rx.cond(EventoState.user_modalidade != "", EventoState.user_modalidade, "Presencial"),
+                                    rx.cond(AuthState.user_modalidade != "", AuthState.user_modalidade, "Presencial"),
                                     color_scheme="indigo",
                                     variant="surface",
                                     size="1",
@@ -520,7 +521,7 @@ def cartao_identificacao_digital() -> rx.Component:
                                     ),
                                     size="2",
                                     color_scheme="cyan",
-                                    on_click=EventoState.handle_upload_foto(rx.upload_files(upload_id="upload_foto_carteirinha")),
+                                    on_click=AuthState.handle_upload_foto(rx.upload_files(upload_id="upload_foto_carteirinha")),
                                     style=STYLE_BUTTON_CHIP,
                                 ),
                                 spacing="2",

@@ -1,5 +1,6 @@
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import *
 
 from projeto_web.views.components.badge_card import cartao_identificacao_digital
@@ -16,9 +17,9 @@ def logged_in_hub() -> rx.Component:
         rx.hstack(
             rx.hstack(
                 rx.cond(
-                    EventoState.user_foto_url != "",
+                    AuthState.user_foto_url != "",
                     rx.image(
-                        src=EventoState.user_foto_url,
+                        src=AuthState.user_foto_url,
                         width="42px",
                         height="42px",
                         border_radius="50%",
@@ -36,12 +37,12 @@ def logged_in_hub() -> rx.Component:
                 ),
                 rx.vstack(
                     rx.hstack(
-                        rx.heading(EventoState.user_nome, size="3", weight="bold", color="white"),
+                        rx.heading(AuthState.user_nome, size="3", weight="bold", color="white"),
                         rx.cond(
-                            EventoState.is_admin,
+                            AuthState.is_admin,
                             rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
                             rx.cond(
-                                EventoState.is_supervisor,
+                                AuthState.is_supervisor,
                                 rx.badge("SUPERVISOR(A)", color_scheme="violet", variant="solid", size="1"),
                                 rx.badge("PARTICIPANTE", color_scheme="cyan", variant="solid", size="1"),
                             ),
@@ -51,11 +52,11 @@ def logged_in_hub() -> rx.Component:
                         wrap="wrap",
                     ),
                     rx.text(
-                        EventoState.user_email,
+                        AuthState.user_email,
                         " • ",
-                        EventoState.user_instituicao,
+                        AuthState.user_instituicao,
                         " (",
-                        EventoState.user_modalidade,
+                        AuthState.user_modalidade,
                         ")",
                         size="1",
                         color="var(--gray-9)",
@@ -71,7 +72,7 @@ def logged_in_hub() -> rx.Component:
             # Ação de Alterar Modalidade
             rx.hstack(
                 rx.cond(
-                    EventoState.user_modalidade == "Presencial",
+                    AuthState.user_modalidade == "Presencial",
                     rx.button(
                         "Mudar para Online",
                         size="1",
@@ -99,7 +100,7 @@ def logged_in_hub() -> rx.Component:
                     variant="ghost",
                     color_scheme="red",
                     size="2",
-                    on_click=EventoState.logout,
+                    on_click=AuthState.logout,
                     style=STYLE_BUTTON_CHIP,
                 ),
                 spacing="2",
@@ -128,7 +129,7 @@ def logged_in_hub() -> rx.Component:
                     value="cracha",
                 ),
                 rx.cond(
-                    EventoState.is_admin,
+                    AuthState.is_admin,
                     rx.tabs.trigger(
                         rx.hstack(
                             rx.icon(tag="shield-alert", size=15),
@@ -141,7 +142,7 @@ def logged_in_hub() -> rx.Component:
                     rx.fragment(),
                 ),
                 rx.cond(
-                    EventoState.is_supervisor,
+                    AuthState.is_supervisor,
                     rx.tabs.trigger(
                         rx.hstack(
                             rx.icon(tag="clipboard-check", size=15),

@@ -1,5 +1,6 @@
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.styles.theme import *
 
 from .feedback_alert import feedback_alert
@@ -11,8 +12,8 @@ def form_cadastro() -> rx.Component:
             rx.text("Nome Completo", size="2", weight="bold", color="white"),
             rx.input(
                 placeholder="Ex: Dra. Jocelyn Bell",
-                value=EventoState.cad_nome,
-                on_change=EventoState.set_cad_nome,
+                value=AuthState.cad_nome,
+                on_change=AuthState.set_cad_nome,
                 size="3",
                 width="100%",
             ),
@@ -24,8 +25,8 @@ def form_cadastro() -> rx.Component:
             rx.input(
                 placeholder="seu.email@exemplo.com",
                 type="email",
-                value=EventoState.cad_email,
-                on_change=EventoState.set_cad_email,
+                value=AuthState.cad_email,
+                on_change=AuthState.set_cad_email,
                 size="3",
                 width="100%",
             ),
@@ -37,8 +38,8 @@ def form_cadastro() -> rx.Component:
             rx.input(
                 placeholder="Crie uma senha (mínimo 6 caracteres)",
                 type="password",
-                value=EventoState.cad_senha,
-                on_change=EventoState.set_cad_senha,
+                value=AuthState.cad_senha,
+                on_change=AuthState.set_cad_senha,
                 size="3",
                 width="100%",
             ),
@@ -50,8 +51,8 @@ def form_cadastro() -> rx.Component:
                 rx.text("Instituição / Polo", size="2", weight="bold", color="white"),
                 rx.input(
                     placeholder="Ex: UFCA, URCA, IFCE, etc.",
-                    value=EventoState.cad_instituicao,
-                    on_change=EventoState.set_cad_instituicao,
+                    value=AuthState.cad_instituicao,
+                    on_change=AuthState.set_cad_instituicao,
                     size="3",
                     width="100%",
                 ),
@@ -62,8 +63,8 @@ def form_cadastro() -> rx.Component:
                 rx.text("Modalidade", size="2", weight="bold", color="white"),
                 rx.select(
                     ["Presencial", "Online"],
-                    value=EventoState.cad_modalidade,
-                    on_change=EventoState.set_cad_modalidade,
+                    value=AuthState.cad_modalidade,
+                    on_change=AuthState.set_cad_modalidade,
                     size="3",
                     width="100%",
                 ),
@@ -83,8 +84,8 @@ def form_cadastro() -> rx.Component:
                     "Física Computacional e Ciência de Dados",
                     "Ensino de Física e Divulgação Científica",
                 ],
-                value=EventoState.cad_area,
-                on_change=EventoState.set_cad_area,
+                value=AuthState.cad_area,
+                on_change=AuthState.set_cad_area,
                 size="3",
                 width="100%",
             ),
@@ -98,7 +99,7 @@ def form_cadastro() -> rx.Component:
             radius="full",
             width="100%",
             margin_top="1rem",
-            on_click=EventoState.realizar_cadastro,
+            on_click=AuthState.realizar_cadastro,
             background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
             color="white",
             box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",

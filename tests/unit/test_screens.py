@@ -1,10 +1,11 @@
 """Testes unitários para a navegação do sistema de telas (Screen Switcher)."""
 
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.navigation_state import NavigationState
 
 
 def test_navegacao_sistema_de_telas():
-    state = EventoState()
+    state = NavigationState()
     assert state.tela_ativa == "inicio"
     assert state.indice_tela == 0
 

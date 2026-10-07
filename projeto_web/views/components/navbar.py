@@ -5,6 +5,7 @@ Pure Deep Cosmic Dark Theme. Adaptável a todas as telas (Desktop, Tablet e Mobi
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.navigation_state import NavigationState
 from projeto_web.styles.theme import (
     COLOR_NAVBAR_BG,
     COLOR_BORDER_SUBTLE,
@@ -17,7 +18,7 @@ from projeto_web.styles.theme import (
 
 def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
     """Item do menu superior com indicador visual cósmico de tela ativa e roteamento universal."""
-    is_ativa = EventoState.tela_ativa == chave
+    is_ativa = NavigationState.tela_ativa == chave
 
     return rx.button(
         rx.hstack(
@@ -35,7 +36,7 @@ def nav_item_secao(texto: str, chave: str, icone: str = "") -> rx.Component:
         radius="large",
         padding_x="0.85rem",
         padding_y="0.35rem",
-        on_click=EventoState.navegar_para_tela(chave),
+        on_click=NavigationState.navegar_para_tela(chave),
         color=rx.cond(
             is_ativa,
             COLOR_CYAN,
@@ -133,13 +134,13 @@ def menu_mobile_telas() -> rx.Component:
             )
         ),
         rx.menu.content(
-            rx.menu.item("Eixos Temáticos", on_click=EventoState.navegar_para_tela("eixos")),
-            rx.menu.item("Palestrantes", on_click=EventoState.navegar_para_tela("palestrantes")),
-            rx.menu.item("Programação Oficial", on_click=EventoState.navegar_para_tela("programacao")),
-            rx.menu.item("Submissões de Trabalhos", on_click=EventoState.navegar_para_tela("submissoes")),
+            rx.menu.item("Eixos Temáticos", on_click=NavigationState.navegar_para_tela("eixos")),
+            rx.menu.item("Palestrantes", on_click=NavigationState.navegar_para_tela("palestrantes")),
+            rx.menu.item("Programação Oficial", on_click=NavigationState.navegar_para_tela("programacao")),
+            rx.menu.item("Submissões de Trabalhos", on_click=NavigationState.navegar_para_tela("submissoes")),
             rx.menu.item("Edital Oficial (PDF em breve)", disabled=True),
-            rx.menu.item("Localização", on_click=EventoState.navegar_para_tela("local")),
-            rx.menu.item("Sobre o Evento", on_click=EventoState.navegar_para_tela("sobre")),
+            rx.menu.item("Localização", on_click=NavigationState.navegar_para_tela("local")),
+            rx.menu.item("Sobre o Evento", on_click=NavigationState.navegar_para_tela("sobre")),
             rx.menu.separator(),
             rx.menu.item("Garantir Inscrição", on_click=rx.redirect("/inscricao")),
             background="rgba(15, 23, 42, 0.98)",
@@ -194,7 +195,7 @@ def navbar() -> rx.Component:
                     spacing="2",
                 ),
                 href="/",
-                on_click=EventoState.set_tela("inicio"),
+                on_click=NavigationState.set_tela("inicio"),
                 style=STYLE_BUTTON_CHIP,
             ),
             # Navegação no Topo: Telas Principais (Visível a partir de Desktop / md/lg)

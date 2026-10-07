@@ -2,6 +2,7 @@ import reflex as rx
 from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.cosmic_background import cosmic_background
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.navigation_state import NavigationState
 from projeto_web.styles.theme import COLOR_BG, COLOR_NAVBAR_BG, COLOR_BORDER_CYAN, STYLE_TEXT_RESPONSIVE
 from projeto_web.views.components.home_sections.tela_inicio import tela_inicio
 from projeto_web.views.components.home_sections.tela_sobre import tela_sobre
@@ -22,22 +23,22 @@ def home_page() -> rx.Component:
         # Palco Central de Tela Única
         rx.box(
             rx.cond(
-                EventoState.tela_ativa == "inicio",
+                NavigationState.tela_ativa == "inicio",
                 tela_inicio(),
                 rx.cond(
-                    EventoState.tela_ativa == "eixos",
+                    NavigationState.tela_ativa == "eixos",
                     tela_eixos(),
                     rx.cond(
-                        EventoState.tela_ativa == "palestrantes",
+                        NavigationState.tela_ativa == "palestrantes",
                         tela_palestrantes(),
                         rx.cond(
-                            EventoState.tela_ativa == "programacao",
+                            NavigationState.tela_ativa == "programacao",
                             tela_programacao(),
                             rx.cond(
-                                EventoState.tela_ativa == "submissoes",
+                                NavigationState.tela_ativa == "submissoes",
                                 tela_submissoes(),
                                 rx.cond(
-                                    EventoState.tela_ativa == "local",
+                                    NavigationState.tela_ativa == "local",
                                     tela_local(),
                                     tela_sobre(),
                                 ),

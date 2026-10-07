@@ -1,6 +1,7 @@
 import reflex as rx
 from datetime import datetime
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.navigation_state import NavigationState
 from projeto_web.controllers.evento_controller import EventoController, EixoTematico, Palestrante, Atividade
 from projeto_web.styles.theme import *
 from projeto_web.views.components.footer import parceiro_chip
@@ -439,7 +440,7 @@ def tela_inicio() -> rx.Component:
                         border="1.5px solid #00ADB5",
                         color=COLOR_CYAN,
                         _hover={"background": "rgba(0, 173, 181, 0.15)"},
-                        on_click=EventoState.set_tela("submissoes"),
+                        on_click=NavigationState.set_tela("submissoes"),
                         style=STYLE_BUTTON_CHIP,
                     ),
                     spacing="3",

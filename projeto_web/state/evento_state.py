@@ -1,4 +1,4 @@
-from projeto_web.state.admin_state import AdminState
+from projeto_web.state.supervisor_state import SupervisorState
 from projeto_web.core.quotes_service import carregar_frases_cientistas
 """Ponte reativa (Reflex State) que consome os Controllers (MVC)."""
 
@@ -21,7 +21,7 @@ _repo = SQLiteUsuarioRepository()
 _usuario_controller = UsuarioController(repository=_repo, hasher=_hasher)
 
 
-class EventoState(AdminState):
+class EventoState(SupervisorState):
     """Estado global reativo da interface visual do IV EFAC."""
 
     # --- Estatísticas ---
@@ -67,10 +67,6 @@ class EventoState(AdminState):
     # Visualização e Emissão da Carteirinha pelo Admin
 
     # --- Painel de Supervisão / Conferência de Presença ---
-    superv_busca: str = ""
-    superv_inscritos: List[Dict[str, Any]] = []
-    superv_presentes_count: int = 0
-    superv_total_count: int = 0
 
     # --- Contagem Regressiva & Mensagens Inspiradoras dos Cientistas ---
     evento_iniciado_preview: bool = False
@@ -145,9 +141,6 @@ class EventoState(AdminState):
             self.badge_foto_input = ""
 
 
-    def set_superv_busca(self, termo: str):
-        self.superv_busca = termo
-        self.carregar_painel_supervisor()
 
 
 
@@ -286,38 +279,7 @@ class EventoState(AdminState):
 
 
     # --- Ações de Supervisor (Conferência de Presença) ---
-    def carregar_painel_supervisor(self):
-        """Carrega lista de inscritos para credenciamento e presença."""
-        usuarios = _usuario_controller.listar_inscritos(self.superv_busca)
-        self.superv_inscritos = [
-            {
-                "id": u.id,
-                "nome": u.nome,
-                "email": u.email,
-                "instituicao": u.instituicao,
-                "modalidade": u.modalidade,
-                "codigo": u.codigo_inscricao,
-                "presenca_confirmada": bool(getattr(u, "presenca_confirmada", False)),
-            }
-            for u in usuarios
-        ]
-        self.superv_total_count = len(self.superv_inscritos)
-        self.superv_presentes_count = sum(1 for item in self.superv_inscritos if item["presenca_confirmada"])
 
-    def alternar_presenca_participante(self, user_id: Any):
-        """Supervisor ou admin marca/desmarca presença do inscrito."""
-        if not self.is_supervisor:
-            return
-        try:
-            uid = int(user_id)
-        except Exception:
-            return
-        res = _usuario_controller.alternar_presenca(uid)
-        self.feedback_msg = res.mensagem
-        self.feedback_tipo = "success" if res.sucesso else "error"
-        self.carregar_painel_supervisor()
-        if self.is_admin:
-            self.carregar_painel_admin()
 
 
 

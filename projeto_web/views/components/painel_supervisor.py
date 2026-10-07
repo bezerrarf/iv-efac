@@ -8,6 +8,7 @@ Permite:
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.supervisor_state import SupervisorState
 from projeto_web.state.admin_state import AdminState
 from projeto_web.styles.theme import (
     COLOR_CYAN,
@@ -92,7 +93,7 @@ def painel_supervisor_view() -> rx.Component:
                     rx.hstack(
                         rx.icon(tag="user-check", size=24, color="#34d399"),
                         rx.vstack(
-                            rx.heading(f"{EventoState.superv_presentes_count} / {EventoState.superv_total_count}", size="6", weight="bold", color="white"),
+                            rx.heading(f"{SupervisorState.superv_presentes_count} / {SupervisorState.superv_total_count}", size="6", weight="bold", color="white"),
                             rx.text("Presentes Confirmados", size="1", color="var(--gray-9)"),
                             spacing="0",
                         ),
@@ -127,8 +128,8 @@ def painel_supervisor_view() -> rx.Component:
             rx.hstack(
                 rx.input(
                     placeholder="Digitar ou bipar código (ex: ASTRO-...) ou nome do participante...",
-                    value=EventoState.superv_busca,
-                    on_change=EventoState.set_superv_busca,
+                    value=SupervisorState.superv_busca,
+                    on_change=SupervisorState.set_superv_busca,
                     size="3",
                     flex="1",
                 ),
@@ -141,7 +142,7 @@ def painel_supervisor_view() -> rx.Component:
                     ),
                     size="3",
                     color_scheme="violet",
-                    on_click=EventoState.carregar_painel_supervisor,
+                    on_click=SupervisorState.carregar_painel_supervisor,
                     style=STYLE_BUTTON_CHIP,
                 ),
                 width="100%",
@@ -161,7 +162,7 @@ def painel_supervisor_view() -> rx.Component:
                     ),
                     rx.table.body(
                         rx.foreach(
-                            EventoState.superv_inscritos,
+                            SupervisorState.superv_inscritos,
                             lambda item: rx.table.row(
                                 rx.table.cell(
                                     rx.badge(item["codigo"], color_scheme="cyan", variant="solid", size="2"),
@@ -195,7 +196,7 @@ def painel_supervisor_view() -> rx.Component:
                                             size="1",
                                             variant="ghost",
                                             color_scheme="red",
-                                            on_click=EventoState.alternar_presenca_participante(item["id"]),
+                                            on_click=SupervisorState.alternar_presenca_participante(item["id"]),
                                             style=STYLE_BUTTON_CHIP,
                                         ),
                                         rx.button(
@@ -203,7 +204,7 @@ def painel_supervisor_view() -> rx.Component:
                                             size="2",
                                             variant="solid",
                                             color_scheme="green",
-                                            on_click=EventoState.alternar_presenca_participante(item["id"]),
+                                            on_click=SupervisorState.alternar_presenca_participante(item["id"]),
                                             style=STYLE_BUTTON_CHIP,
                                         ),
                                     ),

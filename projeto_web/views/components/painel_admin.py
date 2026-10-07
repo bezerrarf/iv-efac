@@ -11,6 +11,7 @@ Permite:
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.admin_state import AdminState
 from projeto_web.styles.theme import (
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
@@ -56,7 +57,7 @@ def stat_metric_box(valor: any, rotulo: str, icone: str, cor: str) -> rx.Compone
 def modal_alterar_senha_inscrito() -> rx.Component:
     """Modal para o administrador redefinir a senha de qualquer participante."""
     return rx.cond(
-        EventoState.modal_alterar_senha_aberto,
+        AdminState.modal_alterar_senha_aberto,
         rx.box(
             # Backdrop de foco
             rx.box(
@@ -103,7 +104,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                             rx.icon(tag="user", size=16, color="var(--gray-10)"),
                             rx.text(
                                 "Participante: ",
-                                rx.text.strong(EventoState.admin_senha_user_nome, color="white"),
+                                rx.text.strong(AdminState.admin_senha_user_nome, color="white"),
                                 size="2",
                                 color="var(--gray-10)",
                             ),
@@ -120,8 +121,8 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                         rx.input(
                             placeholder="Digite a nova senha (mínimo 6 caracteres)",
                             type="password",
-                            value=EventoState.admin_nova_senha_input,
-                            on_change=EventoState.set_admin_nova_senha,
+                            value=AdminState.admin_nova_senha_input,
+                            on_change=AdminState.set_admin_nova_senha,
                             size="3",
                             width="100%",
                         ),
@@ -147,7 +148,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                             variant="solid",
                             color_scheme="cyan",
                             size="2",
-                            on_click=EventoState.salvar_nova_senha_inscrito,
+                            on_click=AdminState.salvar_nova_senha_inscrito,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         spacing="3",
@@ -179,7 +180,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
 def modal_carteirinha_admin() -> rx.Component:
     """Modal para o administrador visualizar, conferir e imprimir a carteirinha de qualquer inscrito."""
     return rx.cond(
-        EventoState.admin_carteirinha_aberta,
+        AdminState.admin_carteirinha_aberta,
         rx.box(
             # Backdrop de foco
             rx.box(
@@ -188,7 +189,7 @@ def modal_carteirinha_admin() -> rx.Component:
                 background="rgba(0, 0, 0, 0.85)",
                 z_index="1000",
                 backdrop_filter="blur(8px)",
-                on_click=EventoState.fechar_carteirinha_admin,
+                on_click=AdminState.fechar_carteirinha_admin,
             ),
             # Caixa do Modal
             rx.card(
@@ -219,7 +220,7 @@ def modal_carteirinha_admin() -> rx.Component:
                             size="1",
                             variant="solid",
                             color_scheme="cyan",
-                            on_click=EventoState.baixar_carteirinha_admin_png,
+                            on_click=AdminState.baixar_carteirinha_admin_png,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
@@ -227,7 +228,7 @@ def modal_carteirinha_admin() -> rx.Component:
                             variant="ghost",
                             color_scheme="gray",
                             size="1",
-                            on_click=EventoState.fechar_carteirinha_admin,
+                            on_click=AdminState.fechar_carteirinha_admin,
                             cursor="pointer",
                         ),
                         align="center",
@@ -261,10 +262,10 @@ def modal_carteirinha_admin() -> rx.Component:
                             rx.hstack(
                                 rx.box(
                                     rx.cond(
-                                        EventoState.admin_carteirinha_foto != "",
+                                        AdminState.admin_carteirinha_foto != "",
                                         rx.image(
-                                            src=EventoState.admin_carteirinha_foto,
-                                            alt=EventoState.admin_carteirinha_nome,
+                                            src=AdminState.admin_carteirinha_foto,
+                                            alt=AdminState.admin_carteirinha_nome,
                                             width="95px",
                                             height="95px",
                                             border_radius="50%",
@@ -287,16 +288,16 @@ def modal_carteirinha_admin() -> rx.Component:
                                     place_items="center",
                                 ),
                                 rx.vstack(
-                                    rx.text(EventoState.admin_carteirinha_nome, size="3", weight="bold", color="white"),
-                                    rx.text(EventoState.admin_carteirinha_email, size="1", color="var(--gray-10)"),
-                                    rx.text(EventoState.admin_carteirinha_inst, size="1", color="var(--gray-9)"),
+                                    rx.text(AdminState.admin_carteirinha_nome, size="3", weight="bold", color="white"),
+                                    rx.text(AdminState.admin_carteirinha_email, size="1", color="var(--gray-10)"),
+                                    rx.text(AdminState.admin_carteirinha_inst, size="1", color="var(--gray-9)"),
                                     rx.hstack(
-                                        rx.badge(EventoState.admin_carteirinha_mod, color_scheme="indigo", size="1"),
-                                        rx.badge(EventoState.admin_carteirinha_role.upper(), color_scheme="violet", size="1"),
+                                        rx.badge(AdminState.admin_carteirinha_mod, color_scheme="indigo", size="1"),
+                                        rx.badge(AdminState.admin_carteirinha_role.upper(), color_scheme="violet", size="1"),
                                         rx.badge(
                                             rx.hstack(
                                                 rx.icon(tag="qr-code", size=11),
-                                                rx.text(EventoState.admin_carteirinha_cod, size="1"),
+                                                rx.text(AdminState.admin_carteirinha_cod, size="1"),
                                                 spacing="1",
                                                 align="center",
                                             ),
@@ -378,8 +379,8 @@ def tabela_inscritos_admin() -> rx.Component:
         rx.hstack(
             rx.input(
                 placeholder="Buscar por nome, e-mail, código ou polo...",
-                value=EventoState.admin_filtro_busca,
-                on_change=EventoState.set_admin_filtro,
+                value=AdminState.admin_filtro_busca,
+                on_change=AdminState.set_admin_filtro,
                 size="2",
                 flex="1",
             ),
@@ -393,7 +394,7 @@ def tabela_inscritos_admin() -> rx.Component:
                 size="2",
                 variant="surface",
                 color_scheme="gray",
-                on_click=EventoState.carregar_painel_admin,
+                on_click=AdminState.carregar_painel_admin,
                 style=STYLE_BUTTON_CHIP,
             ),
             # Botão Baixar CSV
@@ -407,7 +408,7 @@ def tabela_inscritos_admin() -> rx.Component:
                 size="2",
                 variant="surface",
                 color_scheme="green",
-                on_click=EventoState.exportar_inscritos_csv,
+                on_click=AdminState.exportar_inscritos_csv,
                 style=STYLE_BUTTON_CHIP,
                 id="btn-admin-export-csv",
             ),
@@ -422,7 +423,7 @@ def tabela_inscritos_admin() -> rx.Component:
                 size="2",
                 variant="solid",
                 color_scheme="cyan",
-                on_click=EventoState.exportar_inscritos_pdf,
+                on_click=AdminState.exportar_inscritos_pdf,
                 style=STYLE_BUTTON_CHIP,
                 id="btn-admin-export-pdf",
             ),
@@ -445,7 +446,7 @@ def tabela_inscritos_admin() -> rx.Component:
                 ),
                 rx.table.body(
                     rx.foreach(
-                        EventoState.admin_inscritos,
+                        AdminState.admin_inscritos,
                         lambda u: rx.table.row(
                             rx.table.cell(
                                 rx.badge(u["codigo"], color_scheme="cyan", variant="soft", size="1"),
@@ -495,7 +496,7 @@ def tabela_inscritos_admin() -> rx.Component:
                                         size="1",
                                         variant="outline",
                                         color_scheme="cyan",
-                                        on_click=EventoState.ver_carteirinha_admin(u["id"]),
+                                        on_click=AdminState.ver_carteirinha_admin(u["id"]),
                                         style=STYLE_BUTTON_CHIP,
                                     ),
                                     rx.cond(
@@ -583,7 +584,7 @@ def editor_atividades_admin() -> rx.Component:
                     size="2",
                     variant="solid",
                     color_scheme="cyan",
-                    on_click=EventoState.abrir_criacao_atividade,
+                    on_click=AdminState.abrir_criacao_atividade,
                     style=STYLE_BUTTON_CHIP,
                 ),
                 rx.button(
@@ -596,7 +597,7 @@ def editor_atividades_admin() -> rx.Component:
                     size="2",
                     variant="outline",
                     color_scheme="amber",
-                    on_click=EventoState.restaurar_grade_padrao,
+                    on_click=AdminState.restaurar_grade_padrao,
                     style=STYLE_BUTTON_CHIP,
                 ),
                 spacing="2",
@@ -608,7 +609,7 @@ def editor_atividades_admin() -> rx.Component:
         ),
         # Formulário para Criar e Delegar Nova Atividade
         rx.cond(
-            EventoState.is_creating_atividade,
+            AdminState.is_creating_atividade,
             rx.card(
                 rx.vstack(
                     rx.hstack(
@@ -624,8 +625,8 @@ def editor_atividades_admin() -> rx.Component:
                             rx.text("Dia do Evento", size="1", weight="bold", color="white"),
                             rx.select(
                                 ["Dia 1", "Dia 2"],
-                                value=EventoState.new_ativ_dia,
-                                on_change=EventoState.set_new_ativ_dia,
+                                value=AdminState.new_ativ_dia,
+                                on_change=AdminState.set_new_ativ_dia,
                                 size="2",
                                 width="100%",
                             ),
@@ -635,8 +636,8 @@ def editor_atividades_admin() -> rx.Component:
                             rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
                             rx.input(
                                 placeholder="Ex: 14:00 – 15:30",
-                                value=EventoState.new_ativ_horario,
-                                on_change=EventoState.set_new_ativ_horario,
+                                value=AdminState.new_ativ_horario,
+                                on_change=AdminState.set_new_ativ_horario,
                                 size="2",
                                 width="100%",
                             ),
@@ -646,8 +647,8 @@ def editor_atividades_admin() -> rx.Component:
                             rx.text("Tipo de Atividade", size="1", weight="bold", color="white"),
                             rx.select(
                                 ["Conferência", "Mesa-Redonda", "Minicurso", "Sessão Oral", "Abertura", "Intervalo"],
-                                value=EventoState.new_ativ_tipo,
-                                on_change=EventoState.set_new_ativ_tipo,
+                                value=AdminState.new_ativ_tipo,
+                                on_change=AdminState.set_new_ativ_tipo,
                                 size="2",
                                 width="100%",
                             ),
@@ -656,8 +657,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.vstack(
                             rx.text("Local / Sala", size="1", weight="bold", color="white"),
                             rx.input(
-                                value=EventoState.new_ativ_local,
-                                on_change=EventoState.set_new_ativ_local,
+                                value=AdminState.new_ativ_local,
+                                on_change=AdminState.set_new_ativ_local,
                                 size="2",
                                 width="100%",
                             ),
@@ -671,8 +672,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.text("Título / Tema da Palestra ou Atividade", size="1", weight="bold", color="white"),
                         rx.input(
                             placeholder="Tema da conferência ou título do minicurso...",
-                            value=EventoState.new_ativ_titulo,
-                            on_change=EventoState.set_new_ativ_titulo,
+                            value=AdminState.new_ativ_titulo,
+                            on_change=AdminState.set_new_ativ_titulo,
                             size="2",
                             width="100%",
                         ),
@@ -683,8 +684,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.text("Delegar Responsável / Palestrante", size="1", weight="bold", color="white"),
                         rx.input(
                             placeholder="Nome do palestrante, supervisor ou debatedor responsável...",
-                            value=EventoState.new_ativ_palestrante,
-                            on_change=EventoState.set_new_ativ_palestrante,
+                            value=AdminState.new_ativ_palestrante,
+                            on_change=AdminState.set_new_ativ_palestrante,
                             size="2",
                             width="100%",
                         ),
@@ -695,8 +696,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.text("Ementa / Descrição Detalhada", size="1", weight="bold", color="white"),
                         rx.text_area(
                             placeholder="Breve ementa ou tópicos da atividade...",
-                            value=EventoState.new_ativ_descricao,
-                            on_change=EventoState.set_new_ativ_descricao,
+                            value=AdminState.new_ativ_descricao,
+                            on_change=AdminState.set_new_ativ_descricao,
                             size="2",
                             width="100%",
                             rows="2",
@@ -710,7 +711,7 @@ def editor_atividades_admin() -> rx.Component:
                             size="2",
                             variant="ghost",
                             color_scheme="gray",
-                            on_click=EventoState.fechar_criacao_atividade,
+                            on_click=AdminState.fechar_criacao_atividade,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
@@ -723,7 +724,7 @@ def editor_atividades_admin() -> rx.Component:
                             size="2",
                             variant="solid",
                             color_scheme="green",
-                            on_click=EventoState.criar_nova_atividade,
+                            on_click=AdminState.criar_nova_atividade,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         spacing="2",
@@ -743,14 +744,14 @@ def editor_atividades_admin() -> rx.Component:
         ),
         # Formulário de Edição Aberto
         rx.cond(
-            EventoState.is_editing_atividade,
+            AdminState.is_editing_atividade,
             rx.card(
                 rx.vstack(
                     rx.hstack(
                         rx.icon(tag="pencil", size=18, color=COLOR_CYAN),
                         rx.heading("Editar e Re-delegar Atividade", size="3", weight="bold", color="white"),
                         rx.spacer(),
-                        rx.badge(f"ID #{EventoState.edit_ativ_id}", color_scheme="cyan", size="1"),
+                        rx.badge(f"ID #{AdminState.edit_ativ_id}", color_scheme="cyan", size="1"),
                         align="center",
                         width="100%",
                     ),
@@ -759,8 +760,8 @@ def editor_atividades_admin() -> rx.Component:
                             rx.text("Dia do Evento (Manual)", size="1", weight="bold", color="white"),
                             rx.select(
                                 ["Dia 1", "Dia 2"],
-                                value=EventoState.edit_ativ_dia,
-                                on_change=EventoState.set_edit_ativ_dia,
+                                value=AdminState.edit_ativ_dia,
+                                on_change=AdminState.set_edit_ativ_dia,
                                 size="2",
                                 width="100%",
                             ),
@@ -769,8 +770,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.vstack(
                             rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
                             rx.input(
-                                value=EventoState.edit_ativ_horario,
-                                on_change=EventoState.set_edit_ativ_horario,
+                                value=AdminState.edit_ativ_horario,
+                                on_change=AdminState.set_edit_ativ_horario,
                                 size="2",
                                 width="100%",
                             ),
@@ -780,8 +781,8 @@ def editor_atividades_admin() -> rx.Component:
                             rx.text("Tipo de Atividade", size="1", weight="bold", color="white"),
                             rx.select(
                                 ["Abertura", "Conferência", "Minicurso", "Mesa-Redonda", "Sessão Oral", "Intervalo"],
-                                value=EventoState.edit_ativ_tipo,
-                                on_change=EventoState.set_edit_ativ_tipo,
+                                value=AdminState.edit_ativ_tipo,
+                                on_change=AdminState.set_edit_ativ_tipo,
                                 size="2",
                                 width="100%",
                             ),
@@ -790,8 +791,8 @@ def editor_atividades_admin() -> rx.Component:
                         rx.vstack(
                             rx.text("Local / Sala", size="1", weight="bold", color="white"),
                             rx.input(
-                                value=EventoState.edit_ativ_local,
-                                on_change=EventoState.set_edit_ativ_local,
+                                value=AdminState.edit_ativ_local,
+                                on_change=AdminState.set_edit_ativ_local,
                                 size="2",
                                 width="100%",
                             ),
@@ -804,8 +805,8 @@ def editor_atividades_admin() -> rx.Component:
                     rx.vstack(
                         rx.text("Tema / Título da Palestra ou Atividade", size="1", weight="bold", color="white"),
                         rx.input(
-                            value=EventoState.edit_ativ_titulo,
-                            on_change=EventoState.set_edit_ativ_titulo,
+                            value=AdminState.edit_ativ_titulo,
+                            on_change=AdminState.set_edit_ativ_titulo,
                             size="2",
                             width="100%",
                         ),
@@ -815,8 +816,8 @@ def editor_atividades_admin() -> rx.Component:
                     rx.vstack(
                         rx.text("Delegar Palestrante(s) ou Supervisor", size="1", weight="bold", color="white"),
                         rx.input(
-                            value=EventoState.edit_ativ_palestrante,
-                            on_change=EventoState.set_edit_ativ_palestrante,
+                            value=AdminState.edit_ativ_palestrante,
+                            on_change=AdminState.set_edit_ativ_palestrante,
                             size="2",
                             width="100%",
                         ),
@@ -826,8 +827,8 @@ def editor_atividades_admin() -> rx.Component:
                     rx.vstack(
                         rx.text("Ementa / Descrição Detalhada", size="1", weight="bold", color="white"),
                         rx.text_area(
-                            value=EventoState.edit_ativ_descricao,
-                            on_change=EventoState.set_edit_ativ_descricao,
+                            value=AdminState.edit_ativ_descricao,
+                            on_change=AdminState.set_edit_ativ_descricao,
                             size="2",
                             width="100%",
                             rows="2",
@@ -841,7 +842,7 @@ def editor_atividades_admin() -> rx.Component:
                             size="2",
                             variant="ghost",
                             color_scheme="gray",
-                            on_click=EventoState.fechar_edicao_atividade,
+                            on_click=AdminState.fechar_edicao_atividade,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
@@ -854,7 +855,7 @@ def editor_atividades_admin() -> rx.Component:
                             size="2",
                             variant="solid",
                             color_scheme="cyan",
-                            on_click=EventoState.salvar_edicao_atividade,
+                            on_click=AdminState.salvar_edicao_atividade,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         spacing="2",
@@ -887,7 +888,7 @@ def editor_atividades_admin() -> rx.Component:
                 ),
                 rx.table.body(
                     rx.foreach(
-                        EventoState.admin_atividades,
+                        AdminState.admin_atividades,
                         lambda a: rx.table.row(
                             rx.table.cell(rx.badge(a["dia"], color_scheme="indigo", size="1")),
                             rx.table.cell(rx.text(a["horario"], size="2", weight="bold", color="white")),
@@ -911,7 +912,7 @@ def editor_atividades_admin() -> rx.Component:
                                     size="1",
                                     variant="surface",
                                     color_scheme="cyan",
-                                    on_click=EventoState.abrir_edicao_atividade(a["id"]),
+                                    on_click=AdminState.abrir_edicao_atividade(a["id"]),
                                     style=STYLE_BUTTON_CHIP,
                                 ),
                             ),
@@ -958,8 +959,8 @@ def seguranca_admin_view() -> rx.Component:
                     rx.input(
                         placeholder="Digite a nova senha (mínimo 6 caracteres)",
                         type="password",
-                        value=EventoState.admin_propria_senha_input,
-                        on_change=EventoState.set_admin_propria_senha,
+                        value=AdminState.admin_propria_senha_input,
+                        on_change=AdminState.set_admin_propria_senha,
                         size="3",
                         width="100%",
                     ),
@@ -971,8 +972,8 @@ def seguranca_admin_view() -> rx.Component:
                     rx.input(
                         placeholder="Repita a nova senha",
                         type="password",
-                        value=EventoState.admin_propria_senha_confirm,
-                        on_change=EventoState.set_admin_propria_senha_confirm,
+                        value=AdminState.admin_propria_senha_confirm,
+                        on_change=AdminState.set_admin_propria_senha_confirm,
                         size="3",
                         width="100%",
                     ),
@@ -993,7 +994,7 @@ def seguranca_admin_view() -> rx.Component:
                 size="3",
                 color_scheme="red",
                 variant="solid",
-                on_click=EventoState.salvar_propria_senha_admin,
+                on_click=AdminState.salvar_propria_senha_admin,
                 style=STYLE_BUTTON_CHIP,
             ),
             rx.divider(color_scheme="gray", opacity="0.15"),
@@ -1016,7 +1017,7 @@ def seguranca_admin_view() -> rx.Component:
                         size="2",
                         color_scheme="green",
                         variant="surface",
-                        on_click=EventoState.exportar_inscritos_csv,
+                        on_click=AdminState.exportar_inscritos_csv,
                         style=STYLE_BUTTON_CHIP,
                     ),
                     rx.button(
@@ -1029,7 +1030,7 @@ def seguranca_admin_view() -> rx.Component:
                         size="2",
                         color_scheme="cyan",
                         variant="solid",
-                        on_click=EventoState.exportar_inscritos_pdf,
+                        on_click=AdminState.exportar_inscritos_pdf,
                         style=STYLE_BUTTON_CHIP,
                     ),
                     spacing="3",
@@ -1069,11 +1070,11 @@ def painel_admin_view() -> rx.Component:
             rx.heading("Painel de Controle Administrativo • IV EFAC", size="6", weight="bold", color="white"),
             # Grid de Métricas
             rx.grid(
-                stat_metric_box(EventoState.admin_total_inscritos, "Total de Inscritos", "users", "#38bdf8"),
-                stat_metric_box(EventoState.admin_total_presenciais, "Vagas Presenciais", "building", "#818cf8"),
-                stat_metric_box(EventoState.admin_total_onlines, "Transmissão Online", "globe", "#34d399"),
-                stat_metric_box(EventoState.admin_total_presentes, "Presenças Confirmadas", "check-circle", "#f59e0b"),
-                stat_metric_box(EventoState.admin_total_supervisores, "Supervisores Ativos", "shield", "#c084fc"),
+                stat_metric_box(AdminState.admin_total_inscritos, "Total de Inscritos", "users", "#38bdf8"),
+                stat_metric_box(AdminState.admin_total_presenciais, "Vagas Presenciais", "building", "#818cf8"),
+                stat_metric_box(AdminState.admin_total_onlines, "Transmissão Online", "globe", "#34d399"),
+                stat_metric_box(AdminState.admin_total_presentes, "Presenças Confirmadas", "check-circle", "#f59e0b"),
+                stat_metric_box(AdminState.admin_total_supervisores, "Supervisores Ativos", "shield", "#c084fc"),
                 columns=rx.breakpoints(initial="2", sm="3", md="5"),
                 spacing="3",
                 width="100%",

@@ -8,6 +8,7 @@ Permite:
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.admin_state import AdminState
 from projeto_web.styles.theme import (
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
@@ -40,7 +41,7 @@ def painel_supervisor_view() -> rx.Component:
                         size="2",
                         variant="surface",
                         color_scheme="green",
-                        on_click=EventoState.exportar_inscritos_csv,
+                        on_click=AdminState.exportar_inscritos_csv,
                         style=STYLE_BUTTON_CHIP,
                         id="btn-superv-export-csv",
                     ),
@@ -54,7 +55,7 @@ def painel_supervisor_view() -> rx.Component:
                         size="2",
                         variant="solid",
                         color_scheme="cyan",
-                        on_click=EventoState.exportar_inscritos_pdf,
+                        on_click=AdminState.exportar_inscritos_pdf,
                         style=STYLE_BUTTON_CHIP,
                         id="btn-superv-export-pdf",
                     ),

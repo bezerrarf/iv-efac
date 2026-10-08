@@ -3,7 +3,7 @@ from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.cosmic_background import cosmic_background
 from projeto_web.state.evento_state import EventoState
 from projeto_web.state.navigation_state import NavigationState
-from projeto_web.styles.theme import COLOR_BG, COLOR_NAVBAR_BG, COLOR_BORDER_CYAN, STYLE_TEXT_RESPONSIVE
+from projeto_web.styles.theme import COLOR_BG, COLOR_NAVBAR_BG, COLOR_BORDER_CYAN, COLOR_BORDER_SUBTLE, STYLE_TEXT_RESPONSIVE
 from projeto_web.views.components.home_sections.tela_inicio import tela_inicio
 from projeto_web.views.components.home_sections.tela_sobre import tela_sobre
 from projeto_web.views.components.home_sections.tela_eixos import tela_eixos

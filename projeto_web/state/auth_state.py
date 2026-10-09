@@ -107,7 +107,6 @@ class AuthState(rx.State):
         self.cad_email = ""
         self.cad_senha = ""
         self.cad_instituicao = ""
-        self.carregar_stats()
     def realizar_login(self):
         """Dispara caso de uso de autenticação no Controller."""
         self.limpar_feedback()
@@ -138,11 +137,7 @@ class AuthState(rx.State):
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
-        if self.is_admin:
-            self.carregar_painel_admin()
-            self.carregar_atividades_admin()
-        if self.is_supervisor:
-            self.carregar_painel_supervisor()
+        # Sincronização dos painéis ocorre sob demanda na abertura dos componentes
 
         self.feedback_msg = f"Bem-vindo(a) de volta, {usuario.nome}!"
         self.feedback_tipo = "success"
@@ -205,9 +200,12 @@ class AuthState(rx.State):
         self.modal_confirmacao_email_aberto = False
         self.is_admin = False
         self.is_supervisor = False
-        self.admin_inscritos = []
-        self.superv_inscritos = []
-        self.is_editing_atividade = False
+        if hasattr(self, "admin_inscritos"):
+            self.admin_inscritos = []
+        if hasattr(self, "superv_inscritos"):
+            self.superv_inscritos = []
+        if hasattr(self, "is_editing_atividade"):
+            self.is_editing_atividade = False
         self.feedback_msg = "Sessão encerrada com sucesso."
         self.feedback_tipo = "info"
     def abrir_modal_perfil(self):

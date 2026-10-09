@@ -231,4 +231,5 @@ def painel_supervisor_view() -> rx.Component:
         padding=rx.breakpoints(initial="1.25rem", sm="2rem"),
         width="100%",
         margin_top="1.5rem",
+        on_mount=SupervisorState.carregar_painel_supervisor,
     )

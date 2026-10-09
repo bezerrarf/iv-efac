@@ -2,6 +2,13 @@ import reflex as rx
 from typing import Optional, List, Dict, Any
 from projeto_web.controllers.usuario_controller import UsuarioController
 from projeto_web.state.admin_state import AdminState
+from projeto_web.core.security import PBKDF2PasswordHasher
+from projeto_web.repositories.sqlite_usuario import SQLiteUsuarioRepository
+
+_hasher = PBKDF2PasswordHasher()
+_repo = SQLiteUsuarioRepository()
+_usuario_controller = UsuarioController(repository=_repo, hasher=_hasher)
+
 
 class SupervisorState(AdminState):
     """Estado isolado para gerenciar credenciamento e presença."""

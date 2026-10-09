@@ -1,6 +1,8 @@
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
 from projeto_web.state.auth_state import AuthState
+from projeto_web.state.admin_state import AdminState
+from projeto_web.state.supervisor_state import SupervisorState
 from projeto_web.styles.theme import *
 
 from projeto_web.views.components.badge_card import cartao_identificacao_digital
@@ -138,6 +140,7 @@ def logged_in_hub() -> rx.Component:
                             align="center",
                         ),
                         value="admin",
+                        on_click=AdminState.carregar_painel_admin,
                     ),
                     rx.fragment(),
                 ),
@@ -151,6 +154,7 @@ def logged_in_hub() -> rx.Component:
                             align="center",
                         ),
                         value="presenca",
+                        on_click=SupervisorState.carregar_painel_supervisor,
                     ),
                     rx.fragment(),
                 ),

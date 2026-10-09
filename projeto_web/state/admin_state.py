@@ -4,6 +4,14 @@ from datetime import datetime
 from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
 from projeto_web.controllers.evento_controller import EventoController
 from projeto_web.state.auth_state import AuthState
+from projeto_web.core.security import PBKDF2PasswordHasher
+from projeto_web.repositories.sqlite_usuario import SQLiteUsuarioRepository
+from projeto_web.controllers.usuario_controller import UsuarioController
+
+_hasher = PBKDF2PasswordHasher()
+_repo = SQLiteUsuarioRepository()
+_usuario_controller = UsuarioController(repository=_repo, hasher=_hasher)
+
 
 class AdminState(AuthState):
     """Estado isolado para gerenciar o Painel Administrativo, Atividades e Crachás."""
@@ -65,6 +73,7 @@ class AdminState(AuthState):
         self.edit_ativ_descricao = val
     def carregar_painel_admin(self):
         """Carrega e filtra a lista de inscritos e calcula métricas para o admin."""
+        self.carregar_atividades_admin()
         usuarios = _usuario_controller.listar_inscritos(self.admin_filtro_busca)
         self.admin_inscritos = [
             {

@@ -18,6 +18,7 @@ app = rx.App(
         rx.html('<link rel="icon" type="image/x-icon" href="/favicon.ico"/>'),
         rx.html('<link rel="icon" type="image/png" href="/favicon.png"/>'),
         rx.html('<link rel="apple-touch-icon" href="/favicon.png"/>'),
+        rx.html('<style>a[href*="reflex.dev"] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }</style>'),
     ],
 )
 

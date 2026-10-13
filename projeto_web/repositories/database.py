@@ -30,6 +30,16 @@ def _exec_migration(engine_instance):
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN email_confirmado BOOLEAN DEFAULT 0;")
                 if "codigo_confirmacao" not in cols:
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_confirmacao VARCHAR;")
+                if "codigo_confirmacao_hash" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_confirmacao_hash VARCHAR;")
+                if "codigo_expira_em" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_expira_em TIMESTAMP;")
+                if "codigo_tentativas" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_tentativas INTEGER DEFAULT 0;")
+                if "codigo_enviado_em" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN codigo_enviado_em TIMESTAMP;")
+                if "email_confirmado_em" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN email_confirmado_em TIMESTAMP;")
         except Exception:
             pass
 

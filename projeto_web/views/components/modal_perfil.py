@@ -82,15 +82,7 @@ def modal_meu_perfil() -> rx.Component:
                                 ),
                                 value="senha",
                             ),
-                            rx.tabs.trigger(
-                                rx.hstack(
-                                    rx.icon(tag="mail-check", size=15),
-                                    rx.text("Confirmação de E-mail", size="2"),
-                                    spacing="1",
-                                    align="center",
-                                ),
-                                value="email",
-                            ),
+
                             
                             size="2",
                         ),
@@ -237,127 +229,6 @@ def modal_meu_perfil() -> rx.Component:
                             value="senha",
                             padding_top="1rem",
                         ),
-                        # Aba 3: Confirmação de E-mail com Aviso Anti-Spam
-                        rx.tabs.content(
-                            rx.vstack(
-                                rx.cond(
-                                    AuthState.usuario_logado_email_confirmado,
-                                    rx.card(
-                                        rx.vstack(
-                                            rx.hstack(
-                                                rx.icon(tag="shield-check", size=24, color="#10b981"),
-                                                rx.badge("E-MAIL CONFIRMADO E AUTENTICADO", color_scheme="green", variant="solid", size="2"),
-                                                spacing="2",
-                                                align="center",
-                                            ),
-                                            rx.text(
-                                                f"O endereço {AuthState.user_email} está verificado com sucesso no sistema do IV EFAC 2026.",
-                                                size="2",
-                                                color="white",
-                                            ),
-                                            rx.text(
-                                                "✅ Submissão de trabalhos científicos liberada nos Anais do evento.",
-                                                size="2",
-                                                color="#34d399",
-                                            ),
-                                            spacing="2",
-                                            align="start",
-                                        ),
-                                        background="rgba(6, 78, 59, 0.4)",
-                                        border="1px solid rgba(16, 185, 129, 0.4)",
-                                        width="100%",
-                                    ),
-                                    rx.vstack(
-                                        rx.badge("Confirmação de E-mail Pendente", color_scheme="amber", variant="solid", size="2"),
-                                        rx.text(
-                                            f"Para enviar resumos e receber comunicados oficiais, confirme seu e-mail cadastrado ({AuthState.user_email}).",
-                                            size="2",
-                                            color="#CBD5E1",
-                                        ),
-                                        # Box de Orientação Amigável Anti-Lixo/Spam
-                                        rx.box(
-                                            rx.vstack(
-                                                rx.hstack(
-                                                    rx.icon(tag="alert-triangle", size=18, color="#f59e0b"),
-                                                    rx.text("Atenção sobre sua Caixa de Entrada:", size="2", weight="bold", color="#fbbf24"),
-                                                    spacing="2",
-                                                    align="center",
-                                                ),
-                                                rx.text(
-                                                    "Ao receber a mensagem de confirmação ou notificações sobre seus artigos, verifique sempre a pasta de SPAM ou LIXO ELETRÔNICO do seu e-mail.",
-                                                    size="1",
-                                                    color="white",
-                                                ),
-                                                rx.text(
-                                                    "🛡️ Recomendação de Proteção: Adicione o remetente oficial aos seus contatos e marque como 'Não é Spam' para garantir o recebimento dos pareceres da Comissão Científica.",
-                                                    size="1",
-                                                    color="#E2E8F0",
-                                                ),
-                                                spacing="1",
-                                                align="start",
-                                            ),
-                                            padding="0.85rem 1rem",
-                                            border_radius="10px",
-                                            background="rgba(120, 53, 15, 0.35)",
-                                            border="1px solid rgba(245, 158, 11, 0.4)",
-                                            width="100%",
-                                        ),
-                                        rx.hstack(
-                                            rx.button(
-                                                rx.hstack(
-                                                    rx.icon(tag="send", size=15),
-                                                    rx.text("Solicitar Código de Confirmação"),
-                                                    spacing="1",
-                                                    align="center",
-                                                ),
-                                                size="2",
-                                                variant="outline",
-                                                color_scheme="cyan",
-                                                on_click=AuthState.solicitar_codigo_email,
-                                            ),
-                                            rx.button(
-                                                rx.hstack(
-                                                    rx.icon(tag="check-circle", size=15),
-                                                    rx.text("Confirmar E-mail Agora"),
-                                                    spacing="1",
-                                                    align="center",
-                                                ),
-                                                size="2",
-                                                color_scheme="green",
-                                                on_click=AuthState.confirmar_email_direto,
-                                            ),
-                                            spacing="2",
-                                            wrap="wrap",
-                                            width="100%",
-                                        ),
-                                        # Campo para código de confirmação
-                                        rx.hstack(
-                                            rx.input(
-                                                placeholder="Digite o código de 6 dígitos...",
-                                                value=AuthState.codigo_email_input,
-                                                on_change=AuthState.set_codigo_email,
-                                                size="2",
-                                                flex="1",
-                                            ),
-                                            rx.button(
-                                                "Validar Código",
-                                                size="2",
-                                                color_scheme="cyan",
-                                                on_click=AuthState.confirmar_email_codigo,
-                                            ),
-                                            width="100%",
-                                        ),
-                                        spacing="3",
-                                        width="100%",
-                                    ),
-                                ),
-                                spacing="3",
-                                width="100%",
-                            ),
-                            value="email",
-                            padding_top="1rem",
-                        ),
-                        
                         default_value="dados",
                         width="100%",
                     ),

@@ -144,100 +144,30 @@ def lista_inscricoes_disponiveis() -> rx.Component:
 
 
 def alerta_certificado_email() -> rx.Component:
-    """Aviso proativo e acolhedor para validação de e-mail e emissão de certificados oficiais."""
-    return rx.cond(
-        AuthState.email_confirmado,
-        # E-mail Confirmado: Selo de Homologação
-        rx.card(
-            rx.hstack(
-                rx.icon(tag="award", size=22, color="#34d399"),
-                rx.vstack(
-                    rx.heading("Certificado Oficial Homologado (Carga Horária: 30 Horas)", size="3", weight="bold", color="#34d399"),
-                    rx.text(
-                        "Seu e-mail está verificado! A emissão digital com código de autenticidade será liberada automaticamente após a confirmação de presença no evento.",
-                        size="1",
-                        color="var(--gray-11)",
-                        style=STYLE_TEXT_RESPONSIVE,
-                    ),
-                    spacing="0",
-                    align="start",
-                ),
-                align="center",
-                spacing="3",
-                width="100%",
-            ),
-            padding="1rem 1.25rem",
-            background="rgba(52, 211, 153, 0.08)",
-            border="1px solid rgba(52, 211, 153, 0.3)",
-            border_radius="12px",
-            width="100%",
-        ),
-        # E-mail Pendente: Aviso com instruções anti-spam
-        rx.card(
+    """Card informativo oficial para emissão de certificados oficiais."""
+    return rx.card(
+        rx.hstack(
+            rx.icon(tag="award", size=22, color="#34d399"),
             rx.vstack(
-                rx.hstack(
-                    rx.icon(tag="mail-warning", size=22, color="#F59E0B"),
-                    rx.vstack(
-                        rx.heading("Confirmação de E-mail Obrigatória para Certificados (30h)", size="3", weight="bold", color="#F59E0B"),
-                        rx.text(
-                            "Para receber o certificado oficial registrado pela Universidade Federal do Cariri (UFCA), valide seu endereço de e-mail institucional ou pessoal.",
-                            size="1",
-                            color="var(--gray-11)",
-                            style=STYLE_TEXT_RESPONSIVE,
-                        ),
-                        spacing="0",
-                        align="start",
-                    ),
-                    spacing="3",
-                    align="center",
-                    width="100%",
-                ),
-                rx.callout(
-                    "⚠️ Dica Anti-Spam: O código de confirmação pode cair na pasta de Spam ou Lixo Eletrônico. Marque o remetente como confiável.",
-                    icon="shield-alert",
-                    color_scheme="amber",
-                    variant="soft",
+                rx.heading("Certificado Oficial Homologado (Carga Horária: 30 Horas)", size="3", weight="bold", color="#34d399"),
+                rx.text(
+                    "Cadastro ativo e homologado! A emissão digital com código de autenticidade será liberada automaticamente após a confirmação de presença no evento.",
                     size="1",
-                    width="100%",
+                    color="var(--gray-11)",
+                    style=STYLE_TEXT_RESPONSIVE,
                 ),
-                rx.hstack(
-                    rx.button(
-                        rx.hstack(
-                            rx.icon(tag="mail-check", size=14),
-                            rx.text("Inserir Código de Confirmação"),
-                            spacing="1",
-                            align="center",
-                        ),
-                        on_click=AuthState.abrir_modal_perfil,
-                        color_scheme="amber",
-                        size="2",
-                        style=STYLE_BUTTON_CHIP,
-                    ),
-                    rx.button(
-                        rx.hstack(
-                            rx.icon(tag="check", size=14),
-                            rx.text("Verificação Direta"),
-                            spacing="1",
-                            align="center",
-                        ),
-                        on_click=AuthState.confirmar_email_direto,
-                        color_scheme="green",
-                        variant="surface",
-                        size="2",
-                        style=STYLE_BUTTON_CHIP,
-                    ),
-                    spacing="2",
-                    wrap="wrap",
-                ),
-                spacing="2",
-                width="100%",
+                spacing="0",
+                align="start",
             ),
-            padding="1rem 1.25rem",
-            background="rgba(245, 158, 11, 0.08)",
-            border="1px solid rgba(245, 158, 11, 0.35)",
-            border_radius="12px",
+            align="center",
+            spacing="3",
             width="100%",
         ),
+        padding="1rem 1.25rem",
+        background="rgba(52, 211, 153, 0.08)",
+        border="1px solid rgba(52, 211, 153, 0.3)",
+        border_radius="12px",
+        width="100%",
     )
 
 

@@ -192,15 +192,6 @@ def templates_pos_inscricao() -> rx.Component:
                     size="2",
                     cursor="pointer",
                 ),
-                rx.button(
-                    rx.icon(tag="check", size=16),
-                    "Verificação Direta Instantânea",
-                    on_click=AuthState.confirmar_email_direto,
-                    variant="soft",
-                    color_scheme="green",
-                    size="2",
-                    cursor="pointer",
-                ),
                 spacing="3",
                 wrap="wrap",
             ),
@@ -215,11 +206,7 @@ def templates_pos_inscricao() -> rx.Component:
     )
 
     return rx.box(
-        rx.cond(
-            AuthState.email_confirmado,
-            conteudo_liberado,
-            aviso_bloqueio_email,
-        ),
+        conteudo_liberado,
         width="100%",
     )
 

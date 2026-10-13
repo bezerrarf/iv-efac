@@ -23,6 +23,11 @@ class Usuario(SQLModel, table=True):
     role: str = Field(default="participante", index=True)  # 'participante', 'supervisor', 'admin'
     foto_url: Optional[str] = Field(default=None)
     presenca_confirmada: bool = Field(default=False, index=True)
-    email_confirmado: bool = Field(default=False, index=True)
+    email_confirmado: bool = Field(default=True, index=True)
     codigo_confirmacao: Optional[str] = Field(default=None)
+    codigo_confirmacao_hash: Optional[str] = Field(default=None)
+    codigo_expira_em: Optional[datetime] = Field(default=None)
+    codigo_tentativas: int = Field(default=0)
+    codigo_enviado_em: Optional[datetime] = Field(default=None)
+    email_confirmado_em: Optional[datetime] = Field(default=None)
     criado_em: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

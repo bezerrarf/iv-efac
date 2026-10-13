@@ -22,8 +22,8 @@ class AuthState(rx.State):
     user_role: str = "participante"  # 'participante', 'supervisor', 'admin'
     user_foto_url: str = ""
     user_presenca: bool = False
-    usuario_logado_email_confirmado: bool = False
-    email_confirmado: bool = False
+    usuario_logado_email_confirmado: bool = True
+    email_confirmado: bool = True
     is_admin: bool = False
     is_supervisor: bool = False
     modal_perfil_aberto: bool = False
@@ -33,9 +33,10 @@ class AuthState(rx.State):
     minha_senha_atual_input: str = ""
     minha_nova_senha_input: str = ""
     minha_nova_senha_confirm: str = ""
-    modal_confirmacao_email_aberto: bool = False
-    codigo_email_input: str = ""
-    codigo_email_enviado_preview: str = "" 
+
+    # Controle de aviso de redefinição de senha com Prof. Otoniel
+    mostrar_aviso_recuperacao_senha: bool = False
+
     cad_nome: str = ""
     cad_email: str = ""
     cad_senha: str = ""
@@ -48,6 +49,7 @@ class AuthState(rx.State):
     mostrar_senha_cad: bool = False
     feedback_msg: str = ""
     feedback_tipo: str = ""  # 'success', 'error', 'info', ''
+
     def set_cad_nome(self, val: str):
         self.cad_nome = val
     def set_cad_email(self, val: str):
@@ -67,6 +69,13 @@ class AuthState(rx.State):
     def limpar_feedback(self):
         self.feedback_msg = ""
         self.feedback_tipo = ""
+
+    def toggle_aviso_recuperacao_senha(self):
+        self.mostrar_aviso_recuperacao_senha = not self.mostrar_aviso_recuperacao_senha
+
+    def fechar_aviso_recuperacao_senha(self):
+        self.mostrar_aviso_recuperacao_senha = False
+
     def realizar_cadastro(self):
         """Dispara caso de uso de cadastro no Controller."""
         self.limpar_feedback()
@@ -96,8 +105,8 @@ class AuthState(rx.State):
         self.user_role = getattr(usuario, "role", "participante")
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
-        self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
-        self.email_confirmado = self.usuario_logado_email_confirmado
+        self.usuario_logado_email_confirmado = True
+        self.email_confirmado = True
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
 
@@ -109,8 +118,9 @@ class AuthState(rx.State):
         self.cad_email = ""
         self.cad_senha = ""
         self.cad_instituicao = ""
+
     def realizar_login(self):
-        """Dispara caso de uso de autenticação no Controller."""
+        """Dispara caso de uso de autenticação no Controller. Se falhar, exibe aviso institucional."""
         self.limpar_feedback()
         res = _usuario_controller.autenticar(
             email=self.login_email,
@@ -120,6 +130,8 @@ class AuthState(rx.State):
         if not res.sucesso or res.dado is None:
             self.feedback_msg = res.mensagem
             self.feedback_tipo = "error"
+            # Ativa imediatamente a instrução profissional para troca de senha via Prof. Otoniel
+            self.mostrar_aviso_recuperacao_senha = True
             return
 
         usuario = res.dado
@@ -134,18 +146,18 @@ class AuthState(rx.State):
         self.user_role = getattr(usuario, "role", "participante")
         self.user_foto_url = getattr(usuario, "foto_url", "") or ""
         self.user_presenca = bool(getattr(usuario, "presenca_confirmada", False))
-        self.usuario_logado_email_confirmado = bool(getattr(usuario, "email_confirmado", False))
-        self.email_confirmado = self.usuario_logado_email_confirmado
+        self.usuario_logado_email_confirmado = True
+        self.email_confirmado = True
         self.is_admin = (self.user_role == "admin")
         self.is_supervisor = (self.user_role in ["supervisor", "admin"])
-
-        # Sincronização dos painéis ocorre sob demanda na abertura dos componentes
+        self.mostrar_aviso_recuperacao_senha = False
 
         self.feedback_msg = f"Bem-vindo(a) de volta, {usuario.nome}!"
         self.feedback_tipo = "success"
 
         self.login_email = ""
         self.login_senha = ""
+
     async def handle_upload_foto(self, files: List[rx.UploadFile]):
         """Recebe o arquivo de imagem enviado do computador ou dispositivo móvel (celular/tablet)."""
         if not self.is_logged_in or not self.user_id:
@@ -186,6 +198,7 @@ class AuthState(rx.State):
                 self.feedback_msg = res.mensagem
                 self.feedback_tipo = "error"
                 return
+
     def logout(self):
         """Encerra a sessão do usuário."""
         self.is_logged_in = False
@@ -196,10 +209,10 @@ class AuthState(rx.State):
         self.user_role = "participante"
         self.user_foto_url = ""
         self.user_presenca = False
-        self.usuario_logado_email_confirmado = False
-        self.email_confirmado = False
+        self.usuario_logado_email_confirmado = True
+        self.email_confirmado = True
         self.modal_perfil_aberto = False
-        self.modal_confirmacao_email_aberto = False
+        self.mostrar_aviso_recuperacao_senha = False
         self.is_admin = False
         self.is_supervisor = False
         if hasattr(self, "admin_inscritos"):
@@ -210,6 +223,7 @@ class AuthState(rx.State):
             self.is_editing_atividade = False
         self.feedback_msg = "Sessão encerrada com sucesso."
         self.feedback_tipo = "info"
+
     def abrir_modal_perfil(self):
         """Abre o modal de edição de perfil e sincroniza os campos atuais."""
         if not self.is_logged_in:
@@ -221,14 +235,17 @@ class AuthState(rx.State):
         self.minha_nova_senha_input = ""
         self.minha_nova_senha_confirm = ""
         self.modal_perfil_aberto = True
+
     def fechar_modal_perfil(self):
         self.modal_perfil_aberto = False
+
     def set_perfil_nome(self, val: str):
         self.perfil_nome_input = val
     def set_perfil_instituicao(self, val: str):
         self.perfil_instituicao_input = val
     def set_perfil_modalidade(self, val: str):
         self.perfil_modalidade_input = val
+
     def salvar_meu_perfil(self):
         """Salva as alterações de perfil no banco de dados."""
         if not self.is_logged_in or not self.user_id:
@@ -246,12 +263,14 @@ class AuthState(rx.State):
             self.user_instituicao = res.dado.instituicao
             self.user_modalidade = res.dado.modalidade
             self.modal_perfil_aberto = False
+
     def set_minha_senha_atual(self, val: str):
         self.minha_senha_atual_input = val
     def set_minha_nova_senha(self, val: str):
         self.minha_nova_senha_input = val
     def set_minha_nova_senha_confirm(self, val: str):
         self.minha_nova_senha_confirm = val
+
     def salvar_minha_nova_senha(self):
         """Altera com segurança a senha do usuário logado (participante ou admin)."""
         if not self.is_logged_in or not self.user_id:
@@ -268,45 +287,6 @@ class AuthState(rx.State):
             self.minha_senha_atual_input = ""
             self.minha_nova_senha_input = ""
             self.minha_nova_senha_confirm = ""
-    def abrir_confirmacao_email(self):
-        self.modal_confirmacao_email_aberto = True
-        self.codigo_email_input = ""
-    def fechar_confirmacao_email(self):
-        self.modal_confirmacao_email_aberto = False
-    def set_codigo_email(self, val: str):
-        self.codigo_email_input = val
-    def solicitar_codigo_email(self):
-        """Gera um código de confirmação com orientações anti-spam."""
-        if not self.is_logged_in or not self.user_id:
-            return
-        res = _usuario_controller.gerar_codigo_confirmacao(self.user_id)
-        self.feedback_msg = res.mensagem
-        self.feedback_tipo = "success" if res.sucesso else "error"
-        if res.sucesso and res.dado:
-            self.codigo_email_enviado_preview = res.dado
-    def confirmar_email_codigo(self):
-        """Valida o código digitado pelo participante e libera as submissões."""
-        if not self.is_logged_in or not self.user_id:
-            return
-        res = _usuario_controller.confirmar_email(self.user_id, self.codigo_email_input)
-        self.feedback_msg = res.mensagem
-        self.feedback_tipo = "success" if res.sucesso else "error"
-        if res.sucesso:
-            self.usuario_logado_email_confirmado = True
-            self.email_confirmado = True
-            self.modal_confirmacao_email_aberto = False
-    def confirmar_email_direto(self):
-        """Confirmação direta de e-mail com 1 clique."""
-        if not self.is_logged_in or not self.user_id:
-            return
-        res = _usuario_controller.confirmar_email(self.user_id)
-        self.feedback_msg = res.mensagem
-        self.feedback_tipo = "success" if res.sucesso else "error"
-        if res.sucesso:
-            self.usuario_logado_email_confirmado = True
-            self.email_confirmado = True
-            self.modal_confirmacao_email_aberto = False
-
 
     def toggle_mostrar_senha_login(self):
         self.mostrar_senha_login = not self.mostrar_senha_login

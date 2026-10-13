@@ -1,4 +1,4 @@
-"""Testes unitários para Edição de Perfil, Troca de Senha, Confirmação de E-mail e Emissão de Carteirinha PNG."""
+"""Testes unitários para Edição de Perfil, Troca de Senha e Emissão de Carteirinha PNG."""
 
 import pytest
 from sqlmodel import create_engine, SQLModel, Session
@@ -95,32 +95,24 @@ def test_alterar_minha_senha_sucesso_e_falha(controller_teste):
     assert login_ok.sucesso
 
 
-def test_confirmacao_email_fluxo(controller_teste):
-    # 1. Cadastra usuário com email inicialmente não confirmado
+def test_autenticacao_com_falha_instrui_recuperacao(controller_teste):
+    # Cadastra usuário
     cad = controller_teste.cadastrar(
-        nome="Participante Artigo",
-        email="artigo@ufca.edu.br",
-        senha="Senha123!",
+        nome="Participante Teste",
+        email="participante@ufca.edu.br",
+        senha="MinhaSenha123!",
     )
     assert cad.sucesso
-    u_id = cad.dado.id
-    assert cad.dado.email_confirmado is False
 
-    # 2. Gera código de 6 dígitos
-    cod_res = controller_teste.gerar_codigo_confirmacao(u_id)
-    assert cod_res.sucesso
-    assert len(cod_res.dado) == 6
-    codigo_gerado = cod_res.dado
+    # 1. Erro de e-mail não encontrado
+    err_email = controller_teste.autenticar("email_inexistente@ufca.edu.br", "MinhaSenha123!")
+    assert not err_email.sucesso
+    assert "Coordenação" in err_email.mensagem
 
-    # 3. Tentativa com código incorreto
-    err_conf = controller_teste.confirmar_email(u_id, codigo="000000")
-    assert not err_conf.sucesso
-    assert "Código de confirmação incorreto" in err_conf.mensagem
-
-    # 4. Confirmação com o código correto
-    ok_conf = controller_teste.confirmar_email(u_id, codigo=codigo_gerado)
-    assert ok_conf.sucesso
-    assert ok_conf.dado.email_confirmado is True
+    # 2. Erro de senha incorreta
+    err_senha = controller_teste.autenticar("participante@ufca.edu.br", "SenhaErrada999!")
+    assert not err_senha.sucesso
+    assert "redefinição de senha à Coordenação" in err_senha.mensagem
 
 
 def test_gerador_carteirinha_png():

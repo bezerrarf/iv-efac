@@ -1,6 +1,7 @@
 """Controller para orquestração de regras de negócio de usuários e participantes (C de MVC)."""
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Generic, List, Optional, TypeVar
 from projeto_web.core.config import CAPACIDADE_MAXIMA_EVENTO
 from projeto_web.core.security import PasswordHasherProtocol
@@ -77,8 +78,6 @@ class UsuarioController:
                 mensagem="Este e-mail já está cadastrado no evento.",
             )
 
-        import secrets
-        codigo_inicial = f"{secrets.randbelow(900000) + 100000}"
         novo_usuario = Usuario(
             nome=nome_clean,
             email=email_clean,
@@ -87,8 +86,7 @@ class UsuarioController:
             area=area,
             senha_hash=self._hasher.hash(senha),
             role="participante",
-            email_confirmado=False,
-            codigo_confirmacao=codigo_inicial,
+            email_confirmado=True,
         )
 
         salvo = self._repository.save(novo_usuario)
@@ -111,13 +109,13 @@ class UsuarioController:
         if usuario is None:
             return ControllerResult(
                 sucesso=False,
-                mensagem="Usuário não encontrado. Verifique seu e-mail.",
+                mensagem="Usuário não encontrado. Verifique seu e-mail ou solicite a troca de senha à Coordenação.",
             )
 
         if not self._hasher.verify(senha, usuario.senha_hash):
             return ControllerResult(
                 sucesso=False,
-                mensagem="Senha incorreta. Tente novamente.",
+                mensagem="Senha incorreta. Verifique os dados digitados ou solicite a redefinição de senha à Coordenação.",
             )
 
         return ControllerResult(
@@ -240,7 +238,6 @@ class UsuarioController:
             "supervisores": supervisores,
         }
 
-
     def atualizar_perfil(
         self,
         user_id: int,
@@ -312,43 +309,5 @@ class UsuarioController:
         return ControllerResult(
             sucesso=True,
             mensagem="Sua senha foi alterada com sucesso!",
-            dado=atualizado,
-        )
-
-    def gerar_codigo_confirmacao(self, user_id: int) -> ControllerResult[str]:
-        """Gera um novo código de 6 dígitos para confirmação de e-mail."""
-        import secrets
-        usuario = self._repository.find_by_id(user_id)
-        if not usuario:
-            return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
-
-        codigo = f"{secrets.randbelow(900000) + 100000}"
-        usuario.codigo_confirmacao = codigo
-        self._repository.save(usuario)
-        return ControllerResult(
-            sucesso=True,
-            mensagem="Código de confirmação gerado e enviado para o seu e-mail! (Verifique a caixa de entrada e a pasta de Spam/Lixeira).",
-            dado=codigo,
-        )
-
-    def confirmar_email(self, user_id: int, codigo: Optional[str] = None) -> ControllerResult[Usuario]:
-        """Confirma o e-mail do participante via código ou validação direta."""
-        usuario = self._repository.find_by_id(user_id)
-        if not usuario:
-            return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
-
-        if codigo and usuario.codigo_confirmacao:
-            if codigo.strip() != usuario.codigo_confirmacao.strip():
-                return ControllerResult(
-                    sucesso=False,
-                    mensagem="Código de confirmação incorreto. Verifique os dígitos informados ou solicite um novo código.",
-                )
-
-        usuario.email_confirmado = True
-        usuario.codigo_confirmacao = None
-        atualizado = self._repository.save(usuario)
-        return ControllerResult(
-            sucesso=True,
-            mensagem="E-mail confirmado com sucesso! Submissão de trabalhos liberada.",
             dado=atualizado,
         )

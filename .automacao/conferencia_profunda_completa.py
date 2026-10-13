@@ -52,7 +52,7 @@ async def run_full_deep_audit():
         print("   ✓ HUD de Contagem Regressiva (11/11 às 08h00) detectado com sucesso!")
 
         # 1.2 Alternar para o Carrossel dos Cientistas
-        btn_alternar_cientistas = await page.wait_for_selector("button:has-text('Ver Mensagens Inspiradoras dos Cientistas')")
+        btn_alternar_cientistas = await page.wait_for_selector("button:has-text('Reflexões Cientificas')")
         await btn_alternar_cientistas.click()
         await page.wait_for_timeout(1000)
 

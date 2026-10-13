@@ -41,9 +41,11 @@ class AuthState(rx.State):
     cad_senha: str = ""
     cad_instituicao: str = ""
     cad_modalidade: str = "Presencial"
-    cad_area: str = "Ciência de Dados / IA"
+    cad_area: str = "Astrofísica"
     login_email: str = ""
     login_senha: str = ""
+    mostrar_senha_login: bool = False
+    mostrar_senha_cad: bool = False
     feedback_msg: str = ""
     feedback_tipo: str = ""  # 'success', 'error', 'info', ''
     def set_cad_nome(self, val: str):
@@ -305,3 +307,26 @@ class AuthState(rx.State):
             self.email_confirmado = True
             self.modal_confirmacao_email_aberto = False
 
+
+    def toggle_mostrar_senha_login(self):
+        self.mostrar_senha_login = not self.mostrar_senha_login
+
+    def toggle_mostrar_senha_cad(self):
+        self.mostrar_senha_cad = not self.mostrar_senha_cad
+
+    def salvar_edicao_nome_usuario(self, novo_nome: str):
+        if not self.is_logged_in or not self.user_id:
+            return
+        if not novo_nome.strip():
+            self.feedback_msg = "O nome não pode ser vazio."
+            self.feedback_tipo = "error"
+            return
+        res = _usuario_controller.atualizar_perfil(self.user_id, nome=novo_nome.strip())
+        if res.sucesso:
+            self.user_nome = novo_nome.strip()
+            self.perfil_nome_input = novo_nome.strip()
+            self.feedback_msg = "Nome atualizado com sucesso!"
+            self.feedback_tipo = "success"
+        else:
+            self.feedback_msg = res.mensagem
+            self.feedback_tipo = "error"

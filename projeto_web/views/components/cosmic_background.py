@@ -1,6 +1,6 @@
 """Plano de Fundo Vetorial Cósmico Responsivo (UI/UX Pro Max).
 Substitui a malha quântica JS por um container SVG adaptável de altíssimo desempenho.
-Utiliza a arte oficial do Cariri Cósmico (Chapada do Araripe & Astrofísica).
+Utiliza a arte oficial do Cariri Cósmico (Chapada do Araripe & Astrofísica) com visibilidade ampliada.
 """
 
 import reflex as rx
@@ -8,7 +8,7 @@ import reflex as rx
 
 def cosmic_background() -> rx.Component:
     """Fundo em camada fixa com escala vetorial preservada (preserveAspectRatio='xMidYMid slice')
-    e malha de degradê atmosférico para contraste AAA em qualquer resolução.
+    e vinhetas suaves permitindo visualização nítida e vibrante do céu estrelado e da Chapada do Araripe.
     """
     return rx.box(
         rx.html(
@@ -21,25 +21,25 @@ def cosmic_background() -> rx.Component:
                     style="position: absolute; inset: 0; width: 100%; height: 100%;"
                 >
                     <defs>
-                        <!-- Degradê atmosférico cósmico superior e inferior para legibilidade AAA -->
+                        <!-- Degradê atmosférico cósmico sutil para garantir legibilidade dos textos sem encobrir a arte -->
                         <linearGradient id="cosmic-vignette" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#060814" stop-opacity="0.85" />
-                            <stop offset="25%" stop-color="#060814" stop-opacity="0.70" />
-                            <stop offset="65%" stop-color="#060814" stop-opacity="0.88" />
-                            <stop offset="100%" stop-color="#060814" stop-opacity="0.98" />
+                            <stop offset="0%" stop-color="#060814" stop-opacity="0.35" />
+                            <stop offset="30%" stop-color="#060814" stop-opacity="0.15" />
+                            <stop offset="70%" stop-color="#060814" stop-opacity="0.25" />
+                            <stop offset="100%" stop-color="#060814" stop-opacity="0.55" />
                         </linearGradient>
 
-                        <!-- Nebulosa Ciano Difusa (Acento visual suave) -->
+                        <!-- Nebulosa Ciano Difusa Suave -->
                         <radialGradient id="nebula-cyan" cx="20%" cy="25%" r="45%">
-                            <stop offset="0%" stop-color="#00ADB5" stop-opacity="0.18" />
-                            <stop offset="60%" stop-color="#00ADB5" stop-opacity="0.03" />
+                            <stop offset="0%" stop-color="#00ADB5" stop-opacity="0.20" />
+                            <stop offset="60%" stop-color="#00ADB5" stop-opacity="0.04" />
                             <stop offset="100%" stop-color="#060814" stop-opacity="0" />
                         </radialGradient>
 
-                        <!-- Nebulosa Índigo Difusa (Profundidade quântica) -->
+                        <!-- Nebulosa Índigo Difusa Suave -->
                         <radialGradient id="nebula-indigo" cx="80%" cy="40%" r="50%">
-                            <stop offset="0%" stop-color="#6366F1" stop-opacity="0.15" />
-                            <stop offset="65%" stop-color="#6366F1" stop-opacity="0.02" />
+                            <stop offset="0%" stop-color="#6366F1" stop-opacity="0.18" />
+                            <stop offset="65%" stop-color="#6366F1" stop-opacity="0.03" />
                             <stop offset="100%" stop-color="#060814" stop-opacity="0" />
                         </radialGradient>
                     </defs>
@@ -54,7 +54,7 @@ def cosmic_background() -> rx.Component:
                         preserveAspectRatio="xMidYMid slice"
                     />
 
-                    <!-- Camadas de Amortecimento Atmosférico -->
+                    <!-- Camadas de Amortecimento Atmosférico Leve -->
                     <rect width="100%" height="100%" fill="url(#nebula-cyan)" />
                     <rect width="100%" height="100%" fill="url(#nebula-indigo)" />
                     <rect width="100%" height="100%" fill="url(#cosmic-vignette)" />

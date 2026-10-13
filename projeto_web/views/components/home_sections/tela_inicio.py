@@ -4,7 +4,6 @@ from projeto_web.state.evento_state import EventoState
 from projeto_web.state.navigation_state import NavigationState
 from projeto_web.controllers.evento_controller import EventoController, EixoTematico, Palestrante, Atividade
 from projeto_web.styles.theme import *
-from projeto_web.views.components.footer import parceiro_chip
 
 def logo_orbital_hpc() -> rx.Component:
     """Logotipo orbital de alta tecnologia com efeito de lente gravitacional cósmica."""
@@ -103,7 +102,7 @@ def display_hud_contagem() -> rx.Component:
                 rx.text(
                     label,
                     size="1",
-                    color=rx.color_mode_cond(light="#64748b", dark="var(--gray-9)"),
+                    color=rx.color_mode_cond(light="#CBD5E1", dark="#CBD5E1"),
                     text_transform="uppercase",
                     letter_spacing="1px",
                 ),
@@ -152,7 +151,7 @@ def display_hud_contagem() -> rx.Component:
                 rx.button(
                     rx.hstack(
                         rx.icon(tag="sparkles", size=14, color="#38bdf8"),
-                        rx.text("Ver Mensagens Inspiradoras dos Cientistas", size="1"),
+                        rx.text("Reflexões Cientificas", size="1"),
                         spacing="1",
                         align="center",
                     ),
@@ -168,7 +167,7 @@ def display_hud_contagem() -> rx.Component:
                 margin_top="0.3rem",
             ),
             spacing="2",
-            align="start",
+            align=rx.breakpoints(initial="center", md="start"),
         ),
         id="hud-countdown-container",
     )
@@ -207,12 +206,12 @@ def display_hud_contagem() -> rx.Component:
                 "Aproveite Cada Momento do IV EFAC 2026!",
                 size="4",
                 weight="bold",
-                color="white",
+                color=COLOR_TEXT_PRIMARY,
             ),
             rx.text(
                 "Abertura oficial realizada às 08h00! Participe ativamente das conferências magnas, apresentações orais e minicursos no Campus Brejo Santo – UFCA.",
                 size="2",
-                color="var(--gray-10)",
+                color="#E2E8F0",
                 line_height="1.5",
             ),
             # Card com Mensagem Inspiradora do Cientista (Carrossel Automático com intervalo de 10s)
@@ -221,7 +220,7 @@ def display_hud_contagem() -> rx.Component:
                     rx.hstack(
                         rx.icon(tag=EventoState.frase_cientista_icone, size=22, color=EventoState.frase_cientista_cor),
                         rx.vstack(
-                            rx.text(EventoState.frase_cientista_autor, size="2", weight="bold", color="white"),
+                            rx.text(EventoState.frase_cientista_autor, size="2", weight="bold", color=COLOR_TEXT_PRIMARY),
                             rx.text(EventoState.frase_cientista_area, size="1", color=EventoState.frase_cientista_cor),
                             spacing="0",
                             align="start",
@@ -234,7 +233,7 @@ def display_hud_contagem() -> rx.Component:
                     rx.text(
                         EventoState.frase_cientista_texto,
                         size="2",
-                        color="var(--gray-11)",
+                        color="#CBD5E1",
                         font_style="italic",
                         line_height="1.6",
                     ),
@@ -255,7 +254,7 @@ def display_hud_contagem() -> rx.Component:
                         rx.text(
                             EventoState.frase_cientista_paginacao,
                             size="1",
-                            color="var(--gray-9)",
+                            color="#CBD5E1",
                         ),
                         rx.button(
                             rx.hstack(
@@ -301,7 +300,7 @@ def display_hud_contagem() -> rx.Component:
                 }
             """),
             spacing="2",
-            align="start",
+            align="center",
         ),
         id="hud-live-container",
     )
@@ -353,8 +352,10 @@ def tela_inicio() -> rx.Component:
     stats = EventoController.STATS
 
     return rx.box(
-        rx.hstack(
-            # Coluna de Texto e Informações Principais
+        rx.grid(
+            # Coluna 1: Textos e Informações Principais
+            # Em tela estreita (initial): 100% centralizado junto do ícone abaixo
+            # Em tela ampla/desktop (md): alinhado à esquerda, ao lado do ícone
             rx.vstack(
                 rx.badge(
                     rx.hstack(
@@ -372,34 +373,38 @@ def tela_inicio() -> rx.Component:
                     color_scheme="cyan",
                     variant="surface",
                     size="2",
-                    padding_x="0.8rem",
+                    padding_x="0.85rem",
                     style=STYLE_BUTTON_CHIP,
+                    align_self=rx.breakpoints(initial="center", md="start"),
                 ),
                 rx.heading(
                     "IV Encontro de Física e Astronomia do Cariri",
                     size=rx.breakpoints(initial="6", sm="7", md="8", lg="9"),
                     weight="bold",
-                    color="white",
-                    line_height="1.15",
-                    style=STYLE_HEADING_RESPONSIVE,
+                    color=COLOR_TEXT_PRIMARY,
+                    line_height="1.2",
+                    text_align=rx.breakpoints(initial="center", md="left"),
+                    width="100%",
                 ),
                 rx.text(
                     "Fronteiras da Física Contemporânea, Formação Científica e Integração Regional",
                     size=rx.breakpoints(initial="3", sm="4"),
                     weight="medium",
                     color=COLOR_CYAN_LIGHT,
-                    style=STYLE_HEADING_RESPONSIVE,
+                    text_align=rx.breakpoints(initial="center", md="left"),
+                    width="100%",
                 ),
                 rx.text(
                     "Convergência de Astrofísica Relativística, Relatividade Geral, "
                     "Computação de Alto Desempenho (HPC) e Ensino de Ciências no interior do Ceará.",
                     size=rx.breakpoints(initial="2", sm="3"),
-                    color="var(--gray-10)",
+                    color="#E2E8F0",
                     line_height="1.6",
-                    max_width="640px",
-                    style=STYLE_TEXT_RESPONSIVE,
+                    text_align=rx.breakpoints(initial="center", md="left"),
+                    width="100%",
+                    max_width=rx.breakpoints(initial="780px", md="680px"),
                 ),
-                # Display HUD de Contagem
+                # Display HUD de Contagem (Centralizado em tela estreita, start no desktop)
                 display_hud_contagem(),
                 # Ações de Alto Impacto
                 rx.hstack(
@@ -416,7 +421,7 @@ def tela_inicio() -> rx.Component:
                             padding_x="1.8rem",
                             font_weight="bold",
                             background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
-                            color="white",
+                            color=COLOR_TEXT_PRIMARY,
                             box_shadow="0 4px 18px rgba(0, 173, 181, 0.4)",
                             _hover={"transform": "translateY(-1px)", "box_shadow": "0 6px 24px rgba(0, 173, 181, 0.55)"},
                             transition="all 0.2s ease",
@@ -424,34 +429,41 @@ def tela_inicio() -> rx.Component:
                         ),
                         href="/inscricao",
                     ),
-                    rx.button(
-                        rx.hstack(
-                            rx.text("Submeter Trabalho"),
-                            rx.icon(tag="file-text", size=16),
-                            spacing="1",
-                            align="center",
+                    rx.link(
+                        rx.button(
+                            rx.hstack(
+                                rx.text("Submeter Trabalho"),
+                                rx.icon(tag="file-text", size=16),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="3",
+                            variant="outline",
+                            color_scheme="cyan",
+                            radius="full",
+                            padding_x="1.6rem",
+                            font_weight="bold",
+                            border="1.5px solid #00ADB5",
+                            color=COLOR_CYAN,
+                            _hover={"background": "rgba(0, 173, 181, 0.15)"},
+                            style=STYLE_BUTTON_CHIP,
                         ),
-                        size="3",
-                        variant="outline",
-                        color_scheme="cyan",
-                        radius="full",
-                        padding_x="1.6rem",
-                        font_weight="bold",
-                        border="1.5px solid #00ADB5",
-                        color=COLOR_CYAN,
-                        _hover={"background": "rgba(0, 173, 181, 0.15)"},
-                        on_click=NavigationState.set_tela("submissoes"),
-                        style=STYLE_BUTTON_CHIP,
+                        href="/login",
                     ),
                     spacing="3",
                     margin_top="0.5rem",
                     wrap="wrap",
+                    justify=rx.breakpoints(initial="center", md="start"),
+                    align="center",
+                    width="100%",
                 ),
-                align="start",
+                align=rx.breakpoints(initial="center", md="start"),
                 spacing="4",
-                max_width="660px",
+                width="100%",
             ),
-            # Coluna de Destaque Orbital + Telemetria HPC
+            # Coluna 2: Ícone Orbital do Evento + Telemetria HPC
+            # No desktop: ao lado do texto (direita)
+            # Em tela estreita: centralizado abaixo do texto
             rx.vstack(
                 logo_orbital_hpc(),
                 # Painel de Telemetria Científica
@@ -460,7 +472,7 @@ def tela_inicio() -> rx.Component:
                         rx.box(
                             rx.vstack(
                                 rx.heading(s["valor"], size="6", weight="bold", color=COLOR_CYAN),
-                                rx.text(s["rotulo"], size="1", color="var(--gray-10)", text_align="center", style=STYLE_TEXT_RESPONSIVE),
+                                rx.text(s["rotulo"], size="1", color="#E2E8F0", text_align="center", style=STYLE_TEXT_RESPONSIVE),
                                 spacing="0",
                                 align="center",
                             ),
@@ -478,20 +490,21 @@ def tela_inicio() -> rx.Component:
                     spacing="3",
                     width="100%",
                     max_width="380px",
-                    margin_top="1rem",
+                    margin_top="0.8rem",
                 ),
                 align="center",
                 spacing="3",
+                width="100%",
             ),
-            justify="between",
-            align="center",
-            spacing="7",
-            wrap="wrap",
+            columns=rx.breakpoints(initial="1", md="2"),
+            spacing=rx.breakpoints(initial="6", md="7", lg="8"),
+            align_items="center",
             width="100%",
-            max_width="1220px",
+            max_width="1280px",
             margin="0 auto",
-            padding_y=rx.breakpoints(initial="1.5rem", md="2rem"),
+            padding_y=rx.breakpoints(initial="1.5rem", md="2.5rem"),
         ),
+        id="inicio",
         width="100%",
     )
 

@@ -23,12 +23,35 @@ def form_login() -> rx.Component:
         ),
         rx.vstack(
             rx.text("Senha", size="2", weight="bold", color="white"),
-            rx.input(
-                placeholder="Sua senha",
-                type="password",
-                value=AuthState.login_senha,
-                on_change=AuthState.set_login_senha,
-                size="3",
+            rx.box(
+                rx.input(
+                    placeholder="Sua senha",
+                    type=rx.cond(AuthState.mostrar_senha_login, "text", "password"),
+                    value=AuthState.login_senha,
+                    on_change=AuthState.set_login_senha,
+                    size="3",
+                    width="100%",
+                    padding_right="2.5rem",
+                ),
+                rx.box(
+                    rx.tooltip(
+                        rx.icon(
+                            tag=rx.cond(AuthState.mostrar_senha_login, "eye-off", "eye"),
+                            size=18,
+                            color="var(--gray-9)",
+                            _hover={"color": COLOR_CYAN},
+                            cursor="pointer",
+                            on_click=AuthState.toggle_mostrar_senha_login,
+                        ),
+                        content=rx.cond(AuthState.mostrar_senha_login, "Ocultar senha", "Ver senha"),
+                    ),
+                    position="absolute",
+                    right="0.75rem",
+                    top="50%",
+                    transform="translateY(-50%)",
+                    z_index="10",
+                ),
+                position="relative",
                 width="100%",
             ),
             spacing="1",

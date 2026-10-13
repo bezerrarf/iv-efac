@@ -68,7 +68,7 @@ class EventoState(SupervisorState):
 
     # --- Painel de Supervisão / Conferência de Presença ---
 
-    # --- Contagem Regressiva & Mensagens Inspiradoras dos Cientistas ---
+    # --- Contagem Regressiva & Reflexões Cientificas ---
     evento_iniciado_preview: bool = False
     frase_cientista_indice: int = 0
 

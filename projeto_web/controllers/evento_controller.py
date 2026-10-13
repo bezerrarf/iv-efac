@@ -21,6 +21,7 @@ class Atividade:
 
 
 @dataclass
+@dataclass
 class Palestrante:
     nome: str
     cargo: str
@@ -28,6 +29,7 @@ class Palestrante:
     especialidade: str
     topico: str = ""
     foto_placeholder: str = ""
+    foto: str = ""
 
 
 @dataclass
@@ -445,6 +447,7 @@ class EventoController:
                 instituicao="ITA (São José dos Campos)",
                 especialidade="Astrofísica de Altas Energias e Matéria Densa",
                 topico="Plenária Dia 1 (11/11 às 18:00) • Convidado Principal",
+                foto="/participantes/cesar_lenzi.webp",
             ),
             Palestrante(
                 nome="Prof. Dr. Ronaldo Vieira Lobato",
@@ -452,6 +455,7 @@ class EventoController:
                 instituicao="CBPF (Rio de Janeiro)",
                 especialidade="Astrofísica de Partículas e Big Data",
                 topico="Conferência Magna Dia 2 (12/11 às 18:00)",
+                foto="/participantes/ronaldo_lobato.webp",
             ),
             Palestrante(
                 nome="Profa. Dra. Eliane Angela Veit",
@@ -459,6 +463,7 @@ class EventoController:
                 instituicao="UFRGS (Porto Alegre)",
                 especialidade="Inovação, Epistemologia e Ensino de Física",
                 topico="Palestra de Abertura (11/11 às 09:30) • Convidada Principal",
+                foto="/participantes/eliane_angela.webp",
             ),
             Palestrante(
                 nome="Prof. Dr. Iarley Lobato",
@@ -466,13 +471,15 @@ class EventoController:
                 instituicao="UFPB (João Pessoa)",
                 especialidade="Astrofísica Teórica e Objetos Compactos",
                 topico="Palestra Convidada (11/11 às 11:00)",
+                foto="/participantes/iarley_lobo.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Jonathan",
+                nome="Prof. Dr. Jonathan Rebouças",
                 cargo="Docente e Pesquisador",
                 instituicao="IFCE (Ceará)",
                 especialidade="Astrofísica e Física Computacional",
                 topico="Palestra Convidada (12/11 às 10:45) • Convidado Regional",
+                foto="/participantes/jonathan_reboucas.webp",
             ),
             Palestrante(
                 nome="Prof. Dr. Célio Rodrigues Muniz",
@@ -480,6 +487,23 @@ class EventoController:
                 instituicao="UECE (Ceará)",
                 especialidade="Gravitação, Cosmologia Quântica e Buracos Negros",
                 topico="Palestra Convidada (12/11 às 11:45) • Convidado Regional",
+                foto="/participantes/celio_muniz.webp",
+            ),
+            Palestrante(
+                nome="Prof. Dr. Marcos Barros",
+                cargo="Docente e Pesquisador",
+                instituicao="Universidade Federal do Cariri (UFCA)",
+                especialidade="Física da Matéria Condensada e Espectroscopia",
+                topico="Mesa Temática • Pesquisa e Inovação Regional",
+                foto="/participantes/marcos_barros.webp",
+            ),
+            Palestrante(
+                nome="Prof. Dr. José Crisanto",
+                cargo="Docente e Pesquisador",
+                instituicao="Universidade Regional do Cariri (URCA)",
+                especialidade="Divulgação Científica e Ensino de Astronomia",
+                topico="Sessão Especial • Interiorização da Ciência",
+                foto="/participantes/jose_crisanto.webp",
             ),
         ]
 

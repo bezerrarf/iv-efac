@@ -3,7 +3,6 @@ from datetime import datetime
 from projeto_web.state.evento_state import EventoState
 from projeto_web.controllers.evento_controller import EventoController, EixoTematico, Palestrante, Atividade
 from projeto_web.styles.theme import *
-from projeto_web.views.components.footer import parceiro_chip
 
 def tela_submissoes() -> rx.Component:
     normas = EventoController.obter_normas_submissao()

@@ -66,7 +66,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                 background="rgba(0, 0, 0, 0.8)",
                 z_index="1000",
                 backdrop_filter="blur(8px)",
-                on_click=EventoState.fechar_modal_senha,
+                on_click=AdminState.fechar_modal_senha,
             ),
             # Caixa do Modal
             rx.card(
@@ -92,7 +92,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                             variant="ghost",
                             color_scheme="gray",
                             size="1",
-                            on_click=EventoState.fechar_modal_senha,
+                            on_click=AdminState.fechar_modal_senha,
                             cursor="pointer",
                         ),
                         align="center",
@@ -135,7 +135,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                             variant="outline",
                             color_scheme="gray",
                             size="2",
-                            on_click=EventoState.fechar_modal_senha,
+                            on_click=AdminState.fechar_modal_senha,
                             style=STYLE_BUTTON_CHIP,
                         ),
                         rx.button(
@@ -533,7 +533,7 @@ def tabela_inscritos_admin() -> rx.Component:
                                         size="1",
                                         variant="surface",
                                         color_scheme="cyan",
-                                        on_click=EventoState.abrir_modal_senha(u["id"], u["nome"]),
+                                        on_click=AdminState.abrir_modal_senha(u["id"], u["nome"]),
                                         style=STYLE_BUTTON_CHIP,
                                     ),
                                     spacing="2",

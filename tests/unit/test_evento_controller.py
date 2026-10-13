@@ -34,7 +34,7 @@ def test_obter_programacao_dias_oficiais():
 
 def test_obter_palestrantes_oficiais():
     palestrantes = EventoController.obter_palestrantes()
-    assert len(palestrantes) == 6
+    assert len(palestrantes) == 8
     nomes = [p.nome for p in palestrantes]
     assert any("Cesar Lenzi" in n for n in nomes)
     assert any("Ronaldo Vieira Lobato" in n for n in nomes)

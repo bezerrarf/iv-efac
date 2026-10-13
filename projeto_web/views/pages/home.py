@@ -1,85 +1,76 @@
+"""Landing Page Única (Single Page Application) - IV EFAC 2026 (UI/UX Pro Max).
+Estruturada com rolagem suave contínua, menu rápido flutuante (quick_nav),
+todas as seções públicas unificadas e migração de submissões para a área autenticada.
+"""
+
 import reflex as rx
 from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.cosmic_background import cosmic_background
-from projeto_web.state.evento_state import EventoState
-from projeto_web.state.navigation_state import NavigationState
-from projeto_web.styles.theme import COLOR_BG, COLOR_NAVBAR_BG, COLOR_BORDER_CYAN, COLOR_BORDER_SUBTLE, STYLE_TEXT_RESPONSIVE
+from projeto_web.views.components.quick_nav import quick_nav
+from projeto_web.views.components.footer import footer
+from projeto_web.styles.theme import (
+    COLOR_BG,
+    COLOR_NAVBAR_BG,
+    COLOR_BORDER_SUBTLE,
+    COLOR_TEXT_PRIMARY,
+    STYLE_TEXT_RESPONSIVE,
+)
 from projeto_web.views.components.home_sections.tela_inicio import tela_inicio
 from projeto_web.views.components.home_sections.tela_sobre import tela_sobre
 from projeto_web.views.components.home_sections.tela_eixos import tela_eixos
 from projeto_web.views.components.home_sections.tela_palestrantes import tela_palestrantes
 from projeto_web.views.components.home_sections.tela_programacao import tela_programacao
-from projeto_web.views.components.home_sections.tela_submissoes import tela_submissoes
 from projeto_web.views.components.home_sections.tela_local import tela_local
 
+
 def home_page() -> rx.Component:
+    """Landing Page Pública do IV EFAC em fluxo contínuo de página única."""
     return rx.box(
         # Fundo Vetorial Cósmico Adaptativo
         cosmic_background(),
 
-        # Topo com navegação integrada de seções
+        # Topo com navegação integrada e alternador de tema claro/escuro
         navbar(),
 
-        # Palco Central de Tela Única
-        rx.box(
-            rx.cond(
-                NavigationState.tela_ativa == "inicio",
-                tela_inicio(),
-                rx.cond(
-                    NavigationState.tela_ativa == "eixos",
-                    tela_eixos(),
-                    rx.cond(
-                        NavigationState.tela_ativa == "palestrantes",
-                        tela_palestrantes(),
-                        rx.cond(
-                            NavigationState.tela_ativa == "programacao",
-                            tela_programacao(),
-                            rx.cond(
-                                NavigationState.tela_ativa == "submissoes",
-                                tela_submissoes(),
-                                rx.cond(
-                                    NavigationState.tela_ativa == "local",
-                                    tela_local(),
-                                    tela_sobre(),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+        # Menu Flutuante de Rápido Acesso no Canto Inferior Direito
+        quick_nav(),
+
+        # Palco Central Contínuo de Seções (Landing Page Única)
+        rx.vstack(
+            # 1. Hero Section: Início & Contador
+            tela_inicio(),
+
+            # 2. Contexto Institucional: Sobre o IV EFAC
+            tela_sobre(),
+
+            # 3. Eixos Temáticos de Pesquisa
+            tela_eixos(),
+
+            # 4. Palestrantes Convidados (Keynotes) com fotos WebP e alta resolução
+            tela_palestrantes(),
+
+            # 5. Programação do Simpósio (Grade Oficial)
+            tela_programacao(),
+
+            # 6. Localização & Instituições Parceiras (Google Maps Interativo)
+            tela_local(),
+
+            spacing="6",
             width="100%",
             max_width="1320px",
             margin="0 auto",
-            padding_x=rx.breakpoints(initial="1rem", sm="1.5rem"),
-            display="flex",
-            align_items="center",
-            justify_content="center",
-            min_height="calc(100vh - 120px)",
+            padding_x=rx.breakpoints(initial="1rem", sm="1.5rem", md="2rem"),
+            padding_bottom="3rem",
             position="relative",
             z_index="2",
         ),
 
-        # Rodapé Mínimo Discreto
-        rx.box(
-            rx.text(
-                "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Desenvolvido por Ramon Firmino Bezerra.",
-                size="1",
-                color="var(--gray-8)",
-                text_align="center",
-                style=STYLE_TEXT_RESPONSIVE,
-            ),
-            padding_y="0.6rem",
-            border_top=f"1px solid {COLOR_BORDER_SUBTLE}",
-            background=COLOR_NAVBAR_BG,
-            backdrop_filter="blur(10px)",
-            width="100%",
-            position="relative",
-            z_index="2",
-        ),
+        # Rodapé Oficial Integrado
+        footer(),
 
         min_height="100vh",
-        background=COLOR_BG,
-        color="white",
+        background="transparent",
+        color=COLOR_TEXT_PRIMARY,
         position="relative",
-        overflow="hidden",
+        overflow_x="hidden",
     )

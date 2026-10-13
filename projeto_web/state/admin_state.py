@@ -308,3 +308,17 @@ class AdminState(AuthState):
         cod_clean = (self.admin_carteirinha_cod or "001").replace(" ", "_")
         return rx.download(data=img_bytes, filename=f"carteirinha_ivefac_{cod_clean}.png")
 
+
+    def abrir_modal_senha(self, user_id: Any, user_nome: str):
+        try:
+            self.admin_senha_user_id = int(user_id)
+        except Exception:
+            self.admin_senha_user_id = 0
+        self.admin_senha_user_nome = str(user_nome)
+        self.admin_nova_senha_input = ""
+        self.modal_alterar_senha_aberto = True
+
+    def fechar_modal_senha(self):
+        self.modal_alterar_senha_aberto = False
+        self.admin_senha_user_id = 0
+        self.admin_nova_senha_input = ""

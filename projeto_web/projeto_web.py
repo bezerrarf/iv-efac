@@ -10,15 +10,16 @@ from projeto_web.views.pages.inscricao import inscricao_page
 app = rx.App(
     stylesheets=[
         "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
+        "/styles.css",
     ],
     style={
         "font_family": "'Plus Jakarta Sans', sans-serif",
     },
     head_components=[
-        rx.html('<link rel="icon" type="image/x-icon" href="/favicon.ico"/>'),
-        rx.html('<link rel="icon" type="image/png" href="/favicon.png"/>'),
-        rx.html('<link rel="apple-touch-icon" href="/favicon.png"/>'),
-        rx.html('<style>a[href*="reflex.dev"] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }</style>'),
+        rx.el.link(rel="icon", type="image/x-icon", href="/favicon.ico"),
+        rx.el.link(rel="icon", type="image/png", href="/favicon.png"),
+        rx.el.link(rel="apple-touch-icon", href="/favicon.png"),
+        rx.el.style("a[href*='reflex.dev'] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }"),
     ],
 )
 

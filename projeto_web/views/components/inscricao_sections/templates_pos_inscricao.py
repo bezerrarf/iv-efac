@@ -21,6 +21,59 @@ def templates_pos_inscricao() -> rx.Component:
             color="var(--gray-10)",
             style=STYLE_TEXT_RESPONSIVE,
         ),
+        # Card Destacado para Submissão Oficial via Google Forms
+        rx.card(
+            rx.vstack(
+                rx.hstack(
+                    rx.box(
+                        rx.icon(tag="file-up", size=22, color=COLOR_CYAN),
+                        background="rgba(0, 173, 181, 0.15)",
+                        border_radius="8px",
+                        padding="0.5rem",
+                        display="grid",
+                        place_items="center",
+                    ),
+                    rx.vstack(
+                        rx.heading("Submissão Oficial de Artigos & Resumos", size="3", weight="bold", color="white"),
+                        rx.text("Envie seu trabalho diretamente para o Comitê Científico através do formulário institucional.", size="1", color="var(--gray-10)", style=STYLE_TEXT_RESPONSIVE),
+                        spacing="0",
+                        align="start",
+                    ),
+                    spacing="3",
+                    align="center",
+                    width="100%",
+                ),
+                rx.link(
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="external-link", size=16),
+                            rx.text("Acessar Formulário Oficial de Submissão (Google Forms)", weight="bold"),
+                            spacing="2",
+                            align="center",
+                        ),
+                        size="3",
+                        radius="full",
+                        background="linear-gradient(135deg, #00ADB5 0%, #103460 100%)",
+                        color="white",
+                        box_shadow="0 4px 18px rgba(0, 173, 181, 0.45)",
+                        _hover={"transform": "translateY(-1px)", "box_shadow": "0 6px 24px rgba(0, 173, 181, 0.6)"},
+                        transition="all 0.2s ease",
+                        width="100%",
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    href="https://forms.gle/MrVPgHYqPGWaKd26A",
+                    is_external=True,
+                    width="100%",
+                ),
+                spacing="3",
+                width="100%",
+            ),
+            padding="1.25rem",
+            background="linear-gradient(145deg, rgba(0, 173, 181, 0.12), rgba(16, 52, 96, 0.25))",
+            border=f"1.5px solid {COLOR_BORDER_CYAN}",
+            border_radius="14px",
+            width="100%",
+        ),
         rx.vstack(
             rx.link(
                 rx.card(

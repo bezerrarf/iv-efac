@@ -40,7 +40,7 @@ def modal_meu_perfil() -> rx.Component:
                                 rx.text(
                                     f"{AuthState.user_nome} • {AuthState.user_codigo}",
                                     size="1",
-                                    color="var(--gray-9)",
+                                    color="#CBD5E1",
                                 ),
                                 spacing="0",
                                 align="start",
@@ -91,15 +91,7 @@ def modal_meu_perfil() -> rx.Component:
                                 ),
                                 value="email",
                             ),
-                            rx.tabs.trigger(
-                                rx.hstack(
-                                    rx.icon(tag="id-card", size=15),
-                                    rx.text("Carteirinha", size="2"),
-                                    spacing="1",
-                                    align="center",
-                                ),
-                                value="carteirinha",
-                            ),
+                            
                             size="2",
                         ),
                         # Aba 1: Dados Pessoais
@@ -180,7 +172,7 @@ def modal_meu_perfil() -> rx.Component:
                                 rx.text(
                                     "Para proteger sua conta, informe sua senha atual antes de cadastrar uma nova credencial.",
                                     size="2",
-                                    color="var(--gray-10)",
+                                    color="#E2E8F0",
                                     style=STYLE_TEXT_RESPONSIVE,
                                 ),
                                 rx.vstack(
@@ -280,7 +272,7 @@ def modal_meu_perfil() -> rx.Component:
                                         rx.text(
                                             f"Para enviar resumos e receber comunicados oficiais, confirme seu e-mail cadastrado ({AuthState.user_email}).",
                                             size="2",
-                                            color="var(--gray-11)",
+                                            color="#CBD5E1",
                                         ),
                                         # Box de Orientação Amigável Anti-Lixo/Spam
                                         rx.box(
@@ -299,7 +291,7 @@ def modal_meu_perfil() -> rx.Component:
                                                 rx.text(
                                                     "🛡️ Recomendação de Proteção: Adicione o remetente oficial aos seus contatos e marque como 'Não é Spam' para garantir o recebimento dos pareceres da Comissão Científica.",
                                                     size="1",
-                                                    color="var(--gray-10)",
+                                                    color="#E2E8F0",
                                                 ),
                                                 spacing="1",
                                                 align="start",
@@ -365,33 +357,7 @@ def modal_meu_perfil() -> rx.Component:
                             value="email",
                             padding_top="1rem",
                         ),
-                        # Aba 4: Download da Carteirinha
-                        rx.tabs.content(
-                            rx.vstack(
-                                rx.text(
-                                    "Baixe a sua carteirinha oficial em alta resolução com o Soldadinho-do-Araripe e arte do Cariri Cósmico.",
-                                    size="2",
-                                    color="var(--gray-10)",
-                                ),
-                                rx.button(
-                                    rx.hstack(
-                                        rx.icon(tag="download", size=16),
-                                        rx.text("Baixar Carteirinha (PNG)"),
-                                        spacing="2",
-                                        align="center",
-                                    ),
-                                    size="3",
-                                    color_scheme="cyan",
-                                    on_click=EventoState.baixar_minha_carteirinha_png,
-                                    style=STYLE_BUTTON_CHIP,
-                                    width="100%",
-                                ),
-                                spacing="3",
-                                width="100%",
-                            ),
-                            value="carteirinha",
-                            padding_top="1rem",
-                        ),
+                        
                         default_value="dados",
                         width="100%",
                     ),

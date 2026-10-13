@@ -1,77 +1,33 @@
-"""Rodapé acadêmico oficial do IV EFAC (View).
-Régua de marcas de fomento e instituições parceiras, comitê técnico e contatos.
+"""Rodapé acadêmico oficial do IV EFAC (View Cósmica).
+Comitê técnico, contatos e copyright oficial com visibilidade garantida.
 """
 
 import reflex as rx
 
 
-def parceiro_chip(nome: str, papel: str, cor: str = "indigo") -> rx.Component:
-    return rx.box(
-        rx.vstack(
-            rx.text(nome, size="2", weight="bold", color=rx.color_mode_cond(light="#103460", dark="white")),
-            rx.text(papel, size="1", color=rx.color_mode_cond(light="#64748b", dark="var(--gray-9)")),
-            spacing="0",
-            align="center",
-        ),
-        padding="0.6rem 1.2rem",
-        border_radius="10px",
-        background=rx.color_mode_cond(light="rgba(255, 255, 255, 0.9)", dark="rgba(15, 23, 42, 0.6)"),
-        border=rx.color_mode_cond(light="1px solid #e2e8f0", dark="1px solid rgba(255, 255, 255, 0.08)"),
-        box_shadow="0 2px 8px rgba(0, 0, 0, 0.04)",
-    )
+def parceiro_chip(nome: str = "", logo: str = "") -> rx.Component:
+    """Compatibilidade retroativa."""
+    return rx.fragment()
 
 
 def footer() -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.divider(color_scheme="gray", opacity="0.2"),
-            # Régua de Logos e Parceiros Institucionais
-            rx.vstack(
-                rx.text(
-                    "Fomento Oficial & Instituições Parceiras",
-                    size="1",
-                    weight="bold",
-                    text_transform="uppercase",
-                    letter_spacing="0.1em",
-                    color=rx.color_mode_cond(light="#00ADB5", dark="#38bdf8"),
-                ),
-                rx.flex(
-                    parceiro_chip("FUNCAP", "Fomento Oficial"),
-                    parceiro_chip("Governo do Ceará", "Fomento à C&T"),
-                    parceiro_chip("UFCA / IFE", "Instituição Executora • Brejo Santo"),
-                    parceiro_chip("ITA", "Instituto Tecnológico de Aeronáutica"),
-                    parceiro_chip("CBPF", "Centro Brasileiro de Pesquisas Físicas"),
-                    parceiro_chip("UFRGS", "Univ. Federal do Rio Grande do Sul"),
-                    parceiro_chip("UFPB", "Univ. Federal da Paraíba"),
-                    parceiro_chip("IFCE", "Instituto Federal do Ceará"),
-                    parceiro_chip("UECE", "Univ. Estadual do Ceará"),
-                    parceiro_chip("URCA", "Univ. Regional do Cariri"),
-                    parceiro_chip("Observatório Kariri", "Divulgação Científica"),
-                    gap="2",
-                    wrap="wrap",
-                    justify="center",
-                    width="100%",
-                ),
-                spacing="3",
-                align="center",
-                width="100%",
-                padding_y="2rem",
-            ),
-            rx.divider(color_scheme="gray", opacity="0.15"),
+            rx.divider(color_scheme="gray", opacity="0.25"),
             # Informações detalhadas e contatos
             rx.hstack(
                 rx.vstack(
                     rx.hstack(
                         rx.icon(
                             tag="telescope",
-                            size=22,
-                            color=rx.color_mode_cond(light="#103460", dark="#00ADB5"),
+                            size=24,
+                            color="#00ADB5",
                         ),
                         rx.heading(
                             "IV EFAC 2026",
                             size="4",
                             weight="bold",
-                            color=rx.color_mode_cond(light="#103460", dark="white"),
+                            color="white",
                         ),
                         align="center",
                         spacing="2",
@@ -80,17 +36,17 @@ def footer() -> rx.Component:
                         "Encontro de Física e Astronomia do Cariri",
                         size="2",
                         weight="medium",
-                        color=rx.color_mode_cond(light="#334155", dark="var(--gray-11)"),
+                        color="#E2E8F0",
                     ),
                     rx.text(
                         "11 e 12 de Novembro de 2026 • Campus Brejo Santo – UFCA",
                         size="2",
-                        color=rx.color_mode_cond(light="#64748b", dark="var(--gray-9)"),
+                        color="#CBD5E1",
                     ),
                     rx.text(
                         "Rua Olegário Emídio de Araújo, s/n - Centro, Brejo Santo - CE",
                         size="1",
-                        color=rx.color_mode_cond(light="#94a3b8", dark="var(--gray-8)"),
+                        color="#94A3B8",
                     ),
                     align="start",
                     spacing="1",
@@ -101,46 +57,66 @@ def footer() -> rx.Component:
                         "Coordenação & Comitê",
                         weight="bold",
                         size="2",
-                        color=rx.color_mode_cond(light="#103460", dark="white"),
+                        color="white",
                     ),
                     rx.text(
                         "Coord. Geral: Prof. Dr. Edson Otoniel da Silva & Prof. Dr. André Flávio Gonçalves Silva",
                         size="2",
-                        color=rx.color_mode_cond(light="#475569", dark="var(--gray-10)"),
+                        color="#E2E8F0",
                     ),
                     rx.link(
                         "edson.otoniel@ufca.edu.br",
                         href="mailto:edson.otoniel@ufca.edu.br",
                         size="2",
-                        color=rx.color_mode_cond(light="#00ADB5", dark="#38bdf8"),
+                        color="#38bdf8",
                     ),
                     rx.text(
                         "Processo FUNCAP: CER-0264-00190.01.00/26",
                         size="1",
-                        color=rx.color_mode_cond(light="#94a3b8", dark="var(--gray-8)"),
+                        color="#94A3B8",
                     ),
-                    align="end",
+                    align=rx.breakpoints(initial="start", sm="end"),
                     spacing="1",
                 ),
                 width="100%",
                 max_width="1280px",
                 margin="0 auto",
-                padding="2rem 1.5rem",
+                padding="2rem 1.5rem 1.5rem 1.5rem",
                 justify="between",
                 wrap="wrap",
             ),
-            rx.text(
-                "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Desenvolvido por Ramon Firmino Bezerra.",
-                size="1",
-                color=rx.color_mode_cond(light="#94a3b8", dark="var(--gray-8)"),
-                text_align="center",
-                padding_bottom="1.5rem",
+            # Barra Inferior de Créditos com Destaque Visual Garantido
+            rx.box(
+                rx.text(
+                    "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Desenvolvido por Ramon Firmino Bezerra.",
+                    size="2",
+                    weight="medium",
+                    color="#FFFFFF",
+                    text_align="center",
+                    style={
+                        "color": "#FFFFFF !important",
+                        "textAlign": "center",
+                        "letterSpacing": "0.02em",
+                    },
+                ),
+                width="100%",
+                padding_y="1.2rem",
+                padding_x="1rem",
+                background="rgba(3, 5, 12, 0.98)",
+                border_top="1px solid rgba(255, 255, 255, 0.12)",
+                display="flex",
+                justify_content="center",
+                align_items="center",
+                margin_top="1rem",
             ),
             width="100%",
             spacing="1",
         ),
-        background=rx.color_mode_cond(light="#f8fafc", dark="rgba(6, 8, 20, 0.97)"),
-        border_top=rx.color_mode_cond(light="1px solid #e2e8f0", dark="1px solid rgba(255, 255, 255, 0.06)"),
+        position="relative",
+        z_index="10",
+        background="rgba(6, 8, 20, 0.98)",
+        border_top="1px solid rgba(0, 173, 181, 0.25)",
+        box_shadow="0 -10px 40px rgba(0, 0, 0, 0.8)",
         width="100%",
         margin_top="auto",
     )

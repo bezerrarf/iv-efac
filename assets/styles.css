@@ -1,0 +1,55 @@
+/* ==========================================================================
+   IV EFAC 2026 - OTIMIZAÇÃO TIPOGRÁFICA & SINERGIA DE ZOOM (WCAG AAA)
+   ========================================================================== */
+
+/* Suporte suave a rolagem para links de âncoras na Landing Page Única */
+html {
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Sinergia de Zoom e Prevenção de Transbordamento */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tipografia Fluida e Balanceamento de Texto contra quebras artificiais */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: manual;
+}
+
+p, span, label, div {
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Em zoom do navegador (125%, 150%, 175%, 200%), os cartões e grids se adaptam elasticamente */
+.rt-Card, .rt-Box {
+  min-height: auto;
+}
+
+/* Imagens responsivas que nunca estouram a largura da coluna no zoom */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Sinergia suave para modo claro e escuro */
+:root, body, [data-theme="dark"], .dark {
+  --color-page-bg: #060814;
+  --color-page-text: #ffffff;
+  background-color: #060814;
+  color: #ffffff;
+}

@@ -35,12 +35,35 @@ def form_cadastro() -> rx.Component:
         ),
         rx.vstack(
             rx.text("Senha de Acesso", size="2", weight="bold", color="white"),
-            rx.input(
-                placeholder="Crie uma senha (mínimo 6 caracteres)",
-                type="password",
-                value=AuthState.cad_senha,
-                on_change=AuthState.set_cad_senha,
-                size="3",
+            rx.box(
+                rx.input(
+                    placeholder="Crie uma senha (mínimo 6 caracteres)",
+                    type=rx.cond(AuthState.mostrar_senha_cad, "text", "password"),
+                    value=AuthState.cad_senha,
+                    on_change=AuthState.set_cad_senha,
+                    size="3",
+                    width="100%",
+                    padding_right="2.5rem",
+                ),
+                rx.box(
+                    rx.tooltip(
+                        rx.icon(
+                            tag=rx.cond(AuthState.mostrar_senha_cad, "eye-off", "eye"),
+                            size=18,
+                            color="var(--gray-9)",
+                            _hover={"color": COLOR_CYAN},
+                            cursor="pointer",
+                            on_click=AuthState.toggle_mostrar_senha_cad,
+                        ),
+                        content=rx.cond(AuthState.mostrar_senha_cad, "Ocultar senha", "Ver senha"),
+                    ),
+                    position="absolute",
+                    right="0.75rem",
+                    top="50%",
+                    transform="translateY(-50%)",
+                    z_index="10",
+                ),
+                position="relative",
                 width="100%",
             ),
             spacing="1",
@@ -60,11 +83,17 @@ def form_cadastro() -> rx.Component:
                 width="100%",
             ),
             rx.vstack(
-                rx.text("Modalidade", size="2", weight="bold", color="white"),
+                rx.text("Eixo Temático de Interesse", size="2", weight="bold", color="white"),
                 rx.select(
-                    ["Presencial", "Online"],
-                    value=AuthState.cad_modalidade,
-                    on_change=AuthState.set_cad_modalidade,
+                    [
+                        "Astrofísica",
+                        "Relatividade",
+                        "Física computacional",
+                        "Quântica",
+                        "Ensino e divulgação científica",
+                    ],
+                    value=AuthState.cad_area,
+                    on_change=AuthState.set_cad_area,
                     size="3",
                     width="100%",
                 ),
@@ -73,23 +102,6 @@ def form_cadastro() -> rx.Component:
             ),
             columns=rx.breakpoints(initial="1", sm="2"),
             spacing="3",
-            width="100%",
-        ),
-        rx.vstack(
-            rx.text("Eixo Temático de Interesse", size="2", weight="bold", color="white"),
-            rx.select(
-                [
-                    "Astrofísica de Objetos Compactos",
-                    "Relatividade Geral e Gravitação",
-                    "Física Computacional e Ciência de Dados",
-                    "Ensino de Física e Divulgação Científica",
-                ],
-                value=AuthState.cad_area,
-                on_change=AuthState.set_cad_area,
-                size="3",
-                width="100%",
-            ),
-            spacing="1",
             width="100%",
         ),
         rx.button(

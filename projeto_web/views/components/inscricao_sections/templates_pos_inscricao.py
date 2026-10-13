@@ -18,7 +18,7 @@ def templates_pos_inscricao() -> rx.Component:
         rx.text(
             "Diretrizes e arquivos para envio de Resumo Expandido nos Anais do IV EFAC (11 e 12/11/2026).",
             size="2",
-            color="var(--gray-10)",
+            color="#CBD5E1",
             style=STYLE_TEXT_RESPONSIVE,
         ),
         # Card Destacado para Submissão Oficial via Google Forms
@@ -35,7 +35,7 @@ def templates_pos_inscricao() -> rx.Component:
                     ),
                     rx.vstack(
                         rx.heading("Submissão Oficial de Artigos & Resumos", size="3", weight="bold", color="white"),
-                        rx.text("Envie seu trabalho diretamente para o Comitê Científico através do formulário institucional.", size="1", color="var(--gray-10)", style=STYLE_TEXT_RESPONSIVE),
+                        rx.text("Envie seu trabalho diretamente para o Comitê Científico através do formulário institucional.", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                         spacing="0",
                         align="start",
                     ),
@@ -81,7 +81,7 @@ def templates_pos_inscricao() -> rx.Component:
                         rx.icon(tag="file-text", size=18, color=COLOR_CYAN),
                         rx.vstack(
                             rx.text("Modelo de Resumo Expandido (.docx)", size="2", weight="bold", color="white"),
-                            rx.text("2 a 4 páginas com Introdução, Metodologia, Resultados e Referências", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
+                            rx.text("2 a 4 páginas com Introdução, Metodologia, Resultados e Referências", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                             spacing="0",
                             align="start",
                         ),
@@ -106,7 +106,7 @@ def templates_pos_inscricao() -> rx.Component:
                         rx.icon(tag="presentation", size=18, color="#818CF8"),
                         rx.vstack(
                             rx.text("Slide para Apresentação Oral (15 min)", size="2", weight="bold", color="white"),
-                            rx.text("Padrão 16:9 oficial com chancela UFCA e FUNCAP", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
+                            rx.text("Padrão 16:9 oficial com chancela UFCA e FUNCAP", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                             spacing="0",
                             align="start",
                         ),
@@ -131,7 +131,7 @@ def templates_pos_inscricao() -> rx.Component:
                         rx.icon(tag="layout-grid", size=18, color="#34d399"),
                         rx.vstack(
                             rx.text("Modelo de Pôster / Painel Científico", size="2", weight="bold", color="white"),
-                            rx.text("Dimensão 90x120cm para exibição no hall do IFE", size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
+                            rx.text("Dimensão 90x120cm para exibição no hall do IFE", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                             spacing="0",
                             align="start",
                         ),
@@ -172,7 +172,7 @@ def templates_pos_inscricao() -> rx.Component:
             rx.text(
                 "Olá, pesquisador(a)! Para garantir a integridade acadêmica do evento e liberar o envio de artigos e o download dos templates oficiais, é necessário confirmar seu endereço de e-mail.",
                 size="2",
-                color="var(--gray-11)",
+                color="#CBD5E1",
                 style=STYLE_TEXT_RESPONSIVE,
             ),
             rx.callout(

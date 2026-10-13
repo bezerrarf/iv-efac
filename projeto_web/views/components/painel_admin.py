@@ -38,7 +38,7 @@ def stat_metric_box(valor: any, rotulo: str, icone: str, cor: str) -> rx.Compone
             ),
             rx.vstack(
                 rx.heading(valor, size="6", weight="bold", color="white"),
-                rx.text(rotulo, size="1", color="var(--gray-9)"),
+                rx.text(rotulo, size="1", color="#CBD5E1"),
                 spacing="0",
                 align="start",
             ),
@@ -82,7 +82,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                         ),
                         rx.vstack(
                             rx.heading("Alterar Senha do Inscrito", size="4", weight="bold", color="white"),
-                            rx.text("Redefinição direta no banco SQLite WAL", size="1", color="var(--gray-9)"),
+                            rx.text("Redefinição direta no banco SQLite WAL", size="1", color="#CBD5E1"),
                             spacing="0",
                             align="start",
                         ),
@@ -101,12 +101,12 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                     rx.divider(color_scheme="gray", opacity="0.2"),
                     rx.box(
                         rx.hstack(
-                            rx.icon(tag="user", size=16, color="var(--gray-10)"),
+                            rx.icon(tag="user", size=16, color="#CBD5E1"),
                             rx.text(
                                 "Participante: ",
                                 rx.text.strong(AdminState.admin_senha_user_nome, color="white"),
                                 size="2",
-                                color="var(--gray-10)",
+                                color="#CBD5E1",
                             ),
                             spacing="2",
                             align="center",
@@ -205,7 +205,7 @@ def modal_carteirinha_admin() -> rx.Component:
                         ),
                         rx.vstack(
                             rx.heading("Carteirinha Oficial do Participante", size="4", weight="bold", color="white"),
-                            rx.text("Emissão digital com chancela acadêmica UFCA / IFE", size="1", color="var(--gray-9)"),
+                            rx.text("Emissão digital com chancela acadêmica UFCA / IFE", size="1", color="#CBD5E1"),
                             spacing="0",
                             align="start",
                         ),
@@ -250,7 +250,7 @@ def modal_carteirinha_admin() -> rx.Component:
                                 ),
                                 rx.vstack(
                                     rx.text("IV EFAC 2026", size="2", weight="bold", color="white"),
-                                    rx.text("Universidade Federal do Cariri • Campus Brejo Santo", size="1", color="var(--gray-9)"),
+                                    rx.text("Universidade Federal do Cariri • Campus Brejo Santo", size="1", color="#CBD5E1"),
                                     spacing="0",
                                 ),
                                 rx.spacer(),
@@ -289,8 +289,8 @@ def modal_carteirinha_admin() -> rx.Component:
                                 ),
                                 rx.vstack(
                                     rx.text(AdminState.admin_carteirinha_nome, size="3", weight="bold", color="white"),
-                                    rx.text(AdminState.admin_carteirinha_email, size="1", color="var(--gray-10)"),
-                                    rx.text(AdminState.admin_carteirinha_inst, size="1", color="var(--gray-9)"),
+                                    rx.text(AdminState.admin_carteirinha_email, size="1", color="#CBD5E1"),
+                                    rx.text(AdminState.admin_carteirinha_inst, size="1", color="#CBD5E1"),
                                     rx.hstack(
                                         rx.badge(AdminState.admin_carteirinha_mod, color_scheme="indigo", size="1"),
                                         rx.badge(AdminState.admin_carteirinha_role.upper(), color_scheme="violet", size="1"),
@@ -454,14 +454,14 @@ def tabela_inscritos_admin() -> rx.Component:
                             rx.table.cell(
                                 rx.vstack(
                                     rx.text(u["nome"], size="2", weight="bold", color="white"),
-                                    rx.text(u["email"], size="1", color="var(--gray-9)"),
+                                    rx.text(u["email"], size="1", color="#CBD5E1"),
                                     spacing="0",
                                 ),
                             ),
                             rx.table.cell(
                                 rx.vstack(
                                     rx.badge(u["modalidade"], color_scheme="indigo", variant="surface", size="1"),
-                                    rx.text(u["instituicao"], size="1", color="var(--gray-10)"),
+                                    rx.text(u["instituicao"], size="1", color="#CBD5E1"),
                                     spacing="0",
                                 ),
                             ),
@@ -566,7 +566,7 @@ def editor_atividades_admin() -> rx.Component:
                 rx.text(
                     "Altere manualmente datas, horários e temas, delegue responsáveis e crie novas atividades diretamente pelo site.",
                     size="2",
-                    color="var(--gray-10)",
+                    color="#CBD5E1",
                 ),
                 spacing="0",
                 align="start",
@@ -896,11 +896,11 @@ def editor_atividades_admin() -> rx.Component:
                             rx.table.cell(
                                 rx.vstack(
                                     rx.text(a["titulo"], size="2", weight="bold", color="white"),
-                                    rx.text(a["local"], size="1", color="var(--gray-9)"),
+                                    rx.text(a["local"], size="1", color="#CBD5E1"),
                                     spacing="0",
                                 ),
                             ),
-                            rx.table.cell(rx.text(a["palestrante"], size="2", color="var(--gray-11)")),
+                            rx.table.cell(rx.text(a["palestrante"], size="2", color="#CBD5E1")),
                             rx.table.cell(
                                 rx.button(
                                     rx.hstack(
@@ -944,7 +944,7 @@ def seguranca_admin_view() -> rx.Component:
                     rx.text(
                         "Altere com segurança sua própria credencial de acesso master ao sistema.",
                         size="2",
-                        color="var(--gray-10)",
+                        color="#CBD5E1",
                     ),
                     spacing="0",
                     align="start",
@@ -1004,7 +1004,7 @@ def seguranca_admin_view() -> rx.Component:
                 rx.text(
                     "Baixe a relação completa de participantes cadastrados no banco SQLite WAL para conferência offline ou impressão.",
                     size="2",
-                    color="var(--gray-10)",
+                    color="#CBD5E1",
                 ),
                 rx.hstack(
                     rx.button(

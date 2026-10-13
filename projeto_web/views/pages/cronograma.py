@@ -28,7 +28,7 @@ def timeline_card(item: Atividade) -> rx.Component:
         rx.hstack(
             rx.vstack(
                 rx.badge(item.horario, color_scheme="cyan", variant="solid", size="2", style=STYLE_BUTTON_CHIP),
-                rx.text(item.local, size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
+                rx.text(item.local, size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                 align="start",
                 min_width=rx.breakpoints(initial="80px", sm="110px"),
                 spacing="1",
@@ -64,7 +64,7 @@ def timeline_card(item: Atividade) -> rx.Component:
                 rx.text(
                     item.descricao,
                     size="1",
-                    color="var(--gray-10)",
+                    color="#CBD5E1",
                     line_height="1.5",
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
@@ -117,7 +117,7 @@ def cronograma_page() -> rx.Component:
                 rx.text(
                     "Dois dias de imersão intensiva com conferências magnas, minicurso de Python, mesas-redondas e sessões de comunicação oral e pôsteres no Campus Brejo Santo – UFCA.",
                     size=rx.breakpoints(initial="2", sm="3"),
-                    color="var(--gray-10)",
+                    color="#CBD5E1",
                     text_align="center",
                     max_width="740px",
                     style=STYLE_TEXT_RESPONSIVE,
@@ -193,10 +193,13 @@ def cronograma_page() -> rx.Component:
                 padding=rx.breakpoints(initial="2rem 1rem 4rem 1rem", sm="3rem 1.5rem 5rem 1.5rem"),
             ),
             width="100%",
+            flex="1",
             position="relative",
             z_index="2",
         ),
         footer(),
+        display="flex",
+        flex_direction="column",
         min_height="100vh",
         background=COLOR_BG,
         color="white",

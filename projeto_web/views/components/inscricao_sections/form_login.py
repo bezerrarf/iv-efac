@@ -21,7 +21,7 @@ def card_recuperacao_senha() -> rx.Component:
                 rx.icon(
                     tag="x",
                     size=16,
-                    color="var(--gray-9)",
+                    color="#CBD5E1",
                     _hover={"color": "white"},
                     cursor="pointer",
                     on_click=AuthState.fechar_aviso_recuperacao_senha,
@@ -40,7 +40,7 @@ def card_recuperacao_senha() -> rx.Component:
                     rx.text(
                         "Para solicitar sua nova senha, envie uma mensagem à Coordenação:",
                         size="1",
-                        color="#94A3B8",
+                        color="#CBD5E1",
                     ),
                     rx.hstack(
                         rx.icon(tag="user", size=15, color="#00ADB5"),
@@ -64,7 +64,7 @@ def card_recuperacao_senha() -> rx.Component:
                     rx.text(
                         "📌 Dica: Informe seu Nome Completo e E-mail cadastrado para agilizar o atendimento.",
                         size="1",
-                        color="#94A3B8",
+                        color="#CBD5E1",
                     ),
                     spacing="1",
                     align="start",
@@ -128,7 +128,7 @@ def form_login() -> rx.Component:
                 rx.link(
                     "Esqueceu sua senha?",
                     size="1",
-                    color="#94A3B8",
+                    color="#CBD5E1",
                     _hover={"color": "#38bdf8"},
                     cursor="pointer",
                     on_click=AuthState.toggle_aviso_recuperacao_senha,
@@ -151,7 +151,7 @@ def form_login() -> rx.Component:
                         rx.icon(
                             tag=rx.cond(AuthState.mostrar_senha_login, "eye-off", "eye"),
                             size=18,
-                            color="var(--gray-9)",
+                            color="#CBD5E1",
                             _hover={"color": COLOR_CYAN},
                             cursor="pointer",
                             on_click=AuthState.toggle_mostrar_senha_login,

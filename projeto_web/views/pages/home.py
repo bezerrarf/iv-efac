@@ -61,6 +61,7 @@ def home_page() -> rx.Component:
             margin="0 auto",
             padding_x=rx.breakpoints(initial="1rem", sm="1.5rem", md="2rem"),
             padding_bottom="3rem",
+            flex="1",
             position="relative",
             z_index="2",
         ),
@@ -68,6 +69,8 @@ def home_page() -> rx.Component:
         # Rodapé Oficial Integrado
         footer(),
 
+        display="flex",
+        flex_direction="column",
         min_height="100vh",
         background="transparent",
         color=COLOR_TEXT_PRIMARY,

@@ -1,5 +1,7 @@
 """Rodapé acadêmico oficial do IV EFAC (View Cósmica).
 Comitê técnico, contatos e copyright oficial com visibilidade garantida.
+Garante que o rodapé permaneça 100% no final da página (Sticky Footer)
+sem vazamento do fundo cósmico abaixo dele.
 """
 
 import reflex as rx
@@ -85,7 +87,7 @@ def footer() -> rx.Component:
                 justify="between",
                 wrap="wrap",
             ),
-            # Barra Inferior de Créditos com Destaque Visual Garantido
+            # Barra Inferior de Créditos com Fundo Opaco
             rx.box(
                 rx.text(
                     "© 2026 IV EFAC • Universidade Federal do Cariri (UFCA) • Desenvolvido por Ramon Firmino Bezerra.",
@@ -102,7 +104,7 @@ def footer() -> rx.Component:
                 width="100%",
                 padding_y="1.2rem",
                 padding_x="1rem",
-                background="rgba(3, 5, 12, 0.98)",
+                background="#03050c",
                 border_top="1px solid rgba(255, 255, 255, 0.12)",
                 display="flex",
                 justify_content="center",
@@ -114,9 +116,9 @@ def footer() -> rx.Component:
         ),
         position="relative",
         z_index="10",
-        background="rgba(6, 8, 20, 0.98)",
-        border_top="1px solid rgba(0, 173, 181, 0.25)",
-        box_shadow="0 -10px 40px rgba(0, 0, 0, 0.8)",
+        background="#060814",
+        border_top="1px solid rgba(0, 173, 181, 0.35)",
+        box_shadow="0 -10px 40px rgba(0, 0, 0, 0.85)",
         width="100%",
         margin_top="auto",
     )

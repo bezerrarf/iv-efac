@@ -85,7 +85,7 @@ def painel_supervisor_view() -> rx.Component:
             rx.text(
                 "Utilize o leitor de código ou busque pelo nome/e-mail para registrar a entrada dos congressistas nas palestras e minicursos no Campus Brejo Santo.",
                 size="2",
-                color="var(--gray-10)",
+                color="#CBD5E1",
             ),
             # Placar de Presença
             rx.hstack(
@@ -94,7 +94,7 @@ def painel_supervisor_view() -> rx.Component:
                         rx.icon(tag="user-check", size=24, color="#34d399"),
                         rx.vstack(
                             rx.heading(f"{SupervisorState.superv_presentes_count} / {SupervisorState.superv_total_count}", size="6", weight="bold", color="white"),
-                            rx.text("Presentes Confirmados", size="1", color="var(--gray-9)"),
+                            rx.text("Presentes Confirmados", size="1", color="#CBD5E1"),
                             spacing="0",
                         ),
                         spacing="3",
@@ -110,7 +110,7 @@ def painel_supervisor_view() -> rx.Component:
                         rx.icon(tag="clock", size=24, color="#38bdf8"),
                         rx.vstack(
                             rx.heading("11 e 12 Nov 2026", size="5", weight="bold", color="white"),
-                            rx.text("Campus Brejo Santo – UFCA", size="1", color="var(--gray-9)"),
+                            rx.text("Campus Brejo Santo – UFCA", size="1", color="#CBD5E1"),
                             spacing="0",
                         ),
                         spacing="3",
@@ -170,14 +170,14 @@ def painel_supervisor_view() -> rx.Component:
                                 rx.table.cell(
                                     rx.vstack(
                                         rx.text(item["nome"], size="2", weight="bold", color="white"),
-                                        rx.text(item["email"], size="1", color="var(--gray-9)"),
+                                        rx.text(item["email"], size="1", color="#CBD5E1"),
                                         spacing="0",
                                     ),
                                 ),
                                 rx.table.cell(
                                     rx.vstack(
                                         rx.badge(item["modalidade"], color_scheme="indigo", variant="surface", size="1"),
-                                        rx.text(item["instituicao"], size="1", color="var(--gray-10)"),
+                                        rx.text(item["instituicao"], size="1", color="#CBD5E1"),
                                         spacing="0",
                                     ),
                                 ),

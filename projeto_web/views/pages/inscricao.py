@@ -9,6 +9,7 @@ from projeto_web.views.components.inscricao_sections.form_cadastro import form_c
 from projeto_web.views.components.inscricao_sections.form_login import form_login
 from projeto_web.views.components.inscricao_sections.logged_in_hub import logged_in_hub
 
+
 def inscricao_page() -> rx.Component:
     return rx.box(
         # Fundo Vetorial Cósmico Adaptativo
@@ -29,7 +30,7 @@ def inscricao_page() -> rx.Component:
                 rx.text(
                     "Cadastre-se gratuitamente para garantir sua vaga presencial no Campus Brejo Santo ou receber os links da transmissão online.",
                     size=rx.breakpoints(initial="2", sm="3"),
-                    color="var(--gray-10)",
+                    color="#CBD5E1",
                     text_align="center",
                     max_width="660px",
                     style=STYLE_TEXT_RESPONSIVE,
@@ -73,10 +74,13 @@ def inscricao_page() -> rx.Component:
                 padding=rx.breakpoints(initial="2rem 1rem 4rem 1rem", sm="3rem 1.5rem 5rem 1.5rem"),
             ),
             width="100%",
+            flex="1",
             position="relative",
             z_index="2",
         ),
         footer(),
+        display="flex",
+        flex_direction="column",
         min_height="100vh",
         background=COLOR_BG,
         color="white",

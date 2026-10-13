@@ -5,13 +5,14 @@ from projeto_web.styles.theme import *
 
 from .feedback_alert import feedback_alert
 
+
 def form_cadastro() -> rx.Component:
     return rx.vstack(
         feedback_alert(),
         rx.vstack(
             rx.text("Nome Completo", size="2", weight="bold", color="white"),
             rx.input(
-                placeholder="Ex: Dra. Jocelyn Bell",
+                placeholder="Ex.: Dra. Jocelyn Bell Burnell",
                 value=AuthState.cad_nome,
                 on_change=AuthState.set_cad_nome,
                 size="3",
@@ -37,7 +38,7 @@ def form_cadastro() -> rx.Component:
             rx.text("Senha de Acesso", size="2", weight="bold", color="white"),
             rx.box(
                 rx.input(
-                    placeholder="Crie uma senha (mínimo 6 caracteres)",
+                    placeholder="Crie uma senha (mínimo de 6 caracteres)",
                     type=rx.cond(AuthState.mostrar_senha_cad, "text", "password"),
                     value=AuthState.cad_senha,
                     on_change=AuthState.set_cad_senha,
@@ -50,7 +51,7 @@ def form_cadastro() -> rx.Component:
                         rx.icon(
                             tag=rx.cond(AuthState.mostrar_senha_cad, "eye-off", "eye"),
                             size=18,
-                            color="var(--gray-9)",
+                            color="#CBD5E1",
                             _hover={"color": COLOR_CYAN},
                             cursor="pointer",
                             on_click=AuthState.toggle_mostrar_senha_cad,
@@ -69,39 +70,34 @@ def form_cadastro() -> rx.Component:
             spacing="1",
             width="100%",
         ),
-        rx.grid(
-            rx.vstack(
-                rx.text("Instituição / Polo", size="2", weight="bold", color="white"),
-                rx.input(
-                    placeholder="Ex: UFCA, URCA, IFCE, etc.",
-                    value=AuthState.cad_instituicao,
-                    on_change=AuthState.set_cad_instituicao,
-                    size="3",
-                    width="100%",
-                ),
-                spacing="1",
+        rx.vstack(
+            rx.text("Instituição / Polo Acadêmico", size="2", weight="bold", color="white"),
+            rx.input(
+                placeholder="Ex.: UFCA, URCA, IFCE, UFC, etc.",
+                value=AuthState.cad_instituicao,
+                on_change=AuthState.set_cad_instituicao,
+                size="3",
                 width="100%",
             ),
-            rx.vstack(
-                rx.text("Eixo Temático de Interesse", size="2", weight="bold", color="white"),
-                rx.select(
-                    [
-                        "Astrofísica",
-                        "Relatividade",
-                        "Física computacional",
-                        "Quântica",
-                        "Ensino e divulgação científica",
-                    ],
-                    value=AuthState.cad_area,
-                    on_change=AuthState.set_cad_area,
-                    size="3",
-                    width="100%",
-                ),
-                spacing="1",
+            spacing="1",
+            width="100%",
+        ),
+        rx.vstack(
+            rx.text("Eixo Temático de Interesse", size="2", weight="bold", color="white"),
+            rx.select(
+                [
+                    "Astrofísica",
+                    "Relatividade Geral e Gravitação",
+                    "Física Computacional",
+                    "Física Quântica",
+                    "Ensino de Física e Divulgação Científica",
+                ],
+                value=AuthState.cad_area,
+                on_change=AuthState.set_cad_area,
+                size="3",
                 width="100%",
             ),
-            columns=rx.breakpoints(initial="1", sm="2"),
-            spacing="3",
+            spacing="1",
             width="100%",
         ),
         rx.button(
@@ -122,5 +118,3 @@ def form_cadastro() -> rx.Component:
         spacing="3",
         width="100%",
     )
-
-

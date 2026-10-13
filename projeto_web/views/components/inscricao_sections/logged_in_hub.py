@@ -38,7 +38,7 @@ def _card_atividade_disponivel(item: Atividade) -> rx.Component:
                 rx.hstack(
                     rx.badge(item.dia, color_scheme="indigo", variant="surface", size="1", style=STYLE_BUTTON_CHIP),
                     rx.badge(item.tipo, color_scheme=item.tipo_color, size="1", variant="soft", style=STYLE_BUTTON_CHIP),
-                    rx.text(item.local, size="1", color="var(--gray-9)", style=STYLE_TEXT_RESPONSIVE),
+                    rx.text(item.local, size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                     spacing="2",
                     align="center",
                     wrap="wrap",
@@ -95,7 +95,7 @@ def lista_inscricoes_disponiveis() -> rx.Component:
             ),
             rx.vstack(
                 rx.heading("Inscrições & Atividades Disponíveis do IV EFAC", size="4", weight="bold", color="white"),
-                rx.text("Sua credencial concede acesso pleno a todas as conferências, mesas-redondas e sessões científicas.", size="2", color="var(--gray-10)", style=STYLE_TEXT_RESPONSIVE),
+                rx.text("Sua credencial concede acesso pleno a todas as conferências, mesas-redondas e sessões científicas.", size="2", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                 spacing="0",
                 align="start",
             ),
@@ -153,7 +153,7 @@ def alerta_certificado_email() -> rx.Component:
                 rx.text(
                     "Cadastro ativo e homologado! A emissão digital com código de autenticidade será liberada automaticamente após a confirmação de presença no evento.",
                     size="1",
-                    color="var(--gray-11)",
+                    color="#CBD5E1",
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
                 spacing="0",
@@ -215,9 +215,9 @@ def logged_in_hub() -> rx.Component:
                         wrap="wrap",
                     ),
                     rx.hstack(
-                        rx.text(AuthState.user_email, size="1", color="var(--gray-10)"),
+                        rx.text(AuthState.user_email, size="1", color="#CBD5E1"),
                         rx.text("•", size="1", color="var(--gray-8)"),
-                        rx.text(AuthState.user_instituicao, size="1", color="var(--gray-10)"),
+                        rx.text(AuthState.user_instituicao, size="1", color="#CBD5E1"),
                         rx.text("•", size="1", color="var(--gray-8)"),
                         rx.badge(AuthState.user_modalidade, color_scheme="indigo", variant="surface", size="1"),
                         rx.badge(AuthState.user_codigo, color_scheme="gray", variant="soft", size="1"),

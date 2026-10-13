@@ -45,3 +45,25 @@ Thumbs.db
 .automacao/screenshots_conferencia/
 .automacao/*.log
 Estrutura_Web.md
+# Relatorios de auditoria e automacao locais
+.automacao/*.json
+
+# Scripts de uso unico / suporte
+split_script.py
+
+# Arquivos e duplicatas locais preservados fora do repositorio
+frases_cientistas.txt
+Espec complementares.pdf
+identidade_visual/
+participantes/*.png
+assets/regua_instituicoes_poster.png
+assets/cartao_participante.jpeg
+assets/badge_template.jpeg
+assets/card_palestrante_template.jpeg
+assets/logos/regua_fomento_oficial.png
+assets/logos/regua_instituicoes_completa.png
+assets/logos/logo_funcap.png
+assets/logos/logo_ufca.png
+assets/logos/logo_planetarium.png
+projeto_web/views/components/badge_card.py
+projeto_web/views/components/space_fabric.py

@@ -306,31 +306,27 @@ class EventoController:
 
     @staticmethod
     def obter_programacao(dia: str) -> List[Atividade]:
-        """Busca programação do SQLite persistente ou fallback para padrão."""
+        """Busca programação do SQLite persistente via CQRS Query Repository ou fallback para padrão."""
         try:
-            from projeto_web.repositories.database import get_session
-            from projeto_web.models.atividade import AtividadeModel
-            from sqlmodel import select
-
-            with get_session() as session:
-                stmt = select(AtividadeModel).where(AtividadeModel.dia == dia).order_by(AtividadeModel.ordem.asc(), AtividadeModel.id.asc())
-                resultados = session.exec(stmt).all()
-                if resultados:
-                    return [
-                        Atividade(
-                            id=r.id,
-                            dia=r.dia,
-                            horario=r.horario,
-                            titulo=r.titulo,
-                            palestrante=r.palestrante,
-                            local=r.local,
-                            tipo=r.tipo,
-                            descricao=r.descricao,
-                            tipo_color=r.tipo_color,
-                            ordem=r.ordem,
-                        )
-                        for r in resultados
-                    ]
+            from projeto_web.repositories.queries.atividade_queries import SQLiteAtividadeQueryRepository
+            query_repo = SQLiteAtividadeQueryRepository()
+            resultados = query_repo.find_by_dia(dia)
+            if resultados:
+                return [
+                    Atividade(
+                        id=r.id,
+                        dia=r.dia,
+                        horario=r.horario,
+                        titulo=r.titulo,
+                        palestrante=r.palestrante,
+                        local=r.local,
+                        tipo=r.tipo,
+                        descricao=r.descricao,
+                        tipo_color=r.tipo_color,
+                        ordem=r.ordem,
+                    )
+                    for r in resultados
+                ]
         except Exception:
             pass
 
@@ -338,7 +334,7 @@ class EventoController:
 
     @staticmethod
     def obter_todas_atividades() -> List[Atividade]:
-        """Retorna todas as atividades de todos os dias persistidas no banco."""
+        """Retorna todas as atividades de todos os dias persistidas no banco via CQRS Query."""
         todas = []
         for dia in ["Dia 1", "Dia 2"]:
             todas.extend(EventoController.obter_programacao(dia))
@@ -355,25 +351,20 @@ class EventoController:
         tipo: str,
         descricao: str,
     ) -> bool:
-        """Permite ao administrador alterar datas, horários e temas diretamente no banco."""
+        """Permite ao administrador alterar datas, horários e temas diretamente no banco via CQRS Command."""
         try:
-            from projeto_web.repositories.database import get_session
-            from projeto_web.models.atividade import AtividadeModel
-
-            with get_session() as session:
-                item = session.get(AtividadeModel, id)
-                if not item:
-                    return False
-                item.dia = dia
-                item.horario = horario
-                item.titulo = titulo
-                item.palestrante = palestrante
-                item.local = local
-                item.tipo = tipo
-                item.descricao = descricao
-                session.add(item)
-                session.commit()
-                return True
+            from projeto_web.repositories.commands.atividade_commands import SQLiteAtividadeCommandRepository
+            cmd_repo = SQLiteAtividadeCommandRepository()
+            return cmd_repo.update_by_fields(
+                id=id,
+                dia=dia,
+                horario=horario,
+                titulo=titulo,
+                palestrante=palestrante,
+                local=local,
+                tipo=tipo,
+                descricao=descricao,
+            )
         except Exception:
             return False
 
@@ -387,65 +378,61 @@ class EventoController:
         tipo: str,
         descricao: str,
     ) -> bool:
-        """Permite ao administrador criar e delegar manualmente uma nova atividade."""
+        """Permite ao administrador criar uma nova atividade via CQRS Command."""
         try:
-            from projeto_web.repositories.database import get_session
             from projeto_web.models.atividade import AtividadeModel
-            from sqlmodel import select
+            from projeto_web.repositories.commands.atividade_commands import SQLiteAtividadeCommandRepository
+            from projeto_web.repositories.queries.atividade_queries import SQLiteAtividadeQueryRepository
 
-            with get_session() as session:
-                stmt = select(AtividadeModel).where(AtividadeModel.dia == dia)
-                total_dia = len(session.exec(stmt).all())
-                nova = AtividadeModel(
-                    dia=dia,
-                    horario=horario,
-                    titulo=titulo,
-                    palestrante=palestrante,
-                    local=local,
-                    tipo=tipo,
-                    descricao=descricao,
-                    ordem=total_dia + 1,
-                )
-                session.add(nova)
-                session.commit()
-                return True
+            query_repo = SQLiteAtividadeQueryRepository()
+            cmd_repo = SQLiteAtividadeCommandRepository()
+
+            atividades_dia = query_repo.find_by_dia(dia)
+            total_dia = len(atividades_dia)
+
+            nova = AtividadeModel(
+                dia=dia,
+                horario=horario,
+                titulo=titulo,
+                palestrante=palestrante,
+                local=local,
+                tipo=tipo,
+                descricao=descricao,
+                ordem=total_dia + 1,
+            )
+            cmd_repo.create(nova)
+            return True
         except Exception:
             return False
 
     @staticmethod
     def restaurar_programacao_padrao() -> bool:
-        """Restaura a grade de atividades para os valores originais do edital."""
+        """Restaura a grade de atividades para os valores originais via CQRS Command."""
         try:
-            from projeto_web.repositories.database import get_session
             from projeto_web.models.atividade import AtividadeModel
-            from sqlmodel import select
+            from projeto_web.repositories.commands.atividade_commands import SQLiteAtividadeCommandRepository
 
-            with get_session() as session:
-                stmt = select(AtividadeModel)
-                itens = session.exec(stmt).all()
-                for i in itens:
-                    session.delete(i)
-                session.commit()
+            cmd_repo = SQLiteAtividadeCommandRepository()
+            cmd_repo.clear_all()
 
-                ordem_counter = 1
-                for dia in ["Dia 1", "Dia 2"]:
-                    padrao = EventoController.obter_programacao_padrao(dia)
-                    for p in padrao:
-                        at = AtividadeModel(
-                            dia=dia,
-                            horario=p.horario,
-                            titulo=p.titulo,
-                            palestrante=p.palestrante,
-                            local=p.local,
-                            tipo=p.tipo,
-                            descricao=p.descricao,
-                            tipo_color=p.tipo_color,
-                            ordem=ordem_counter,
-                        )
-                        session.add(at)
-                        ordem_counter += 1
-                session.commit()
-                return True
+            ordem_counter = 1
+            for dia in ["Dia 1", "Dia 2"]:
+                padrao = EventoController.obter_programacao_padrao(dia)
+                for p in padrao:
+                    at = AtividadeModel(
+                        dia=dia,
+                        horario=p.horario,
+                        titulo=p.titulo,
+                        palestrante=p.palestrante,
+                        local=p.local,
+                        tipo=p.tipo,
+                        descricao=p.descricao,
+                        tipo_color=p.tipo_color,
+                        ordem=ordem_counter,
+                    )
+                    cmd_repo.create(at)
+                    ordem_counter += 1
+            return True
         except Exception:
             return False
 
@@ -531,39 +518,48 @@ class EventoController:
         return [
             EixoTematico(
                 numero=1,
-                titulo="Astrofísica de Objetos Compactos",
-                subtitulo="Densidades e Pressões Extremas",
-                descricao="Investigação da matéria sob densidades extremas, processos de evolução estelar, pulsares, estrelas de nêutrons e anãs brancas.",
+                titulo="Astrofísica",
+                subtitulo="Objetos Compactos e Cosmologia",
+                descricao="Investigação da matéria sob densidades e pressões extremas, evolução estelar, pulsares, estrelas de nêutrons e anãs brancas.",
                 cor="#103460",
                 icone="disc",
-                tags=["Pulsares", "Estrelas de Nêutrons", "Anãs Brancas"],
+                tags=["Astrofísica", "Pulsares", "Cosmologia"],
             ),
             EixoTematico(
                 numero=2,
-                titulo="Relatividade Geral e Gravitação",
-                subtitulo="Campos Fortes e Cosmologia",
-                descricao="Estudos de gravitação em regimes de campo forte, detecção e teoria de ondas gravitacionais, termodinâmica de buracos negros e modelos cosmológicos.",
-                cor="#00ADB5",
-                icone="orbit",
-                tags=["Ondas Gravitacionais", "Buracos Negros", "Cosmologia"],
+                titulo="Física Computacional",
+                subtitulo="Simulações e Ciência de Dados",
+                descricao="Aplicações de algoritmos de aprendizado de máquina, simulações numéricas avançadas e processamento de grandes levantamentos científicos.",
+                cor="#2563EB",
+                icone="cpu",
+                tags=["Computação Científica", "Simulações", "Machine Learning"],
             ),
             EixoTematico(
                 numero=3,
-                titulo="Física Computacional e Ciência de Dados",
-                subtitulo="Machine Learning & Big Data Cósmico",
-                descricao="Aplicações de algoritmos de aprendizado de máquina, simulações numéricas e processamento de grandes levantamentos astronômicos.",
-                cor="#2563EB",
-                icone="cpu",
-                tags=["Machine Learning", "Big Data", "Simulações"],
+                titulo="Relatividade e Gravitação",
+                subtitulo="Campos Fortes e Espaço-Tempo",
+                descricao="Estudos de gravitação em regimes de campo forte, ondas gravitacionais, termodinâmica de buracos negros e geometria relativística.",
+                cor="#00ADB5",
+                icone="orbit",
+                tags=["Relatividade", "Buracos Negros", "Gravitação"],
             ),
             EixoTematico(
                 numero=4,
-                titulo="Ensino de Física e Divulgação Científica",
-                subtitulo="Interiorização & Formação Docente",
-                descricao="Metodologias ativas para sala de aula, formação continuada de educadores, epistemologia e extensão em parceria com o Observatório Kariri.",
+                titulo="Física Quântica",
+                subtitulo="Fundamentos e Tecnologias Quânticas",
+                descricao="Mecânica quântica fundamental, estados quânticos, grafeno curvo, qubits e tecnologias emergentes de computação quântica.",
+                cor="#818CF8",
+                icone="atom",
+                tags=["Física Quântica", "Qubits", "Grafeno"],
+            ),
+            EixoTematico(
+                numero=5,
+                titulo="Ensino e Divulgação Científica",
+                subtitulo="Formação Docente e Interiorização",
+                descricao="Metodologias inovadoras de ensino, formação continuada de professores e popularização da astronomia em parceria com o Observatório Kariri.",
                 cor="#059669",
                 icone="graduation-cap",
-                tags=["MNPEF", "Observatório Kariri", "Educação Básica"],
+                tags=["Ensino", "Divulgação", "Observatório Kariri"],
             ),
         ]
 

@@ -6,7 +6,11 @@ from typing import Generic, List, Optional, TypeVar
 from projeto_web.core.config import CAPACIDADE_MAXIMA_EVENTO
 from projeto_web.core.security import PasswordHasherProtocol
 from projeto_web.models.usuario import Usuario
-from projeto_web.repositories.base import UsuarioRepositoryProtocol
+from projeto_web.repositories.base import (
+    UsuarioCommandRepositoryProtocol,
+    UsuarioQueryRepositoryProtocol,
+    UsuarioRepositoryProtocol,
+)
 
 T = TypeVar("T")
 
@@ -21,15 +25,33 @@ class ControllerResult(Generic[T]):
 
 
 class UsuarioController:
-    """Controller de Usuários com inversão de dependência (DIP)."""
+    """Controller de Usuários com inversão de dependência e CQRS (Command Query Responsibility Segregation)."""
 
     def __init__(
         self,
-        repository: UsuarioRepositoryProtocol,
-        hasher: PasswordHasherProtocol,
+        repository: Optional[UsuarioRepositoryProtocol] = None,
+        hasher: Optional[PasswordHasherProtocol] = None,
         capacidade_maxima: int = CAPACIDADE_MAXIMA_EVENTO,
+        command_repository: Optional[UsuarioCommandRepositoryProtocol] = None,
+        query_repository: Optional[UsuarioQueryRepositoryProtocol] = None,
     ):
-        self._repository = repository
+        if repository is None and command_repository is None and query_repository is None:
+            from projeto_web.repositories.sqlite_usuario import SQLiteUsuarioRepository
+            repository = SQLiteUsuarioRepository()
+
+        if repository is not None:
+            self._commands = command_repository or repository
+            self._queries = query_repository or repository
+            self._repository = repository
+        else:
+            self._commands = command_repository
+            self._queries = query_repository
+            self._repository = command_repository
+
+        if hasher is None:
+            from projeto_web.core.security import PBKDF2PasswordHasher
+            hasher = PBKDF2PasswordHasher()
+
         self._hasher = hasher
         self._capacidade_maxima = capacidade_maxima
 
@@ -65,14 +87,14 @@ class UsuarioController:
             )
 
         # Validação de capacidade para modalidade presencial
-        if modalidade == "Presencial" and self._repository.count() >= self._capacidade_maxima:
+        if modalidade == "Presencial" and self._queries.count() >= self._capacidade_maxima:
             return ControllerResult(
                 sucesso=False,
                 mensagem="Limite de vagas presenciais esgotado. Escolha a modalidade Online.",
             )
 
         # Validação de unicidade de e-mail
-        if self._repository.find_by_email(email_clean) is not None:
+        if self._queries.find_by_email(email_clean) is not None:
             return ControllerResult(
                 sucesso=False,
                 mensagem="Este e-mail já está cadastrado no evento.",
@@ -89,7 +111,7 @@ class UsuarioController:
             email_confirmado=True,
         )
 
-        salvo = self._repository.save(novo_usuario)
+        salvo = self._commands.save(novo_usuario)
         return ControllerResult(
             sucesso=True,
             mensagem="Inscrição realizada com sucesso!",
@@ -105,7 +127,7 @@ class UsuarioController:
                 mensagem="Informe e-mail e senha para acessar.",
             )
 
-        usuario = self._repository.find_by_email(email_clean)
+        usuario = self._queries.find_by_email(email_clean)
         if usuario is None:
             return ControllerResult(
                 sucesso=False,
@@ -126,7 +148,7 @@ class UsuarioController:
 
     def alterar_modalidade(self, user_id: int, nova_modalidade: str) -> ControllerResult[Usuario]:
         """Permite ao participante alterar entre Presencial e Online."""
-        usuario = self._repository.find_by_id(user_id)
+        usuario = self._queries.find_by_id(user_id)
         if usuario is None:
             return ControllerResult(
                 sucesso=False,
@@ -134,7 +156,7 @@ class UsuarioController:
             )
 
         usuario.modalidade = nova_modalidade
-        atualizado = self._repository.save(usuario)
+        atualizado = self._commands.save(usuario)
         return ControllerResult(
             sucesso=True,
             mensagem=f"Modalidade alterada para {nova_modalidade} com sucesso!",
@@ -143,7 +165,7 @@ class UsuarioController:
 
     def listar_inscritos(self, termo: Optional[str] = None) -> List[Usuario]:
         """Retorna todos os inscritos filtrados por termo de busca opcional."""
-        todos = self._repository.list_all()
+        todos = self._queries.list_all()
         if not termo or not termo.strip():
             return todos
         termo_clean = termo.strip().lower()
@@ -163,7 +185,7 @@ class UsuarioController:
         if nova_role not in ["participante", "supervisor", "admin"]:
             return ControllerResult(sucesso=False, mensagem="Permissão inválida.")
 
-        atualizado = self._repository.update_role(user_id, nova_role)
+        atualizado = self._commands.update_role(user_id, nova_role)
         if not atualizado:
             return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
 
@@ -176,7 +198,7 @@ class UsuarioController:
 
     def alternar_presenca(self, user_id: int) -> ControllerResult[Usuario]:
         """Permite ao supervisor/admin marcar conferência de presença do participante."""
-        atualizado = self._repository.toggle_presenca(user_id)
+        atualizado = self._commands.toggle_presenca(user_id)
         if not atualizado:
             return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
 
@@ -189,7 +211,7 @@ class UsuarioController:
 
     def atualizar_foto(self, user_id: int, foto_url: str) -> ControllerResult[Usuario]:
         """Atualiza a foto de identificação do participante ou palestrante."""
-        atualizado = self._repository.update_foto(user_id, foto_url.strip())
+        atualizado = self._commands.update_foto(user_id, foto_url.strip())
         if not atualizado:
             return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
 
@@ -207,12 +229,12 @@ class UsuarioController:
                 mensagem="A nova senha deve possuir no mínimo 6 caracteres.",
             )
 
-        usuario = self._repository.find_by_id(user_id)
+        usuario = self._queries.find_by_id(user_id)
         if not usuario:
             return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
 
         hash_novo = self._hasher.hash(nova_senha.strip())
-        atualizado = self._repository.update_senha(user_id, hash_novo)
+        atualizado = self._commands.update_senha(user_id, hash_novo)
         return ControllerResult(
             sucesso=True,
             mensagem=f"Senha de {usuario.nome} atualizada com sucesso no banco de dados!",
@@ -221,8 +243,8 @@ class UsuarioController:
 
     def obter_estatisticas(self) -> dict:
         """Calcula métricas de vagas e inscritos."""
-        total = self._repository.count()
-        todos = self._repository.list_all()
+        total = self._queries.count()
+        todos = self._queries.list_all()
         presenciais = sum(1 for u in todos if u.modalidade == "Presencial")
         onlines = sum(1 for u in todos if u.modalidade == "Online")
         presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False))
@@ -250,7 +272,7 @@ class UsuarioController:
         if not nome_clean:
             return ControllerResult(sucesso=False, mensagem="O nome completo não pode ficar em branco.")
 
-        usuario = self._repository.find_by_id(user_id)
+        usuario = self._queries.find_by_id(user_id)
         if usuario is None:
             return ControllerResult(sucesso=False, mensagem="Participante não encontrado.")
 
@@ -258,7 +280,7 @@ class UsuarioController:
             return ControllerResult(sucesso=False, mensagem="Modalidade inválida.")
 
         if modalidade == "Presencial" and usuario.modalidade != "Presencial":
-            if self._repository.count() >= self._capacidade_maxima:
+            if self._queries.count() >= self._capacidade_maxima:
                 return ControllerResult(
                     sucesso=False,
                     mensagem="Vagas presenciais esgotadas. Mantenha a modalidade Online.",
@@ -267,7 +289,7 @@ class UsuarioController:
         usuario.nome = nome_clean
         usuario.instituicao = instituicao.strip() or "Não informada"
         usuario.modalidade = modalidade
-        atualizado = self._repository.save(usuario)
+        atualizado = self._commands.save(usuario)
         return ControllerResult(
             sucesso=True,
             mensagem="Perfil atualizado com sucesso!",
@@ -297,7 +319,7 @@ class UsuarioController:
                 mensagem="A nova senha e a confirmação não coincidem.",
             )
 
-        usuario = self._repository.find_by_id(user_id)
+        usuario = self._queries.find_by_id(user_id)
         if not usuario:
             return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
 
@@ -305,7 +327,7 @@ class UsuarioController:
             return ControllerResult(sucesso=False, mensagem="Senha atual incorreta. Tente novamente.")
 
         hash_novo = self._hasher.hash(nova_senha.strip())
-        atualizado = self._repository.update_senha(user_id, hash_novo)
+        atualizado = self._commands.update_senha(user_id, hash_novo)
         return ControllerResult(
             sucesso=True,
             mensagem="Sua senha foi alterada com sucesso!",

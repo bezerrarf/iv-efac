@@ -57,7 +57,7 @@ def tela_eixos() -> rx.Component:
             ),
             rx.grid(
                 *[card_eixo_hpc(e) for e in eixos],
-                columns=rx.breakpoints(initial="1", sm="2", lg="4"),
+                columns=rx.breakpoints(initial="1", sm="2", md="3"),
                 spacing="4",
                 max_width="1240px",
                 width="100%",

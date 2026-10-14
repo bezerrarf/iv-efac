@@ -1,0 +1,1 @@
+from .usuario_commands import SQLiteUsuarioCommandRepository

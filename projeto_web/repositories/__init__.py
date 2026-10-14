@@ -1,12 +1,27 @@
-"""Camada de repositórios de dados do AstroData 2026."""
+"""Camada de Acesso a Dados e Repositórios no Padrão CQRS (Command Query Responsibility Segregation)."""
 
-from projeto_web.repositories.base import UsuarioRepositoryProtocol
-from projeto_web.repositories.sqlite_usuario import SQLiteUsuarioRepository
-from projeto_web.repositories.database import init_db, get_session
+from .base import (
+    UsuarioCommandRepositoryProtocol,
+    UsuarioQueryRepositoryProtocol,
+    UsuarioRepositoryProtocol,
+    AtividadeCommandRepositoryProtocol,
+    AtividadeQueryRepositoryProtocol,
+)
+from .commands.usuario_commands import SQLiteUsuarioCommandRepository
+from .queries.usuario_queries import SQLiteUsuarioQueryRepository
+from .commands.atividade_commands import SQLiteAtividadeCommandRepository
+from .queries.atividade_queries import SQLiteAtividadeQueryRepository
+from .sqlite_usuario import SQLiteUsuarioRepository
 
 __all__ = [
+    "UsuarioCommandRepositoryProtocol",
+    "UsuarioQueryRepositoryProtocol",
     "UsuarioRepositoryProtocol",
+    "AtividadeCommandRepositoryProtocol",
+    "AtividadeQueryRepositoryProtocol",
+    "SQLiteUsuarioCommandRepository",
+    "SQLiteUsuarioQueryRepository",
+    "SQLiteAtividadeCommandRepository",
+    "SQLiteAtividadeQueryRepository",
     "SQLiteUsuarioRepository",
-    "init_db",
-    "get_session",
 ]

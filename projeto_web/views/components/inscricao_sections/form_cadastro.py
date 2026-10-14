@@ -84,13 +84,13 @@ def form_cadastro() -> rx.Component:
         ),
         rx.vstack(
             rx.text("Eixo Temático de Interesse", size="2", weight="bold", color="white"),
-            rx.select(
+                        rx.select(
                 [
                     "Astrofísica",
-                    "Relatividade Geral e Gravitação",
                     "Física Computacional",
+                    "Relatividade e Gravitação",
                     "Física Quântica",
-                    "Ensino de Física e Divulgação Científica",
+                    "Ensino e Divulgação Científica",
                 ],
                 value=AuthState.cad_area,
                 on_change=AuthState.set_cad_area,

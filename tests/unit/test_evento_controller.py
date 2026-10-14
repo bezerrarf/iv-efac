@@ -6,12 +6,12 @@ from projeto_web.controllers.evento_controller import EventoController
 
 def test_obter_dimensoes_e_eixos():
     eixos = EventoController.obter_eixos_tematicos()
-    assert len(eixos) == 4
+    assert len(eixos) == 5
     numeros = [e.numero for e in eixos]
-    assert numeros == [1, 2, 3, 4]
+    assert numeros == [1, 2, 3, 4, 5]
 
     dimensoes = EventoController.obter_dimensoes()
-    assert len(dimensoes) == 4
+    assert len(dimensoes) == 5
     for d in dimensoes:
         assert d.cor.startswith("#")
         assert len(d.nome) > 0
@@ -34,12 +34,12 @@ def test_obter_programacao_dias_oficiais():
 
 def test_obter_palestrantes_oficiais():
     palestrantes = EventoController.obter_palestrantes()
-    assert len(palestrantes) == 8
+    assert len(palestrantes) == 9
     nomes = [p.nome for p in palestrantes]
     assert any("Cesar Lenzi" in n for n in nomes)
     assert any("Ronaldo Vieira Lobato" in n for n in nomes)
     assert any("Eliane Angela Veit" in n for n in nomes)
-    assert any("Iarley Lobato" in n for n in nomes)
+    assert any("Iarley Lobo" in n for n in nomes)
     assert any("Jonathan" in n for n in nomes)
     assert any("Célio Rodrigues Muniz" in n for n in nomes)
 

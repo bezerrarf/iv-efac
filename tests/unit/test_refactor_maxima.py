@@ -20,7 +20,7 @@ from projeto_web.styles.theme import (
 def test_palestrantes_possuem_fotos_webp():
     """Valida se todos os palestrantes possuem fotos no formato WebP adaptativo."""
     palestrantes = EventoController.obter_palestrantes()
-    assert len(palestrantes) == 8
+    assert len(palestrantes) == 9
     for p in palestrantes:
         assert hasattr(p, "foto")
         assert p.foto.endswith(".webp") and p.foto.startswith("/participantes/")
@@ -37,6 +37,7 @@ def test_participantes_webp_existentes_em_disco():
         "celio_muniz",
         "marcos_barros",
         "jose_crisanto",
+        "job_saraiva",
     ]
     p_dir = Path("participantes")
     assets_dir = Path("assets/participantes")

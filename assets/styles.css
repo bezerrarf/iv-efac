@@ -55,30 +55,43 @@ img {
 }
 
 /* ==========================================================================
-   TABELAS INTERATIVAS (ADMIN & SUPERVISOR) - SETAS TRANSLÚCIDAS DE ROLAGEM
-   Controles Flutuantes que Movem a Tabela Toda (Desktop Hover & Touchscreen)
+   TABELAS DE DADOS (ADMIN & SUPERVISOR) - ROLAGEM MOBILE SUAVE & CINÉTICA
    ========================================================================== */
-.table-scroll-wrapper {
-  position: relative;
-  width: 100%;
-}
-
 .table-scroll-container {
   width: 100%;
   overflow-x: auto;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(15, 23, 42, 0.6);
-  cursor: grab;
+  backdrop-filter: blur(12px);
 }
 
-.table-scroll-container:active {
-  cursor: grabbing;
+/* Barra de rolagem sutil, moderna e translúcida */
+.table-scroll-container::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* Efeito de iluminação suave da linha ao passar o mouse ou tocar */
+.table-scroll-container::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 9999px;
+  margin: 0 12px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 173, 181, 0.45);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 173, 181, 0.8);
+}
+
+/* Efeito suave de iluminação na linha ao passar o mouse ou tocar */
 .interactive-table-row {
   transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -86,79 +99,5 @@ img {
 .interactive-table-row:hover,
 .interactive-table-row:focus-within,
 .interactive-table-row:active {
-  background: rgba(0, 173, 181, 0.09) !important;
-}
-
-/* Setas Translúcidas Flutuantes que Movem a Tabela como um Scroll */
-.table-scroll-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 40;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  background: rgba(6, 8, 20, 0.82) !important;
-  backdrop-filter: blur(14px);
-  border: 1.5px solid rgba(0, 173, 181, 0.55) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 173, 181, 0.4) !important;
-  color: #ffffff !important;
-  cursor: pointer;
-  opacity: 0.35;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  -webkit-tap-highlight-color: transparent;
-  padding: 0 !important;
-}
-
-.table-scroll-arrow-left {
-  left: -12px;
-}
-
-.table-scroll-arrow-right {
-  right: -12px;
-}
-
-/* Ao passar o mouse sobre a área da tabela ou interagir */
-.table-scroll-wrapper:hover .table-scroll-arrow,
-.table-scroll-wrapper:focus-within .table-scroll-arrow {
-  opacity: 0.95;
-}
-
-.table-scroll-arrow:hover {
-  opacity: 1 !important;
-  background: rgba(0, 173, 181, 0.4) !important;
-  border-color: #00ADB5 !important;
-  transform: translateY(-50%) scale(1.15) !important;
-  box-shadow: 0 6px 25px rgba(0, 173, 181, 0.7) !important;
-}
-
-.table-scroll-arrow:active {
-  transform: translateY(-50%) scale(0.95) !important;
-}
-
-/* Em telas de toque (touchscreens/smartphones/tablets), setas sempre visíveis e fáceis de tocar */
-@media (hover: none) and (pointer: coarse) {
-  .table-scroll-arrow {
-    opacity: 0.9 !important;
-    width: 44px;
-    height: 44px;
-  }
-  .table-scroll-arrow-left {
-    left: 4px;
-  }
-  .table-scroll-arrow-right {
-    right: 4px;
-  }
-}
-
-@media (max-width: 768px) {
-  .table-scroll-arrow-left {
-    left: 2px;
-  }
-  .table-scroll-arrow-right {
-    right: 2px;
-  }
+  background: rgba(0, 173, 181, 0.08) !important;
 }

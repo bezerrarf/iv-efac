@@ -373,7 +373,7 @@ def modal_carteirinha_admin() -> rx.Component:
 
 
 def tabela_inscritos_admin() -> rx.Component:
-    """Tabela analítica de participantes com setas translúcidas de rolagem horizontal e suporte a toque."""
+    """Tabela analítica de participantes com rolagem cinética fluida no mobile e exportação em CSV/PDF."""
     return rx.vstack(
         # Barra Superior: Pesquisa, Recarregar e Botões de Exportação
         rx.hstack(
@@ -434,263 +434,253 @@ def tabela_inscritos_admin() -> rx.Component:
             spacing="2",
             wrap="wrap",
         ),
-        # Wrapper com as Duas Setas Translúcidas de Rolagem Horizontal
+        # Dica Visual de Deslize Horizontal apenas no Mobile
         rx.box(
-            # Seta Translúcida Esquerda (Rola a tabela para a esquerda)
-            rx.button(
-                rx.icon(tag="chevron-left", size=20, color="white"),
-                size="2",
-                variant="ghost",
-                class_name="table-scroll-arrow table-scroll-arrow-left",
-                id="btn-scroll-admin-left",
-                title="Rolar tabela para a esquerda",
-                on_click=rx.call_script("window.scrollTable('tabela-admin-inscritos', -360)"),
+            rx.hstack(
+                rx.icon(tag="arrow-left-right", size=13, color="#00ADB5"),
+                rx.text("Deslize para o lado para visualizar todas as presenças e ações", size="1", color="#CBD5E1"),
+                spacing="1",
+                align="center",
             ),
-            # Seta Translúcida Direita (Rola a tabela para a direita)
-            rx.button(
-                rx.icon(tag="chevron-right", size=20, color="white"),
-                size="2",
-                variant="ghost",
-                class_name="table-scroll-arrow table-scroll-arrow-right",
-                id="btn-scroll-admin-right",
-                title="Rolar tabela para a direita",
-                on_click=rx.call_script("window.scrollTable('tabela-admin-inscritos', 360)"),
-            ),
-            # Contêiner da Tabela com Scroll Suave e Suporte a Toque
-            rx.box(
-                rx.table.root(
-                    rx.table.header(
-                        rx.table.row(
-                            rx.table.column_header_cell(
-                                "Código",
-                                width="130px",
-                                min_width="130px",
-                                white_space="nowrap",
-                            ),
-                            rx.table.column_header_cell(
-                                "Participante",
-                                min_width="240px",
-                                white_space="nowrap",
-                            ),
-                            rx.table.column_header_cell(
-                                "Modalidade / Polo",
-                                min_width="200px",
-                                white_space="nowrap",
-                            ),
-                            rx.table.column_header_cell(
-                                "Função / Role",
-                                width="130px",
-                                min_width="130px",
-                                text_align="center",
-                                white_space="nowrap",
-                            ),
-                            rx.table.column_header_cell(
-                                "Presença (D1 | D2)",
-                                width="150px",
-                                min_width="150px",
-                                text_align="center",
-                                white_space="nowrap",
-                            ),
-                            rx.table.column_header_cell(
-                                "Ações Administrativas",
-                                width="360px",
-                                min_width="360px",
-                                text_align="center",
-                                white_space="nowrap",
-                            ),
-                        )
-                    ),
-                    rx.table.body(
-                        rx.foreach(
-                            AdminState.admin_inscritos,
-                            lambda u: rx.table.row(
-                                # 1. Código Check-in (Monospace, padding elegante, nowrap permanente)
-                                rx.table.cell(
-                                    rx.badge(
-                                        u["codigo"],
-                                        color_scheme="cyan",
-                                        variant="soft",
-                                        size="1",
-                                        white_space="nowrap",
-                                        font_family="monospace",
-                                        font_weight="bold",
-                                        letter_spacing="0.5px",
-                                        padding_x="0.6rem",
-                                        padding_y="0.25rem",
-                                    ),
+            display=rx.breakpoints(initial="flex", md="none"),
+            padding="0.35rem 0.75rem",
+            background="rgba(0, 173, 181, 0.10)",
+            border_radius="8px",
+            border="1px solid rgba(0, 173, 181, 0.25)",
+            width="100%",
+        ),
+        # Contêiner da Tabela com Scroll Suave e Cinético no Mobile
+        rx.box(
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell(
+                            "Código",
+                            width="120px",
+                            min_width="120px",
+                            white_space="nowrap",
+                        ),
+                        rx.table.column_header_cell(
+                            "Participante",
+                            min_width="230px",
+                            white_space="nowrap",
+                        ),
+                        rx.table.column_header_cell(
+                            "Modalidade / Polo",
+                            min_width="190px",
+                            white_space="nowrap",
+                        ),
+                        rx.table.column_header_cell(
+                            "Função / Role",
+                            width="130px",
+                            min_width="130px",
+                            text_align="center",
+                            white_space="nowrap",
+                        ),
+                        rx.table.column_header_cell(
+                            "Presença (D1 | D2)",
+                            width="145px",
+                            min_width="145px",
+                            text_align="center",
+                            white_space="nowrap",
+                        ),
+                        rx.table.column_header_cell(
+                            "Ações Administrativas",
+                            width="340px",
+                            min_width="340px",
+                            text_align="center",
+                            white_space="nowrap",
+                        ),
+                    )
+                ),
+                rx.table.body(
+                    rx.foreach(
+                        AdminState.admin_inscritos,
+                        lambda u: rx.table.row(
+                            # 1. Código Check-in (Monospace, padding elegante, nowrap)
+                            rx.table.cell(
+                                rx.badge(
+                                    u["codigo"],
+                                    color_scheme="cyan",
+                                    variant="soft",
+                                    size="1",
                                     white_space="nowrap",
+                                    font_family="monospace",
+                                    font_weight="bold",
+                                    letter_spacing="0.5px",
+                                    padding_x="0.6rem",
+                                    padding_y="0.25rem",
                                 ),
-                                # 2. Participante (Nome e e-mail com nowrap e hierarquia clara)
-                                rx.table.cell(
-                                    rx.vstack(
-                                        rx.text(u["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
-                                        rx.text(u["email"], size="1", color="#CBD5E1", white_space="nowrap"),
-                                        spacing="0",
-                                        align="start",
-                                    ),
-                                    white_space="nowrap",
+                                white_space="nowrap",
+                            ),
+                            # 2. Participante (Nome e e-mail com nowrap e hierarquia clara)
+                            rx.table.cell(
+                                rx.vstack(
+                                    rx.text(u["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                    rx.text(u["email"], size="1", color="#CBD5E1", white_space="nowrap"),
+                                    spacing="0",
+                                    align="start",
                                 ),
-                                # 3. Modalidade e Polo/Instituição
-                                rx.table.cell(
-                                    rx.vstack(
-                                        rx.badge(u["modalidade"], color_scheme="indigo", variant="surface", size="1", white_space="nowrap"),
-                                        rx.text(u["instituicao"], size="1", color="#CBD5E1", white_space="nowrap"),
-                                        spacing="0",
-                                        align="start",
-                                    ),
-                                    white_space="nowrap",
+                                white_space="nowrap",
+                            ),
+                            # 3. Modalidade e Polo/Instituição
+                            rx.table.cell(
+                                rx.vstack(
+                                    rx.badge(u["modalidade"], color_scheme="indigo", variant="surface", size="1", white_space="nowrap"),
+                                    rx.text(u["instituicao"], size="1", color="#CBD5E1", white_space="nowrap"),
+                                    spacing="0",
+                                    align="start",
                                 ),
-                                # 4. Função / Role (Tag com nowrap e padding generoso para nunca quebrar)
-                                rx.table.cell(
+                                white_space="nowrap",
+                            ),
+                            # 4. Função / Role (Tag com nowrap e padding generoso)
+                            rx.table.cell(
+                                rx.cond(
+                                    u["role"] == "admin",
+                                    rx.badge("Admin", color_scheme="red", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
                                     rx.cond(
-                                        u["role"] == "admin",
-                                        rx.badge("Admin", color_scheme="red", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                        rx.cond(
-                                            u["is_supervisor"],
-                                            rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                            rx.badge("Participante", color_scheme="gray", variant="surface", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                        ),
+                                        u["is_supervisor"],
+                                        rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
+                                        rx.badge("Participante", color_scheme="gray", variant="surface", size="1", white_space="nowrap", padding_x="0.65rem"),
                                     ),
-                                    align="center",
-                                    white_space="nowrap",
-                                ),
-                                # 5. Presença Segregada Dia 1 e Dia 2 (Badges interativos)
-                                rx.table.cell(
-                                    rx.hstack(
-                                        rx.tooltip(
-                                            rx.badge(
-                                                "Dia 1",
-                                                color_scheme=rx.cond(u["presenca_dia1"], "green", "gray"),
-                                                variant=rx.cond(u["presenca_dia1"], "solid", "surface"),
-                                                size="1",
-                                                cursor="pointer",
-                                                white_space="nowrap",
-                                                padding_x="0.55rem",
-                                                on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 1"),
-                                            ),
-                                            content="Presença Dia 1 (11/Nov) • Clique para alternar",
-                                        ),
-                                        rx.tooltip(
-                                            rx.badge(
-                                                "Dia 2",
-                                                color_scheme=rx.cond(u["presenca_dia2"], "green", "gray"),
-                                                variant=rx.cond(u["presenca_dia2"], "solid", "surface"),
-                                                size="1",
-                                                cursor="pointer",
-                                                white_space="nowrap",
-                                                padding_x="0.55rem",
-                                                on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 2"),
-                                            ),
-                                            content="Presença Dia 2 (12/Nov) • Clique para alternar",
-                                        ),
-                                        spacing="1",
-                                        align="center",
-                                        justify="center",
-                                        wrap="nowrap",
-                                    ),
-                                    white_space="nowrap",
-                                    align="center",
-                                ),
-                                # 6. Ações Administrativas (Editar, Carteirinha, Supervisor/Revogar, Senha)
-                                rx.table.cell(
-                                    rx.hstack(
-                                        # Botão Editar Perfil Completo
-                                        rx.button(
-                                            rx.hstack(
-                                                rx.icon(tag="user-cog", size=12),
-                                                rx.text("Editar", size="1"),
-                                                spacing="1",
-                                                align="center",
-                                            ),
-                                            size="1",
-                                            variant="surface",
-                                            color_scheme="cyan",
-                                            on_click=AdminState.abrir_modal_editar_participante(u),
-                                            style=STYLE_BUTTON_CHIP,
-                                            white_space="nowrap",
-                                            flex_shrink="0",
-                                        ),
-                                        # Botão Carteirinha
-                                        rx.button(
-                                            rx.hstack(
-                                                rx.icon(tag="id-card", size=12),
-                                                rx.text("Carteirinha", size="1"),
-                                                spacing="1",
-                                                align="center",
-                                            ),
-                                            size="1",
-                                            variant="outline",
-                                            color_scheme="cyan",
-                                            on_click=AdminState.ver_carteirinha_admin(u["id"]),
-                                            style=STYLE_BUTTON_CHIP,
-                                            white_space="nowrap",
-                                            flex_shrink="0",
-                                        ),
-                                        # Botão Supervisor / Revogar / Master
-                                        rx.cond(
-                                            u["role"] != "admin",
-                                            rx.cond(
-                                                u["is_supervisor"],
-                                                rx.button(
-                                                    "Revogar",
-                                                    size="1",
-                                                    variant="outline",
-                                                    color_scheme="red",
-                                                    on_click=EventoState.rebaixar_supervisor(u["id"]),
-                                                    style=STYLE_BUTTON_CHIP,
-                                                    white_space="nowrap",
-                                                    flex_shrink="0",
-                                                ),
-                                                rx.button(
-                                                    "Supervisor",
-                                                    size="1",
-                                                    variant="solid",
-                                                    color_scheme="violet",
-                                                    on_click=EventoState.promover_supervisor(u["id"]),
-                                                    style=STYLE_BUTTON_CHIP,
-                                                    white_space="nowrap",
-                                                    flex_shrink="0",
-                                                ),
-                                            ),
-                                            rx.badge("Master", color_scheme="red", variant="soft", size="1", white_space="nowrap", flex_shrink="0"),
-                                        ),
-                                        # Botão Alterar Senha do Inscrito
-                                        rx.button(
-                                            rx.hstack(
-                                                rx.icon(tag="key", size=12),
-                                                rx.text("Senha", size="1"),
-                                                spacing="1",
-                                                align="center",
-                                            ),
-                                            size="1",
-                                            variant="surface",
-                                            color_scheme="cyan",
-                                            on_click=AdminState.abrir_modal_senha(u["id"], u["nome"]),
-                                            style=STYLE_BUTTON_CHIP,
-                                            white_space="nowrap",
-                                            flex_shrink="0",
-                                        ),
-                                        spacing="2",
-                                        align="center",
-                                        justify="center",
-                                        wrap="nowrap",
-                                    ),
-                                    white_space="nowrap",
-                                    align="center",
                                 ),
                                 align="center",
-                                class_name="interactive-table-row",
+                                white_space="nowrap",
                             ),
+                            # 5. Presença Segregada Dia 1 e Dia 2 (Badges interativos)
+                            rx.table.cell(
+                                rx.hstack(
+                                    rx.tooltip(
+                                        rx.badge(
+                                            "Dia 1",
+                                            color_scheme=rx.cond(u["presenca_dia1"], "green", "gray"),
+                                            variant=rx.cond(u["presenca_dia1"], "solid", "surface"),
+                                            size="1",
+                                            cursor="pointer",
+                                            white_space="nowrap",
+                                            padding_x="0.55rem",
+                                            on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 1"),
+                                        ),
+                                        content="Presença Dia 1 (11/Nov) • Clique para alternar",
+                                    ),
+                                    rx.tooltip(
+                                        rx.badge(
+                                            "Dia 2",
+                                            color_scheme=rx.cond(u["presenca_dia2"], "green", "gray"),
+                                            variant=rx.cond(u["presenca_dia2"], "solid", "surface"),
+                                            size="1",
+                                            cursor="pointer",
+                                            white_space="nowrap",
+                                            padding_x="0.55rem",
+                                            on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 2"),
+                                        ),
+                                        content="Presença Dia 2 (12/Nov) • Clique para alternar",
+                                    ),
+                                    spacing="1",
+                                    align="center",
+                                    justify="center",
+                                    wrap="nowrap",
+                                ),
+                                white_space="nowrap",
+                                align="center",
+                            ),
+                            # 6. Ações Administrativas (Editar, Carteirinha, Supervisor/Revogar, Senha)
+                            rx.table.cell(
+                                rx.hstack(
+                                    # Botão Editar Perfil Completo
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="user-cog", size=12),
+                                            rx.text("Editar", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="surface",
+                                        color_scheme="cyan",
+                                        on_click=AdminState.abrir_modal_editar_participante(u),
+                                        style=STYLE_BUTTON_CHIP,
+                                        white_space="nowrap",
+                                        flex_shrink="0",
+                                    ),
+                                    # Botão Carteirinha
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="id-card", size=12),
+                                            rx.text("Carteirinha", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="outline",
+                                        color_scheme="cyan",
+                                        on_click=AdminState.ver_carteirinha_admin(u["id"]),
+                                        style=STYLE_BUTTON_CHIP,
+                                        white_space="nowrap",
+                                        flex_shrink="0",
+                                    ),
+                                    # Botão Supervisor / Revogar / Master
+                                    rx.cond(
+                                        u["role"] != "admin",
+                                        rx.cond(
+                                            u["is_supervisor"],
+                                            rx.button(
+                                                "Revogar",
+                                                size="1",
+                                                variant="outline",
+                                                color_scheme="red",
+                                                on_click=EventoState.rebaixar_supervisor(u["id"]),
+                                                style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
+                                                flex_shrink="0",
+                                            ),
+                                            rx.button(
+                                                "Supervisor",
+                                                size="1",
+                                                variant="solid",
+                                                color_scheme="violet",
+                                                on_click=EventoState.promover_supervisor(u["id"]),
+                                                style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
+                                                flex_shrink="0",
+                                            ),
+                                        ),
+                                        rx.badge("Master", color_scheme="red", variant="soft", size="1", white_space="nowrap", flex_shrink="0"),
+                                    ),
+                                    # Botão Alterar Senha do Inscrito
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="key", size=12),
+                                            rx.text("Senha", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="surface",
+                                        color_scheme="cyan",
+                                        on_click=AdminState.abrir_modal_senha(u["id"], u["nome"]),
+                                        style=STYLE_BUTTON_CHIP,
+                                        white_space="nowrap",
+                                        flex_shrink="0",
+                                    ),
+                                    spacing="2",
+                                    align="center",
+                                    justify="center",
+                                    wrap="nowrap",
+                                ),
+                                white_space="nowrap",
+                                align="center",
+                            ),
+                            align="center",
+                            class_name="interactive-table-row",
                         ),
                     ),
-                    width="100%",
-                    min_width="1220px",
-                    variant="surface",
                 ),
-                id="tabela-admin-inscritos",
-                class_name="table-scroll-container",
+                width="100%",
+                min_width="1160px",
+                variant="surface",
             ),
-            class_name="table-scroll-wrapper",
+            class_name="table-scroll-container",
             width="100%",
         ),
         spacing="3",

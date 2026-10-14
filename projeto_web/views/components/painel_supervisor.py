@@ -136,38 +136,31 @@ def painel_supervisor_view() -> rx.Component:
                 width="100%",
                 spacing="2",
             ),
-            # Tabela de Conferência com Setas Translúcidas de Rolagem Horizontal
+            # Dica Visual de Deslize Horizontal no Mobile
             rx.box(
-                # Seta Translúcida Esquerda
-                rx.button(
-                    rx.icon(tag="chevron-left", size=20, color="white"),
-                    size="2",
-                    variant="ghost",
-                    class_name="table-scroll-arrow table-scroll-arrow-left",
-                    id="btn-scroll-superv-left",
-                    title="Rolar tabela para a esquerda",
-                    on_click=rx.call_script("window.scrollTable('tabela-supervisor-conferencia', -360)"),
+                rx.hstack(
+                    rx.icon(tag="arrow-left-right", size=13, color="#8B5CF6"),
+                    rx.text("Deslize para o lado para visualizar a conferência de presença", size="1", color="#CBD5E1"),
+                    spacing="1",
+                    align="center",
                 ),
-                # Seta Translúcida Direita
-                rx.button(
-                    rx.icon(tag="chevron-right", size=20, color="white"),
-                    size="2",
-                    variant="ghost",
-                    class_name="table-scroll-arrow table-scroll-arrow-right",
-                    id="btn-scroll-superv-right",
-                    title="Rolar tabela para a direita",
-                    on_click=rx.call_script("window.scrollTable('tabela-supervisor-conferencia', 360)"),
-                ),
-                # Contêiner com Scroll Suave
-                rx.box(
-                    rx.table.root(
+                display=rx.breakpoints(initial="flex", md="none"),
+                padding="0.35rem 0.75rem",
+                background="rgba(139, 92, 246, 0.12)",
+                border_radius="8px",
+                border="1px solid rgba(139, 92, 246, 0.25)",
+                width="100%",
+            ),
+            # Tabela de Conferência com Scroll Fluido
+            rx.box(
+                rx.table.root(
                     rx.table.header(
                         rx.table.row(
-                            rx.table.column_header_cell("Código Check-in", width="140px", min_width="140px", white_space="nowrap"),
-                            rx.table.column_header_cell("Nome do Participante", min_width="240px", white_space="nowrap"),
-                            rx.table.column_header_cell("Polo / Modalidade", min_width="200px", white_space="nowrap"),
-                            rx.table.column_header_cell("Presença Dia 1 (11/Nov)", width="190px", min_width="190px", text_align="center", white_space="nowrap"),
-                            rx.table.column_header_cell("Presença Dia 2 (12/Nov)", width="190px", min_width="190px", text_align="center", white_space="nowrap"),
+                            rx.table.column_header_cell("Código Check-in", width="130px", min_width="130px", white_space="nowrap"),
+                            rx.table.column_header_cell("Nome do Participante", min_width="230px", white_space="nowrap"),
+                            rx.table.column_header_cell("Polo / Modalidade", min_width="190px", white_space="nowrap"),
+                            rx.table.column_header_cell("Presença Dia 1 (11/Nov)", width="180px", min_width="180px", text_align="center", white_space="nowrap"),
+                            rx.table.column_header_cell("Presença Dia 2 (12/Nov)", width="180px", min_width="180px", text_align="center", white_space="nowrap"),
                         )
                     ),
                     rx.table.body(
@@ -209,8 +202,8 @@ def painel_supervisor_view() -> rx.Component:
                                     rx.hstack(
                                         rx.cond(
                                             item["presenca_dia1"],
-                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1"),
-                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1"),
+                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1", white_space="nowrap"),
+                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1", white_space="nowrap"),
                                         ),
                                         rx.cond(
                                             item["presenca_dia1"],
@@ -221,6 +214,7 @@ def painel_supervisor_view() -> rx.Component:
                                                 color_scheme="red",
                                                 on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
                                                 style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
                                             ),
                                             rx.button(
                                                 "Confirmar",
@@ -229,18 +223,23 @@ def painel_supervisor_view() -> rx.Component:
                                                 color_scheme="cyan",
                                                 on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
                                                 style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
                                             ),
                                         ),
                                         spacing="2",
                                         align="center",
+                                        justify="center",
+                                        wrap="nowrap",
                                     ),
+                                    white_space="nowrap",
+                                    align="center",
                                 ),
                                 rx.table.cell(
                                     rx.hstack(
                                         rx.cond(
                                             item["presenca_dia2"],
-                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1"),
-                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1"),
+                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1", white_space="nowrap"),
+                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1", white_space="nowrap"),
                                         ),
                                         rx.cond(
                                             item["presenca_dia2"],
@@ -251,6 +250,7 @@ def painel_supervisor_view() -> rx.Component:
                                                 color_scheme="red",
                                                 on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
                                                 style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
                                             ),
                                             rx.button(
                                                 "Confirmar",
@@ -259,27 +259,27 @@ def painel_supervisor_view() -> rx.Component:
                                                 color_scheme="violet",
                                                 on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
                                                 style=STYLE_BUTTON_CHIP,
+                                                white_space="nowrap",
                                             ),
                                         ),
-
                                         spacing="2",
                                         align="center",
+                                        justify="center",
+                                        wrap="nowrap",
                                     ),
+                                    white_space="nowrap",
+                                    align="center",
                                 ),
                                 align="center",
                                 class_name="interactive-table-row",
-                                tab_index=0,
                             ),
                         ),
                     ),
                     width="100%",
-                    min_width="1020px",
+                    min_width="920px",
                     variant="surface",
                 ),
-                    id="tabela-supervisor-conferencia",
-                    class_name="table-scroll-container",
-                ),
-                class_name="table-scroll-wrapper",
+                class_name="table-scroll-container",
                 width="100%",
             ),
             spacing="4",

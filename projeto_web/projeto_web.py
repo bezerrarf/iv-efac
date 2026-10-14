@@ -20,6 +20,35 @@ app = rx.App(
         rx.el.link(rel="icon", type="image/png", href="/favicon.png"),
         rx.el.link(rel="apple-touch-icon", href="/favicon.png"),
         rx.el.style("a[href*='reflex.dev'] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }"),
+        rx.el.script("""
+window.scrollTable = function(id, delta) {
+    var el = document.getElementById(id);
+    if (el) {
+        el.scrollBy({ left: delta, behavior: 'smooth' });
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    ['tabela-admin-inscritos', 'tabela-supervisor-conferencia'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var isDown = false, startX, scrollLeft;
+        el.addEventListener('mousedown', function(e) {
+            if (e.target.closest('button, input, a, [role="button"]')) return;
+            isDown = true;
+            startX = e.pageX - el.offsetLeft;
+            scrollLeft = el.scrollLeft;
+        });
+        window.addEventListener('mouseup', function() { isDown = false; });
+        el.addEventListener('mousemove', function(e) {
+            if (!isDown) return;
+            e.preventDefault();
+            var x = e.pageX - el.offsetLeft;
+            el.scrollLeft = scrollLeft - (x - startX) * 1.5;
+        });
+    });
+});
+"""),
     ],
 )
 

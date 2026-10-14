@@ -136,16 +136,38 @@ def painel_supervisor_view() -> rx.Component:
                 width="100%",
                 spacing="2",
             ),
-            # Tabela de Conferência
+            # Tabela de Conferência com Setas Translúcidas de Rolagem Horizontal
             rx.box(
-                rx.table.root(
+                # Seta Translúcida Esquerda
+                rx.button(
+                    rx.icon(tag="chevron-left", size=20, color="white"),
+                    size="2",
+                    variant="ghost",
+                    class_name="table-scroll-arrow table-scroll-arrow-left",
+                    id="btn-scroll-superv-left",
+                    title="Rolar tabela para a esquerda",
+                    on_click=rx.call_script("window.scrollTable('tabela-supervisor-conferencia', -360)"),
+                ),
+                # Seta Translúcida Direita
+                rx.button(
+                    rx.icon(tag="chevron-right", size=20, color="white"),
+                    size="2",
+                    variant="ghost",
+                    class_name="table-scroll-arrow table-scroll-arrow-right",
+                    id="btn-scroll-superv-right",
+                    title="Rolar tabela para a direita",
+                    on_click=rx.call_script("window.scrollTable('tabela-supervisor-conferencia', 360)"),
+                ),
+                # Contêiner com Scroll Suave
+                rx.box(
+                    rx.table.root(
                     rx.table.header(
                         rx.table.row(
-                            rx.table.column_header_cell("Código Check-in"),
-                            rx.table.column_header_cell("Nome do Participante"),
-                            rx.table.column_header_cell("Polo / Modalidade"),
-                            rx.table.column_header_cell("Presença Dia 1 (11/Nov)"),
-                            rx.table.column_header_cell("Presença Dia 2 (12/Nov)"),
+                            rx.table.column_header_cell("Código Check-in", width="140px", min_width="140px", white_space="nowrap"),
+                            rx.table.column_header_cell("Nome do Participante", min_width="240px", white_space="nowrap"),
+                            rx.table.column_header_cell("Polo / Modalidade", min_width="200px", white_space="nowrap"),
+                            rx.table.column_header_cell("Presença Dia 1 (11/Nov)", width="190px", min_width="190px", text_align="center", white_space="nowrap"),
+                            rx.table.column_header_cell("Presença Dia 2 (12/Nov)", width="190px", min_width="190px", text_align="center", white_space="nowrap"),
                         )
                     ),
                     rx.table.body(
@@ -153,21 +175,35 @@ def painel_supervisor_view() -> rx.Component:
                             SupervisorState.superv_inscritos,
                             lambda item: rx.table.row(
                                 rx.table.cell(
-                                    rx.badge(item["codigo"], color_scheme="cyan", variant="solid", size="2"),
+                                    rx.badge(
+                                        item["codigo"],
+                                        color_scheme="cyan",
+                                        variant="solid",
+                                        size="2",
+                                        white_space="nowrap",
+                                        font_family="monospace",
+                                        font_weight="bold",
+                                        letter_spacing="0.5px",
+                                    ),
+                                    white_space="nowrap",
                                 ),
                                 rx.table.cell(
                                     rx.vstack(
-                                        rx.text(item["nome"], size="2", weight="bold", color="white"),
-                                        rx.text(item["email"], size="1", color="#CBD5E1"),
+                                        rx.text(item["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                        rx.text(item["email"], size="1", color="#CBD5E1", white_space="nowrap"),
                                         spacing="0",
+                                        align="start",
                                     ),
+                                    white_space="nowrap",
                                 ),
                                 rx.table.cell(
                                     rx.vstack(
-                                        rx.badge(item["modalidade"], color_scheme="indigo", variant="surface", size="1"),
-                                        rx.text(item["instituicao"], size="1", color="#CBD5E1"),
+                                        rx.badge(item["modalidade"], color_scheme="indigo", variant="surface", size="1", white_space="nowrap"),
+                                        rx.text(item["instituicao"], size="1", color="#CBD5E1", white_space="nowrap"),
                                         spacing="0",
+                                        align="start",
                                     ),
+                                    white_space="nowrap",
                                 ),
                                 rx.table.cell(
                                     rx.hstack(
@@ -225,21 +261,26 @@ def painel_supervisor_view() -> rx.Component:
                                                 style=STYLE_BUTTON_CHIP,
                                             ),
                                         ),
+
                                         spacing="2",
                                         align="center",
                                     ),
                                 ),
                                 align="center",
+                                class_name="interactive-table-row",
+                                tab_index=0,
                             ),
                         ),
                     ),
                     width="100%",
+                    min_width="1020px",
                     variant="surface",
                 ),
+                    id="tabela-supervisor-conferencia",
+                    class_name="table-scroll-container",
+                ),
+                class_name="table-scroll-wrapper",
                 width="100%",
-                overflow_x="auto",
-                border_radius="12px",
-                border="1px solid rgba(255, 255, 255, 0.08)",
             ),
             spacing="4",
             width="100%",

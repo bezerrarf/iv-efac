@@ -1,4 +1,8 @@
+import os
 import reflex as rx
+
+# Desativa o pre-render SSR/SSG no build de producao para evitar timeout do React Router em VMs enxutas (e2-micro)
+os.environ.setdefault("REFLEX_SSR", "false")
 
 config = rx.Config(
     app_name="projeto_web",
@@ -16,3 +20,4 @@ config = rx.Config(
         ),
     ],
 )
+

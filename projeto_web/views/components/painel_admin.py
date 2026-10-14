@@ -462,32 +462,25 @@ def tabela_inscritos_admin() -> rx.Component:
                         ),
                         rx.table.column_header_cell(
                             "Participante",
-                            min_width="230px",
+                            min_width="240px",
                             white_space="nowrap",
                         ),
                         rx.table.column_header_cell(
                             "Modalidade / Polo",
-                            min_width="190px",
-                            white_space="nowrap",
-                        ),
-                        rx.table.column_header_cell(
-                            "Função / Role",
-                            width="130px",
-                            min_width="130px",
-                            text_align="center",
+                            min_width="200px",
                             white_space="nowrap",
                         ),
                         rx.table.column_header_cell(
                             "Presença (D1 | D2)",
-                            width="145px",
-                            min_width="145px",
+                            width="160px",
+                            min_width="160px",
                             text_align="center",
                             white_space="nowrap",
                         ),
                         rx.table.column_header_cell(
                             "Ações Administrativas",
-                            width="340px",
-                            min_width="340px",
+                            width="260px",
+                            min_width="260px",
                             text_align="center",
                             white_space="nowrap",
                         ),
@@ -533,21 +526,7 @@ def tabela_inscritos_admin() -> rx.Component:
                                 ),
                                 white_space="nowrap",
                             ),
-                            # 4. Função / Role (Tag com nowrap e padding generoso)
-                            rx.table.cell(
-                                rx.cond(
-                                    u["role"] == "admin",
-                                    rx.badge("Admin", color_scheme="red", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                    rx.cond(
-                                        u["is_supervisor"],
-                                        rx.badge("Supervisor", color_scheme="violet", variant="solid", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                        rx.badge("Participante", color_scheme="gray", variant="surface", size="1", white_space="nowrap", padding_x="0.65rem"),
-                                    ),
-                                ),
-                                align="center",
-                                white_space="nowrap",
-                            ),
-                            # 5. Presença Segregada Dia 1 e Dia 2 (Badges interativos)
+                            # 4. Presença Segregada Dia 1 e Dia 2 (Badges interativos)
                             rx.table.cell(
                                 rx.hstack(
                                     rx.tooltip(
@@ -584,7 +563,7 @@ def tabela_inscritos_admin() -> rx.Component:
                                 white_space="nowrap",
                                 align="center",
                             ),
-                            # 6. Ações Administrativas (Editar, Carteirinha, Supervisor/Revogar, Senha)
+                            # 5. Ações Administrativas (Editar, Carteirinha, Senha)
                             rx.table.cell(
                                 rx.hstack(
                                     # Botão Editar Perfil Completo
@@ -619,34 +598,6 @@ def tabela_inscritos_admin() -> rx.Component:
                                         white_space="nowrap",
                                         flex_shrink="0",
                                     ),
-                                    # Botão Supervisor / Revogar / Master
-                                    rx.cond(
-                                        u["role"] != "admin",
-                                        rx.cond(
-                                            u["is_supervisor"],
-                                            rx.button(
-                                                "Revogar",
-                                                size="1",
-                                                variant="outline",
-                                                color_scheme="red",
-                                                on_click=EventoState.rebaixar_supervisor(u["id"]),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
-                                                flex_shrink="0",
-                                            ),
-                                            rx.button(
-                                                "Supervisor",
-                                                size="1",
-                                                variant="solid",
-                                                color_scheme="violet",
-                                                on_click=EventoState.promover_supervisor(u["id"]),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
-                                                flex_shrink="0",
-                                            ),
-                                        ),
-                                        rx.badge("Master", color_scheme="red", variant="soft", size="1", white_space="nowrap", flex_shrink="0"),
-                                    ),
                                     # Botão Alterar Senha do Inscrito
                                     rx.button(
                                         rx.hstack(
@@ -677,7 +628,7 @@ def tabela_inscritos_admin() -> rx.Component:
                     ),
                 ),
                 width="100%",
-                min_width="1160px",
+                min_width="980px",
                 variant="surface",
             ),
             class_name="table-scroll-container",
@@ -707,7 +658,7 @@ def editor_atividades_admin() -> rx.Component:
                 # Botão Criar / Delegar Nova Atividade
                 rx.button(
                     rx.hstack(
-                        rx.icon(tag="plus-circle", size=14),
+                        rx.icon(tag="circle-plus", size=14),
                         rx.text("Delegar Nova Atividade", size="1"),
                         spacing="1",
                         align="center",
@@ -744,7 +695,7 @@ def editor_atividades_admin() -> rx.Component:
             rx.card(
                 rx.vstack(
                     rx.hstack(
-                        rx.icon(tag="plus-circle", size=18, color=COLOR_CYAN),
+                        rx.icon(tag="circle-plus", size=18, color=COLOR_CYAN),
                         rx.heading("Delegar e Criar Nova Atividade na Grade", size="3", weight="bold", color="white"),
                         rx.spacer(),
                         rx.badge("Nova Atividade", color_scheme="green", size="1"),
@@ -1368,7 +1319,7 @@ def modal_editar_participante_admin() -> rx.Component:
                         rx.vstack(
                             rx.text("Privilégio / Função", size="1", weight="bold", color="#CBD5E1"),
                             rx.select(
-                                ["participante", "supervisor", "admin"],
+                                ["participante", "admin"],
                                 value=AdminState.admin_edit_role,
                                 on_change=AdminState.set_admin_edit_role,
                                 size="2",
@@ -1489,14 +1440,13 @@ def painel_admin_view() -> rx.Component:
                 align="center",
             ),
             rx.heading("Painel de Controle Administrativo • IV EFAC", size="6", weight="bold", color="white"),
-            # Grid de Métricas
+            # Grid de Métricas (4 Indicadores Centrais Otimizados)
             rx.grid(
                 stat_metric_box(AdminState.admin_total_inscritos, "Total de Inscritos", "users", "#38bdf8"),
                 stat_metric_box(AdminState.admin_total_presenciais, "Vagas Presenciais", "building", "#818cf8"),
                 stat_metric_box(AdminState.admin_total_onlines, "Transmissão Online", "globe", "#34d399"),
-                stat_metric_box(AdminState.admin_total_presentes, "Presenças Confirmadas", "check-circle", "#f59e0b"),
-                stat_metric_box(AdminState.admin_total_supervisores, "Supervisores Ativos", "shield", "#c084fc"),
-                columns=rx.breakpoints(initial="2", sm="3", md="5"),
+                stat_metric_box(AdminState.admin_total_presentes, "Presenças Confirmadas", "circle-check", "#f59e0b"),
+                columns=rx.breakpoints(initial="2", sm="2", md="4"),
                 spacing="3",
                 width="100%",
             ),
@@ -1506,7 +1456,7 @@ def painel_admin_view() -> rx.Component:
                     rx.tabs.trigger(
                         rx.hstack(
                             rx.icon(tag="users", size=14),
-                            rx.text("Inscritos & Supervisores", size="2"),
+                            rx.text("Participantes Inscritos", size="2"),
                             spacing="1",
                             align="center",
                         ),

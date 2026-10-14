@@ -38,6 +38,24 @@ class AdminState(AuthState):
     edit_ativ_tipo: str = ""
     edit_ativ_descricao: str = ""
     is_editing_atividade: bool = False
+    # Edição Completa de Participante pelo Administrador
+    modal_editar_participante_aberto: bool = False
+    admin_edit_user_id: int = 0
+    admin_edit_nome: str = ""
+    admin_edit_email: str = ""
+    admin_edit_instituicao: str = ""
+    admin_edit_modalidade: str = "Presencial"
+    admin_edit_area: str = "Astrofísica"
+    admin_edit_role: str = "participante"
+    admin_edit_presenca_d1: bool = False
+    admin_edit_presenca_d2: bool = False
+    # Links dos Modelos de Apresentação e Submissão
+    link_modelo_resumo: str = "https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
+    link_modelo_slides: str = "https://docs.google.com/presentation/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
+    link_modelo_poster: str = "https://docs.google.com/presentation/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
+    admin_link_resumo_input: str = ""
+    admin_link_slides_input: str = ""
+    admin_link_poster_input: str = ""
     is_creating_atividade: bool = False
     new_ativ_dia: str = "Dia 1"
     new_ativ_horario: str = "08:00 – 09:30"
@@ -71,9 +89,58 @@ class AdminState(AuthState):
         self.edit_ativ_tipo = val
     def set_edit_ativ_descricao(self, val: str):
         self.edit_ativ_descricao = val
+    def carregar_links_modelos(self):
+        """Carrega os links configurados dos modelos a partir do repositório."""
+        try:
+            from projeto_web.repositories.config_repository import ConfigRepository
+            repo = ConfigRepository()
+            self.link_modelo_resumo = repo.get("link_modelo_resumo", self.link_modelo_resumo)
+            self.link_modelo_slides = repo.get("link_modelo_slides", self.link_modelo_slides)
+            self.link_modelo_poster = repo.get("link_modelo_poster", self.link_modelo_poster)
+            self.admin_link_resumo_input = self.link_modelo_resumo
+            self.admin_link_slides_input = self.link_modelo_slides
+            self.admin_link_poster_input = self.link_modelo_poster
+        except Exception:
+            pass
+
+    def set_admin_link_resumo_input(self, val: str):
+        self.admin_link_resumo_input = val
+
+    def set_admin_link_slides_input(self, val: str):
+        self.admin_link_slides_input = val
+
+    def set_admin_link_poster_input(self, val: str):
+        self.admin_link_poster_input = val
+
+    def salvar_links_modelos(self):
+        """Salva novos links de modelos acadêmicos definidos pelo Administrador."""
+        if not self.is_admin:
+            self.feedback_msg = "Apenas administradores podem atualizar os links dos modelos."
+            self.feedback_tipo = "error"
+            return
+        try:
+            from projeto_web.repositories.config_repository import ConfigRepository
+            repo = ConfigRepository()
+            if self.admin_link_resumo_input.strip():
+                self.link_modelo_resumo = self.admin_link_resumo_input.strip()
+                repo.set("link_modelo_resumo", self.link_modelo_resumo)
+            if self.admin_link_slides_input.strip():
+                self.link_modelo_slides = self.admin_link_slides_input.strip()
+                repo.set("link_modelo_slides", self.link_modelo_slides)
+            if self.admin_link_poster_input.strip():
+                self.link_modelo_poster = self.admin_link_poster_input.strip()
+                repo.set("link_modelo_poster", self.link_modelo_poster)
+
+            self.feedback_msg = "Links dos modelos atualizados com sucesso no sistema!"
+            self.feedback_tipo = "success"
+        except Exception as e:
+            self.feedback_msg = f"Erro ao salvar links: {str(e)}"
+            self.feedback_tipo = "error"
+
     def carregar_painel_admin(self):
         """Carrega e filtra a lista de inscritos e calcula métricas para o admin."""
         self.carregar_atividades_admin()
+        self.carregar_links_modelos()
         usuarios = _usuario_controller.listar_inscritos(self.admin_filtro_busca)
         self.admin_inscritos = [
             {
@@ -87,6 +154,8 @@ class AdminState(AuthState):
                 "role": getattr(u, "role", "participante"),
                 "is_supervisor": (getattr(u, "role", "participante") == "supervisor"),
                 "presenca_confirmada": bool(getattr(u, "presenca_confirmada", False)),
+                "presenca_dia1": bool(getattr(u, "presenca_dia1", False)),
+                "presenca_dia2": bool(getattr(u, "presenca_dia2", False)),
             }
             for u in usuarios
         ]
@@ -99,6 +168,87 @@ class AdminState(AuthState):
         self.admin_total_supervisores = stats["supervisores"]
     def set_admin_nova_senha(self, val: str):
         self.admin_nova_senha_input = val
+    def alternar_presenca_dia(self, user_id: Any, dia: str):
+        """Alterna a presença de um inscrito em um dia específico."""
+        try:
+            uid = int(user_id)
+        except Exception:
+            return
+        res = _usuario_controller.alternar_presenca(uid, dia=dia)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        self.carregar_painel_admin()
+        if hasattr(self, "carregar_painel_supervisor"):
+            self.carregar_painel_supervisor()
+
+    def abrir_modal_editar_participante(self, user_data: Dict[str, Any]):
+        """Abre o modal de edição completa com os dados atuais do participante."""
+        if not self.is_admin:
+            return
+        self.admin_edit_user_id = int(user_data.get("id", 0))
+        self.admin_edit_nome = str(user_data.get("nome", ""))
+        self.admin_edit_email = str(user_data.get("email", ""))
+        self.admin_edit_instituicao = str(user_data.get("instituicao", ""))
+        self.admin_edit_modalidade = str(user_data.get("modalidade", "Presencial"))
+        self.admin_edit_area = str(user_data.get("area", "Astrofísica"))
+        self.admin_edit_role = str(user_data.get("role", "participante"))
+        self.admin_edit_presenca_d1 = bool(user_data.get("presenca_dia1", False))
+        self.admin_edit_presenca_d2 = bool(user_data.get("presenca_dia2", False))
+        self.modal_editar_participante_aberto = True
+
+    def fechar_modal_editar_participante(self):
+        """Fecha o modal de edição completa."""
+        self.modal_editar_participante_aberto = False
+
+    def set_admin_edit_nome(self, val: str):
+        self.admin_edit_nome = val
+
+    def set_admin_edit_email(self, val: str):
+        self.admin_edit_email = val
+
+    def set_admin_edit_instituicao(self, val: str):
+        self.admin_edit_instituicao = val
+
+    def set_admin_edit_modalidade(self, val: str):
+        self.admin_edit_modalidade = val
+
+    def set_admin_edit_area(self, val: str):
+        self.admin_edit_area = val
+
+    def set_admin_edit_role(self, val: str):
+        self.admin_edit_role = val
+
+    def toggle_admin_edit_presenca_d1(self, val: bool):
+        self.admin_edit_presenca_d1 = val
+
+    def toggle_admin_edit_presenca_d2(self, val: bool):
+        self.admin_edit_presenca_d2 = val
+
+    def salvar_edicao_participante(self):
+        """Persiste as alterações completas do participante realizadas pelo admin."""
+        if not self.is_admin or not self.admin_edit_user_id:
+            return
+
+        res = _usuario_controller.atualizar_participante_completo(
+            user_id=self.admin_edit_user_id,
+            nome=self.admin_edit_nome,
+            email=self.admin_edit_email,
+            instituicao=self.admin_edit_instituicao,
+            modalidade=self.admin_edit_modalidade,
+            area=self.admin_edit_area,
+            role=self.admin_edit_role,
+            presenca_dia1=self.admin_edit_presenca_d1,
+            presenca_dia2=self.admin_edit_presenca_d2,
+        )
+
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.modal_editar_participante_aberto = False
+            self.carregar_painel_admin()
+            if hasattr(self, "carregar_painel_supervisor"):
+                self.carregar_painel_supervisor()
+
     def salvar_nova_senha_inscrito(self):
         """Persiste a nova senha definida pelo administrador para o inscrito selecionado."""
         if not self.is_admin or not self.admin_senha_user_id:

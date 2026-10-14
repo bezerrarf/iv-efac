@@ -319,4 +319,13 @@ class EventoState(SupervisorState):
         )
         cod_clean = self.user_codigo.replace(" ", "_")
         return rx.download(data=img_bytes, filename=f"carteirinha_ivefac_{cod_clean}.png")
+    def baixar_pdf_programacao(self):
+        """Gera e baixa o PDF oficial com toda a programação das atividades do IV EFAC para todos os usuários."""
+        from projeto_web.core.export_service import gerar_pdf_programacao
+        from projeto_web.controllers.evento_controller import EventoController
 
+        dia1 = EventoController.obter_programacao("Dia 1")
+        dia2 = EventoController.obter_programacao("Dia 2")
+        pdf_bytes = gerar_pdf_programacao(dia1, dia2)
+        data_tag = datetime.now().strftime("%Y%m%d_%H%M")
+        return rx.download(data=pdf_bytes, filename=f"programacao_atividades_iv_efac_{data_tag}.pdf")

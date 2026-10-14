@@ -38,7 +38,9 @@ class SQLiteUsuarioQueryRepository(UsuarioQueryRepositoryProtocol):
         total = len(todos)
         presenciais = sum(1 for u in todos if u.modalidade == "Presencial")
         onlines = sum(1 for u in todos if u.modalidade == "Online")
-        presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False))
+        presentes_dia1 = sum(1 for u in todos if getattr(u, "presenca_dia1", False))
+        presentes_dia2 = sum(1 for u in todos if getattr(u, "presenca_dia2", False))
+        presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False) or getattr(u, "presenca_dia1", False) or getattr(u, "presenca_dia2", False))
         supervisores = sum(1 for u in todos if getattr(u, "role", "") == "supervisor")
 
         return {
@@ -48,5 +50,7 @@ class SQLiteUsuarioQueryRepository(UsuarioQueryRepositoryProtocol):
             "presenciais": presenciais,
             "onlines": onlines,
             "presentes": presentes,
+            "presentes_dia1": presentes_dia1,
+            "presentes_dia2": presentes_dia2,
             "supervisores": supervisores,
         }

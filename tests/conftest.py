@@ -44,10 +44,18 @@ class InMemoryUsuarioRepository(UsuarioRepositoryProtocol):
             return u
         return None
 
-    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+    def toggle_presenca(self, user_id: int, dia: Optional[str] = None) -> Optional[Usuario]:
         u = self._usuarios.get(user_id)
         if u:
-            u.presenca_confirmada = not bool(u.presenca_confirmada)
+            if dia == "Dia 1":
+                u.presenca_dia1 = not bool(getattr(u, "presenca_dia1", False))
+            elif dia == "Dia 2":
+                u.presenca_dia2 = not bool(getattr(u, "presenca_dia2", False))
+            else:
+                novo = not bool(getattr(u, "presenca_confirmada", False))
+                u.presenca_dia1 = novo
+                u.presenca_dia2 = novo
+            u.presenca_confirmada = bool(getattr(u, "presenca_dia1", False) or getattr(u, "presenca_dia2", False))
             return u
         return None
 

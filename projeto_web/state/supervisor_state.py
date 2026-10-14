@@ -15,6 +15,8 @@ class SupervisorState(AdminState):
     superv_busca: str = ""
     superv_inscritos: List[Dict[str, Any]] = []
     superv_presentes_count: int = 0
+    superv_presentes_dia1_count: int = 0
+    superv_presentes_dia2_count: int = 0
     superv_total_count: int = 0
     def set_superv_busca(self, termo: str):
         self.superv_busca = termo
@@ -31,11 +33,30 @@ class SupervisorState(AdminState):
                 "modalidade": u.modalidade,
                 "codigo": u.codigo_inscricao,
                 "presenca_confirmada": bool(getattr(u, "presenca_confirmada", False)),
+                "presenca_dia1": bool(getattr(u, "presenca_dia1", False)),
+                "presenca_dia2": bool(getattr(u, "presenca_dia2", False)),
             }
             for u in usuarios
         ]
         self.superv_total_count = len(self.superv_inscritos)
-        self.superv_presentes_count = sum(1 for item in self.superv_inscritos if item["presenca_confirmada"])
+        self.superv_presentes_dia1_count = sum(1 for item in self.superv_inscritos if item["presenca_dia1"])
+        self.superv_presentes_dia2_count = sum(1 for item in self.superv_inscritos if item["presenca_dia2"])
+        self.superv_presentes_count = sum(1 for item in self.superv_inscritos if item["presenca_confirmada"] or item["presenca_dia1"] or item["presenca_dia2"])
+    def alternar_presenca_dia(self, user_id: Any, dia: str):
+        """Supervisor confirma ou desmarca presença para o Dia 1 ou Dia 2."""
+        if not self.is_supervisor:
+            return
+        try:
+            uid = int(user_id)
+        except Exception:
+            return
+        res = _usuario_controller.alternar_presenca(uid, dia=dia)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        self.carregar_painel_supervisor()
+        if self.is_admin:
+            self.carregar_painel_admin()
+
     def alternar_presenca_participante(self, user_id: Any):
         """Supervisor ou admin marca/desmarca presença do inscrito."""
         if not self.is_supervisor:

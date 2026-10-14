@@ -103,28 +103,50 @@ def lista_inscricoes_disponiveis() -> rx.Component:
             align="center",
             width="100%",
         ),
-        # Seletor de Dias
+        # Seletor de Dias e Download Oficial do PDF da Programação
         rx.hstack(
+            rx.hstack(
+                rx.button(
+                    "Dia 1 • 11/Nov (Abertura, Plenárias e Apresentações)",
+                    variant=rx.cond(EventoState.dia_selecionado == "Dia 1", "solid", "outline"),
+                    color_scheme="cyan",
+                    on_click=EventoState.set_dia("Dia 1"),
+                    radius="full",
+                    size="2",
+                    style=STYLE_BUTTON_CHIP,
+                ),
+                rx.button(
+                    "Dia 2 • 12/Nov (Mesas Temáticas e Encerramento)",
+                    variant=rx.cond(EventoState.dia_selecionado == "Dia 2", "solid", "outline"),
+                    color_scheme="cyan",
+                    on_click=EventoState.set_dia("Dia 2"),
+                    radius="full",
+                    size="2",
+                    style=STYLE_BUTTON_CHIP,
+                ),
+                spacing="2",
+                wrap="wrap",
+            ),
+            rx.spacer(),
             rx.button(
-                "Dia 1 • 11/Nov (Abertura, Plenárias e Apresentações)",
-                variant=rx.cond(EventoState.dia_selecionado == "Dia 1", "solid", "outline"),
+                rx.hstack(
+                    rx.icon(tag="file-down", size=15),
+                    rx.text("Baixar PDF da Programação", size="2", weight="bold"),
+                    spacing="1",
+                    align="center",
+                ),
+                variant="solid",
                 color_scheme="cyan",
-                on_click=EventoState.set_dia("Dia 1"),
+                on_click=EventoState.baixar_pdf_programacao,
                 radius="full",
                 size="2",
                 style=STYLE_BUTTON_CHIP,
+                box_shadow="0 4px 14px rgba(0, 173, 181, 0.35)",
             ),
-            rx.button(
-                "Dia 2 • 12/Nov (Mesas Temáticas e Encerramento)",
-                variant=rx.cond(EventoState.dia_selecionado == "Dia 2", "solid", "outline"),
-                color_scheme="cyan",
-                on_click=EventoState.set_dia("Dia 2"),
-                radius="full",
-                size="2",
-                style=STYLE_BUTTON_CHIP,
-            ),
-            spacing="2",
+            width="100%",
+            align="center",
             wrap="wrap",
+            gap="2",
         ),
         # Lista de Atividades
         rx.box(
@@ -149,7 +171,7 @@ def alerta_certificado_email() -> rx.Component:
         rx.hstack(
             rx.icon(tag="award", size=22, color="#34d399"),
             rx.vstack(
-                rx.heading("Certificado Oficial Homologado (Carga Horária: 30 Horas)", size="3", weight="bold", color="#34d399"),
+                rx.heading("Certificado Oficial Homologado", size="3", weight="bold", color="#34d399"),
                 rx.text(
                     "Cadastro ativo e homologado! A emissão digital com código de autenticidade será liberada automaticamente após a confirmação de presença no evento.",
                     size="1",
@@ -297,8 +319,8 @@ def logged_in_hub() -> rx.Component:
             gap="2",
         ),
 
-        # Alerta Pedagógico para Certificados
-        alerta_certificado_email(),
+        # Alerta Pedagógico para Certificados (exibido apenas para participantes; oculto para o Administrador)
+        rx.cond(~AuthState.is_admin, alerta_certificado_email()),
 
         # Abas da Área do Usuário
         rx.tabs.root(

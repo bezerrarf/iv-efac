@@ -23,7 +23,8 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             mod = u.get("modalidade", "")
             area = u.get("area", "")
             role = u.get("role", "")
-            presenca = "SIM" if u.get("presenca_confirmada", False) else "NÃO"
+            pres_d1 = "SIM" if u.get("presenca_dia1", False) else "NÃO"
+            pres_d2 = "SIM" if u.get("presenca_dia2", False) else "NÃO"
             criado = str(u.get("criado_em", ""))
         else:
             uid = getattr(u, "id", "")
@@ -34,7 +35,8 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             mod = getattr(u, "modalidade", "")
             area = getattr(u, "area", "")
             role = getattr(u, "role", "")
-            presenca = "SIM" if getattr(u, "presenca_confirmada", False) else "NÃO"
+            pres_d1 = "SIM" if getattr(u, "presenca_dia1", False) else "NÃO"
+            pres_d2 = "SIM" if getattr(u, "presenca_dia2", False) else "NÃO"
             criado = str(getattr(u, "criado_em", ""))
 
         # Sanitizar campos contra ponto-e-vírgula
@@ -47,7 +49,8 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             f'"{mod}"',
             f'"{str(area).replace(";", ",")}"',
             f'"{str(role).upper()}"',
-            f'"{presenca}"',
+            f'"{pres_d1}"',
+            f'"{pres_d2}"',
         ]
         linhas.append(";".join(linha))
 
@@ -173,7 +176,8 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
         Paragraph("Instituição / Polo", estilo_cabecalho_tab),
         Paragraph("Modalidade", estilo_cabecalho_tab),
         Paragraph("Função", estilo_cabecalho_tab),
-        Paragraph("Presença", estilo_cabecalho_tab),
+        Paragraph("D1 (11/11)", estilo_cabecalho_tab),
+        Paragraph("D2 (12/11)", estilo_cabecalho_tab),
     ]
 
     linhas_tabela = [cabecalho]
@@ -184,7 +188,8 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
         inst = getattr(u, "instituicao", None) or (u.get("instituicao") if isinstance(u, dict) else "")
         mod = getattr(u, "modalidade", None) or (u.get("modalidade") if isinstance(u, dict) else "")
         role = getattr(u, "role", None) or (u.get("role") if isinstance(u, dict) else "participante")
-        pres = "CONFIRMADA" if (getattr(u, "presenca_confirmada", False) or (isinstance(u, dict) and u.get("presenca_confirmada", False))) else "PENDENTE"
+        pres1 = "SIM" if (getattr(u, "presenca_dia1", False) or (isinstance(u, dict) and u.get("presenca_dia1", False))) else "NÃO"
+        pres2 = "SIM" if (getattr(u, "presenca_dia2", False) or (isinstance(u, dict) and u.get("presenca_dia2", False))) else "NÃO"
 
         linhas_tabela.append([
             Paragraph(f"<b>{cod}</b>", estilo_celula),
@@ -193,11 +198,12 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
             Paragraph(str(inst), estilo_celula),
             Paragraph(str(mod), estilo_celula),
             Paragraph(role.upper(), estilo_celula),
-            Paragraph(f"<b>{pres}</b>", estilo_celula),
+            Paragraph(f"<b>{pres1}</b>", estilo_celula),
+            Paragraph(f"<b>{pres2}</b>", estilo_celula),
         ])
 
     # Larguras das colunas em landscape (total ~720 pt)
-    larguras = [85, 160, 165, 120, 70, 60, 60]
+    larguras = [80, 155, 160, 115, 65, 55, 45, 45]
     tabela_principal = Table(linhas_tabela, colWidths=larguras, repeatRows=1)
     tabela_principal.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#103460")),
@@ -208,6 +214,191 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
         ("PADDING", (0, 0), (-1, -1), 4),
     ]))
     elementos.append(tabela_principal)
+
+    doc.build(elementos)
+    return buffer.getvalue()
+
+def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]) -> bytes:
+    """Gera PDF oficial diagramado com a programação e atividades completas do IV EFAC."""
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            leftMargin=36,
+            rightMargin=36,
+            topMargin=36,
+            bottomMargin=36,
+        )
+        elementos = []
+        estilos = getSampleStyleSheet()
+    except ImportError:
+        agora_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        return (
+            f"%PDF-1.4\n"
+            f"% IV EFAC 2026 - Programacao Oficial ({agora_str})\n"
+            f"1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+            f"2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
+            f"3 0 obj<</Type/Page/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<<>>>>endobj\n"
+            f"xref\n0 4\n0000000000 65535 f \n0000000010 00000 n \n0000000060 00000 n \n0000000115 00000 n \n"
+            f"trailer<</Size 4/Root 1 0 R>>\nstartxref\n210\n%%EOF\n"
+        ).encode("utf-8")
+
+    estilo_titulo = ParagraphStyle(
+        "TituloEFACProg",
+        parent=estilos["Heading1"],
+        fontName="Helvetica-Bold",
+        fontSize=14,
+        leading=17,
+        textColor=colors.HexColor("#103460"),
+        alignment=0,
+    )
+    estilo_subtitulo = ParagraphStyle(
+        "SubtituloEFACProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=9.5,
+        leading=12.5,
+        textColor=colors.HexColor("#00ADB5"),
+        alignment=0,
+    )
+    estilo_meta = ParagraphStyle(
+        "MetaEFACProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica",
+        fontSize=8,
+        leading=10.5,
+        textColor=colors.HexColor("#475569"),
+        alignment=0,
+    )
+    estilo_dia_header = ParagraphStyle(
+        "DiaHeaderEFAC",
+        parent=estilos["Heading2"],
+        fontName="Helvetica-Bold",
+        fontSize=10.5,
+        leading=13.5,
+        textColor=colors.HexColor("#0f172a"),
+        spaceBefore=7,
+        spaceAfter=3,
+    )
+    estilo_hora = ParagraphStyle(
+        "HoraProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=7.5,
+        leading=9.5,
+        textColor=colors.HexColor("#00ADB5"),
+    )
+    estilo_tipo = ParagraphStyle(
+        "TipoProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=7,
+        leading=9,
+        textColor=colors.HexColor("#2563EB"),
+    )
+    estilo_titulo_atv = ParagraphStyle(
+        "TituloAtvProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=8,
+        leading=10.5,
+        textColor=colors.HexColor("#0f172a"),
+    )
+    estilo_palestrante_atv = ParagraphStyle(
+        "PalestranteAtvProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Oblique",
+        fontSize=7.5,
+        leading=9.5,
+        textColor=colors.HexColor("#334155"),
+    )
+    estilo_local = ParagraphStyle(
+        "LocalProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica",
+        fontSize=7,
+        leading=9,
+        textColor=colors.HexColor("#1e293b"),
+    )
+    estilo_cabecalho_tab = ParagraphStyle(
+        "CabTabProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=7.5,
+        leading=9.5,
+        textColor=colors.white,
+    )
+
+    agora_str = datetime.now().strftime("%d/%m/%Y às %H:%M:%S")
+    elementos.append(Paragraph("IV EFAC 2026 • Encontro de Física e Astronomia do Cariri", estilo_titulo))
+    elementos.append(Paragraph("Universidade Federal do Cariri (UFCA) • Instituto de Formação de Educadores (IFE) • Campus Brejo Santo", estilo_subtitulo))
+    elementos.append(Paragraph(f"Guia Oficial de Programação e Atividades Disponíveis • Fomento FUNCAP • Emitido em: {agora_str}", estilo_meta))
+    elementos.append(Spacer(1, 8))
+
+    def _montar_tabela_dia(nome_dia: str, subtitulo_dia: str, atividades: List[Any]):
+        t_elementos = []
+        t_elementos.append(Paragraph(f"<b>{nome_dia}</b> • {subtitulo_dia}", estilo_dia_header))
+
+        cabecalho = [
+            Paragraph("Horário", estilo_cabecalho_tab),
+            Paragraph("Categoria", estilo_cabecalho_tab),
+            Paragraph("Atividade & Ministrante", estilo_cabecalho_tab),
+            Paragraph("Local", estilo_cabecalho_tab),
+        ]
+        linhas = [cabecalho]
+
+        for a in atividades:
+            horario = getattr(a, "horario", "") if hasattr(a, "horario") else str(a.get("horario", ""))
+            tipo = getattr(a, "tipo", "") if hasattr(a, "tipo") else str(a.get("tipo", ""))
+            titulo = getattr(a, "titulo", "") if hasattr(a, "titulo") else str(a.get("titulo", ""))
+            palestrante = getattr(a, "palestrante", "") if hasattr(a, "palestrante") else str(a.get("palestrante", ""))
+            local = getattr(a, "local", "") if hasattr(a, "local") else str(a.get("local", ""))
+
+            bloco_desc = [Paragraph(titulo, estilo_titulo_atv)]
+            if palestrante and palestrante.strip():
+                bloco_desc.append(Paragraph(palestrante, estilo_palestrante_atv))
+
+            linhas.append([
+                Paragraph(horario, estilo_hora),
+                Paragraph(tipo, estilo_tipo),
+                bloco_desc,
+                Paragraph(local, estilo_local),
+            ])
+
+        col_widths = [75, 75, 273, 100]
+        tab = Table(linhas, colWidths=col_widths, repeatRows=1)
+        tab.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#103460")),
+            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
+            ("PADDING", (0, 0), (-1, -1), 3.5),
+        ]))
+        t_elementos.append(tab)
+        t_elementos.append(Spacer(1, 8))
+        return t_elementos
+
+    elementos.extend(_montar_tabela_dia("Dia 1 • 11/11/2026", "Abertura Oficial, Plenárias e Apresentações Científicas", atividades_dia1))
+    elementos.extend(_montar_tabela_dia("Dia 2 • 12/11/2026", "Palestras Convidadas, Mesas Temáticas e Encerramento", atividades_dia2))
+
+    estilo_rodape = ParagraphStyle(
+        "RodapeProg",
+        parent=estilos["Normal"],
+        fontName="Helvetica",
+        fontSize=7,
+        leading=9,
+        textColor=colors.HexColor("#64748B"),
+        alignment=1,
+    )
+    elementos.append(Spacer(1, 4))
+    elementos.append(Paragraph("A credencial oficial concede acesso pleno a todas as atividades do simpósio.", estilo_rodape))
 
     doc.build(elementos)
     return buffer.getvalue()

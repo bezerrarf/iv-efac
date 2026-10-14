@@ -196,16 +196,24 @@ class UsuarioController:
             dado=atualizado,
         )
 
-    def alternar_presenca(self, user_id: int) -> ControllerResult[Usuario]:
-        """Permite ao supervisor/admin marcar conferência de presença do participante."""
-        atualizado = self._commands.toggle_presenca(user_id)
+    def alternar_presenca(self, user_id: int, dia: Optional[str] = None) -> ControllerResult[Usuario]:
+        """Permite ao supervisor/admin marcar conferência de presença do participante segregada por dia."""
+        try:
+            if dia is not None:
+                atualizado = self._commands.toggle_presenca(user_id, dia=dia)
+            else:
+                atualizado = self._commands.toggle_presenca(user_id)
+        except TypeError:
+            atualizado = self._commands.toggle_presenca(user_id)
         if not atualizado:
             return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
 
-        status = "CONFIRMADA" if atualizado.presenca_confirmada else "PENDENTE"
+        status_d1 = "CONFIRMADA" if atualizado.presenca_dia1 else "PENDENTE"
+        status_d2 = "CONFIRMADA" if atualizado.presenca_dia2 else "PENDENTE"
+        dia_str = f" no {dia}" if dia else ""
         return ControllerResult(
             sucesso=True,
-            mensagem=f"Presença de {atualizado.nome} marcada como {status}!",
+            mensagem=f"Presença de {atualizado.nome}{dia_str} atualizada! (Dia 1: {status_d1} | Dia 2: {status_d2})",
             dado=atualizado,
         )
 
@@ -247,7 +255,9 @@ class UsuarioController:
         todos = self._queries.list_all()
         presenciais = sum(1 for u in todos if u.modalidade == "Presencial")
         onlines = sum(1 for u in todos if u.modalidade == "Online")
-        presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False))
+        presentes_dia1 = sum(1 for u in todos if getattr(u, "presenca_dia1", False))
+        presentes_dia2 = sum(1 for u in todos if getattr(u, "presenca_dia2", False))
+        presentes = sum(1 for u in todos if getattr(u, "presenca_confirmada", False) or getattr(u, "presenca_dia1", False) or getattr(u, "presenca_dia2", False))
         supervisores = sum(1 for u in todos if getattr(u, "role", "") == "supervisor")
 
         return {
@@ -257,6 +267,8 @@ class UsuarioController:
             "presenciais": presenciais,
             "onlines": onlines,
             "presentes": presentes,
+            "presentes_dia1": presentes_dia1,
+            "presentes_dia2": presentes_dia2,
             "supervisores": supervisores,
         }
 
@@ -332,4 +344,51 @@ class UsuarioController:
             sucesso=True,
             mensagem="Sua senha foi alterada com sucesso!",
             dado=atualizado,
+        )
+    def atualizar_participante_completo(
+        self,
+        user_id: int,
+        nome: str,
+        email: str,
+        instituicao: str,
+        modalidade: str,
+        area: str,
+        role: str,
+        presenca_dia1: bool,
+        presenca_dia2: bool,
+    ) -> ControllerResult[Usuario]:
+        """Permite ao administrador editar completamente todos os dados cadastrais do participante."""
+        nome_clean = nome.strip()
+        email_clean = email.strip().lower()
+
+        if not nome_clean:
+            return ControllerResult(sucesso=False, mensagem="O nome do participante não pode ficar vazio.")
+        if not email_clean or "@" not in email_clean:
+            return ControllerResult(sucesso=False, mensagem="Informe um e-mail válido para o participante.")
+
+        usuario = self._queries.find_by_id(user_id)
+        if not usuario:
+            return ControllerResult(sucesso=False, mensagem="Participante não encontrado no banco de dados.")
+
+        # Verificar duplicidade de e-mail se alterou
+        if email_clean != usuario.email.lower():
+            existente = self._queries.find_by_email(email_clean)
+            if existente and existente.id != user_id:
+                return ControllerResult(sucesso=False, mensagem="Já existe outro usuário cadastrado com este e-mail.")
+
+        usuario.nome = nome_clean
+        usuario.email = email_clean
+        usuario.instituicao = instituicao.strip() or "Não informada"
+        usuario.modalidade = modalidade
+        usuario.area = area
+        usuario.role = role
+        usuario.presenca_dia1 = presenca_dia1
+        usuario.presenca_dia2 = presenca_dia2
+        usuario.presenca_confirmada = bool(presenca_dia1 or presenca_dia2)
+
+        salvo = self._commands.save(usuario)
+        return ControllerResult(
+            sucesso=True,
+            mensagem=f"Dados cadastrais de {salvo.nome} atualizados com sucesso!",
+            dado=salvo,
         )

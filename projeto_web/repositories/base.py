@@ -19,7 +19,7 @@ class UsuarioCommandRepositoryProtocol(Protocol):
         """Atualiza a permissão do usuário ('participante', 'supervisor', 'admin')."""
         ...
 
-    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+    def toggle_presenca(self, user_id: int, dia: Optional[str] = None) -> Optional[Usuario]:
         """Alterna o status de presença confirmada."""
         ...
 

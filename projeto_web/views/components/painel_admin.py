@@ -440,7 +440,7 @@ def tabela_inscritos_admin() -> rx.Component:
                         rx.table.column_header_cell("Participante"),
                         rx.table.column_header_cell("Modalidade / Polo"),
                         rx.table.column_header_cell("Função / Role"),
-                        rx.table.column_header_cell("Presença"),
+                        rx.table.column_header_cell("Presença (D1 | D2)"),
                         rx.table.column_header_cell("Ações Administrativas"),
                     )
                 ),
@@ -477,14 +477,49 @@ def tabela_inscritos_admin() -> rx.Component:
                                 ),
                             ),
                             rx.table.cell(
-                                rx.cond(
-                                    u["presenca_confirmada"],
-                                    rx.badge("Presente", color_scheme="green", variant="solid", size="1"),
-                                    rx.badge("Pendente", color_scheme="amber", variant="surface", size="1"),
+                                rx.hstack(
+                                    rx.tooltip(
+                                        rx.badge(
+                                            "Dia 1",
+                                            color_scheme=rx.cond(u["presenca_dia1"], "green", "gray"),
+                                            variant=rx.cond(u["presenca_dia1"], "solid", "surface"),
+                                            size="1",
+                                            cursor="pointer",
+                                            on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 1"),
+                                        ),
+                                        content="Presença Dia 1 (11/Nov) • Clique para alternar",
+                                    ),
+                                    rx.tooltip(
+                                        rx.badge(
+                                            "Dia 2",
+                                            color_scheme=rx.cond(u["presenca_dia2"], "green", "gray"),
+                                            variant=rx.cond(u["presenca_dia2"], "solid", "surface"),
+                                            size="1",
+                                            cursor="pointer",
+                                            on_click=AdminState.alternar_presenca_dia(u["id"], "Dia 2"),
+                                        ),
+                                        content="Presença Dia 2 (12/Nov) • Clique para alternar",
+                                    ),
+                                    spacing="1",
+                                    align="center",
                                 ),
                             ),
                             rx.table.cell(
                                 rx.hstack(
+                                    # Botão Editar Perfil Completo
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="user-cog", size=12),
+                                            rx.text("Editar", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="surface",
+                                        color_scheme="cyan",
+                                        on_click=AdminState.abrir_modal_editar_participante(u),
+                                        style=STYLE_BUTTON_CHIP,
+                                    ),
                                     # Botão Carteirinha
                                     rx.button(
                                         rx.hstack(
@@ -1051,6 +1086,293 @@ def seguranca_admin_view() -> rx.Component:
     )
 
 
+def editor_modelos_admin() -> rx.Component:
+    """Aba do Administrador para gerenciar os links de download dos modelos acadêmicos."""
+    return rx.card(
+        rx.vstack(
+            rx.hstack(
+                rx.box(
+                    rx.icon(tag="file-text", size=22, color=COLOR_CYAN),
+                    background="rgba(0, 173, 181, 0.15)",
+                    border_radius="10px",
+                    padding="0.6rem",
+                    display="grid",
+                    place_items="center",
+                ),
+                rx.vstack(
+                    rx.heading("Gestão dos Links de Download dos Modelos Acadêmicos", size="4", weight="bold", color="white"),
+                    rx.text(
+                        "Configure as URLs externas (Google Drive, Dropbox, OneDrive ou institucional) para os modelos oficiais do IV EFAC.",
+                        size="2",
+                        color="#CBD5E1",
+                        style=STYLE_TEXT_RESPONSIVE,
+                    ),
+                    spacing="0",
+                    align="start",
+                ),
+                spacing="3",
+                align="center",
+                width="100%",
+            ),
+            rx.divider(color_scheme="gray", opacity="0.2"),
+            rx.vstack(
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(tag="file-text", size=16, color=COLOR_CYAN),
+                        rx.text("1. Modelo de Resumo Expandido (.docx)", size="2", weight="bold", color="white"),
+                        rx.badge("Baixar Modelo", color_scheme="cyan", size="1"),
+                        spacing="2",
+                        align="center",
+                    ),
+                    rx.text("Link oficial de download do documento de 2 a 4 páginas:", size="1", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_link_resumo_input,
+                        on_change=AdminState.set_admin_link_resumo_input,
+                        placeholder="https://drive.google.com/file/d/...",
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="1",
+                    width="100%",
+                ),
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(tag="presentation", size=16, color="#818CF8"),
+                        rx.text("2. Slide para Apresentação Oral (15 min)", size="2", weight="bold", color="white"),
+                        rx.badge("Baixar PPTX", color_scheme="blue", size="1"),
+                        spacing="2",
+                        align="center",
+                    ),
+                    rx.text("Link oficial do arquivo de slides em formato 16:9:", size="1", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_link_slides_input,
+                        on_change=AdminState.set_admin_link_slides_input,
+                        placeholder="https://drive.google.com/file/d/...",
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="1",
+                    width="100%",
+                ),
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon(tag="layout-grid", size=16, color="#34d399"),
+                        rx.text("3. Modelo de Pôster / Painel Científico", size="2", weight="bold", color="white"),
+                        rx.badge("Baixar Template", color_scheme="green", size="1"),
+                        spacing="2",
+                        align="center",
+                    ),
+                    rx.text("Link oficial do template do pôster para dimensões 90x120cm:", size="1", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_link_poster_input,
+                        on_change=AdminState.set_admin_link_poster_input,
+                        placeholder="https://drive.google.com/file/d/...",
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="1",
+                    width="100%",
+                ),
+                spacing="4",
+                width="100%",
+            ),
+            rx.button(
+                rx.hstack(
+                    rx.icon(tag="save", size=16),
+                    rx.text("Salvar e Publicar Links dos Modelos", size="2", weight="bold"),
+                    spacing="2",
+                    align="center",
+                ),
+                color_scheme="cyan",
+                variant="solid",
+                size="3",
+                on_click=AdminState.salvar_links_modelos,
+                style=STYLE_BUTTON_CHIP,
+                width="100%",
+                margin_top="0.5rem",
+            ),
+            spacing="4",
+            width="100%",
+        ),
+        padding="1.75rem",
+        background="rgba(15, 23, 42, 0.75)",
+        border="1px solid rgba(0, 173, 181, 0.2)",
+        border_radius="16px",
+        width="100%",
+    )
+
+
+def modal_editar_participante_admin() -> rx.Component:
+    """Modal profissional para o administrador editar completamente qualquer perfil de participante."""
+    return rx.dialog.root(
+        rx.dialog.content(
+            rx.vstack(
+                rx.hstack(
+                    rx.box(
+                        rx.icon(tag="user-cog", size=22, color=COLOR_CYAN),
+                        background="rgba(0, 173, 181, 0.15)",
+                        border_radius="10px",
+                        padding="0.6rem",
+                    ),
+                    rx.vstack(
+                        rx.dialog.title("Edição Completa de Participante", size="4", weight="bold", color="white"),
+                        rx.dialog.description(
+                            "Altere dados cadastrais, modalidade, eixo temático, privilégios e presença.",
+                            size="1",
+                            color="#CBD5E1",
+                        ),
+                        spacing="0",
+                        align="start",
+                    ),
+                    spacing="3",
+                    align="center",
+                    width="100%",
+                ),
+                rx.divider(color_scheme="gray", opacity="0.2"),
+                rx.vstack(
+                    rx.text("Nome Completo", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_edit_nome,
+                        on_change=AdminState.set_admin_edit_nome,
+                        placeholder="Nome completo do participante",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.text("Endereço de E-mail", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_edit_email,
+                        on_change=AdminState.set_admin_edit_email,
+                        placeholder="email@instituicao.edu.br",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.text("Instituição de Origem", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.admin_edit_instituicao,
+                        on_change=AdminState.set_admin_edit_instituicao,
+                        placeholder="Universidade ou Polo Acadêmico",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.hstack(
+                        rx.vstack(
+                            rx.text("Modalidade", size="1", weight="bold", color="#CBD5E1"),
+                            rx.select(
+                                ["Presencial", "Online"],
+                                value=AdminState.admin_edit_modalidade,
+                                on_change=AdminState.set_admin_edit_modalidade,
+                                size="2",
+                                width="100%",
+                            ),
+                            width="50%",
+                            spacing="1",
+                        ),
+                        rx.vstack(
+                            rx.text("Privilégio / Função", size="1", weight="bold", color="#CBD5E1"),
+                            rx.select(
+                                ["participante", "supervisor", "admin"],
+                                value=AdminState.admin_edit_role,
+                                on_change=AdminState.set_admin_edit_role,
+                                size="2",
+                                width="100%",
+                            ),
+                            width="50%",
+                            spacing="1",
+                        ),
+                        width="100%",
+                        spacing="3",
+                    ),
+                    rx.text("Eixo Temático de Interesse", size="1", weight="bold", color="#CBD5E1"),
+                    rx.select(
+                        [
+                            "Astrofísica",
+                            "Física Computacional",
+                            "Relatividade e Gravitação",
+                            "Física Quântica",
+                            "Ensino e Divulgação Científica",
+                        ],
+                        value=AdminState.admin_edit_area,
+                        on_change=AdminState.set_admin_edit_area,
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.divider(color_scheme="gray", opacity="0.15"),
+                    rx.text("Conferência de Presença Oficial", size="1", weight="bold", color="#CBD5E1"),
+                    rx.hstack(
+                        rx.hstack(
+                            rx.checkbox(
+                                checked=AdminState.admin_edit_presenca_d1,
+                                on_change=AdminState.toggle_admin_edit_presenca_d1,
+                                size="2",
+                                color_scheme="cyan",
+                            ),
+                            rx.text("Presente no Dia 1 (11/Nov)", size="1", color="white"),
+                            spacing="2",
+                            align="center",
+                        ),
+                        rx.hstack(
+                            rx.checkbox(
+                                checked=AdminState.admin_edit_presenca_d2,
+                                on_change=AdminState.toggle_admin_edit_presenca_d2,
+                                size="2",
+                                color_scheme="violet",
+                            ),
+                            rx.text("Presente no Dia 2 (12/Nov)", size="1", color="white"),
+                            spacing="2",
+                            align="center",
+                        ),
+                        width="100%",
+                        spacing="4",
+                        wrap="wrap",
+                    ),
+                    spacing="2",
+                    width="100%",
+                ),
+                rx.hstack(
+                    rx.dialog.close(
+                        rx.button(
+                            "Cancelar",
+                            variant="soft",
+                            color_scheme="gray",
+                            size="2",
+                            on_click=AdminState.fechar_modal_editar_participante,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                    ),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="check", size=14),
+                            rx.text("Salvar Alterações", size="2", weight="bold"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        color_scheme="cyan",
+                        variant="solid",
+                        size="2",
+                        on_click=AdminState.salvar_edicao_participante,
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    spacing="2",
+                    justify="end",
+                    width="100%",
+                    margin_top="1rem",
+                ),
+                spacing="3",
+                width="100%",
+            ),
+            background="rgba(15, 23, 42, 0.98)",
+            border="1.5px solid rgba(0, 173, 181, 0.4)",
+            border_radius="16px",
+            box_shadow="0 20px 60px rgba(0, 0, 0, 0.7)",
+            padding="1.75rem",
+            max_width="540px",
+            width="90vw",
+        ),
+        open=AdminState.modal_editar_participante_aberto,
+    )
+
+
+
 def painel_admin_view() -> rx.Component:
     """Componente completo de renderização do Painel de Administração."""
     return rx.box(
@@ -1058,6 +1380,7 @@ def painel_admin_view() -> rx.Component:
         modal_alterar_senha_inscrito(),
         # Modal de visualização de carteirinha de participante
         modal_carteirinha_admin(),
+        modal_editar_participante_admin(),
 
         rx.vstack(
             # Título e Badges
@@ -1109,6 +1432,15 @@ def painel_admin_view() -> rx.Component:
                         ),
                         value="seguranca",
                     ),
+                    rx.tabs.trigger(
+                        rx.hstack(
+                            rx.icon(tag="file-text", size=14),
+                            rx.text("Modelos & Submissões", size="2"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        value="modelos",
+                    ),
                     size="2",
                 ),
                 rx.tabs.content(
@@ -1124,6 +1456,11 @@ def painel_admin_view() -> rx.Component:
                 rx.tabs.content(
                     seguranca_admin_view(),
                     value="seguranca",
+                    padding_top="1.5rem",
+                ),
+                rx.tabs.content(
+                    editor_modelos_admin(),
+                    value="modelos",
                     padding_top="1.5rem",
                 ),
                 default_value="inscritos",

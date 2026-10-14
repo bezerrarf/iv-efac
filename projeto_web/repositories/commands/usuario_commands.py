@@ -37,11 +37,20 @@ class SQLiteUsuarioCommandRepository(UsuarioCommandRepositoryProtocol):
                 return usuario
             return None
 
-    def toggle_presenca(self, user_id: int) -> Optional[Usuario]:
+    def toggle_presenca(self, user_id: int, dia: Optional[str] = None) -> Optional[Usuario]:
         with self._session_factory() as session:
             usuario = session.get(Usuario, user_id)
             if usuario:
-                usuario.presenca_confirmada = not bool(usuario.presenca_confirmada)
+                if dia == "Dia 1":
+                    usuario.presenca_dia1 = not bool(usuario.presenca_dia1)
+                elif dia == "Dia 2":
+                    usuario.presenca_dia2 = not bool(usuario.presenca_dia2)
+                else:
+                    novo_status = not bool(usuario.presenca_dia1 or usuario.presenca_dia2 or usuario.presenca_confirmada)
+                    usuario.presenca_dia1 = novo_status
+                    usuario.presenca_dia2 = novo_status
+
+                usuario.presenca_confirmada = bool(usuario.presenca_dia1 or usuario.presenca_dia2)
                 session.add(usuario)
                 session.commit()
                 session.refresh(usuario)

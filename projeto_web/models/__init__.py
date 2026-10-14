@@ -4,3 +4,4 @@ from projeto_web.models.usuario import Usuario
 from projeto_web.models.atividade import AtividadeModel
 
 __all__ = ["Usuario", "AtividadeModel"]
+from .configuracao import ConfiguracaoModel

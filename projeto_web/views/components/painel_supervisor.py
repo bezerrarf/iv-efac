@@ -60,19 +60,7 @@ def painel_supervisor_view() -> rx.Component:
                         style=STYLE_BUTTON_CHIP,
                         id="btn-superv-export-pdf",
                     ),
-                    rx.button(
-                        rx.hstack(
-                            rx.icon(tag="printer", size=14),
-                            rx.text("Imprimir Lista", size="1"),
-                            spacing="1",
-                            align="center",
-                        ),
-                        size="2",
-                        variant="outline",
-                        color_scheme="gray",
-                        on_click=rx.call_script("window.print()"),
-                        style=STYLE_BUTTON_CHIP,
-                    ),
+
                     spacing="2",
                     align="center",
                 ),
@@ -156,8 +144,8 @@ def painel_supervisor_view() -> rx.Component:
                             rx.table.column_header_cell("Código Check-in"),
                             rx.table.column_header_cell("Nome do Participante"),
                             rx.table.column_header_cell("Polo / Modalidade"),
-                            rx.table.column_header_cell("Status"),
-                            rx.table.column_header_cell("Ação de Presença"),
+                            rx.table.column_header_cell("Presença Dia 1 (11/Nov)"),
+                            rx.table.column_header_cell("Presença Dia 2 (12/Nov)"),
                         )
                     ),
                     rx.table.body(
@@ -182,31 +170,63 @@ def painel_supervisor_view() -> rx.Component:
                                     ),
                                 ),
                                 rx.table.cell(
-                                    rx.cond(
-                                        item["presenca_confirmada"],
-                                        rx.badge("PRESENTE", color_scheme="green", variant="solid", size="2"),
-                                        rx.badge("AGUARDANDO", color_scheme="amber", variant="soft", size="1"),
+                                    rx.hstack(
+                                        rx.cond(
+                                            item["presenca_dia1"],
+                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1"),
+                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1"),
+                                        ),
+                                        rx.cond(
+                                            item["presenca_dia1"],
+                                            rx.button(
+                                                "Desmarcar",
+                                                size="1",
+                                                variant="ghost",
+                                                color_scheme="red",
+                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                            rx.button(
+                                                "Confirmar",
+                                                size="1",
+                                                variant="solid",
+                                                color_scheme="cyan",
+                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                        ),
+                                        spacing="2",
+                                        align="center",
                                     ),
                                 ),
                                 rx.table.cell(
-                                    rx.cond(
-                                        item["presenca_confirmada"],
-                                        rx.button(
-                                            "Desmarcar",
-                                            size="1",
-                                            variant="ghost",
-                                            color_scheme="red",
-                                            on_click=SupervisorState.alternar_presenca_participante(item["id"]),
-                                            style=STYLE_BUTTON_CHIP,
+                                    rx.hstack(
+                                        rx.cond(
+                                            item["presenca_dia2"],
+                                            rx.badge("PRESENTE", color_scheme="green", variant="solid", size="1"),
+                                            rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1"),
                                         ),
-                                        rx.button(
-                                            "Confirmar Presença",
-                                            size="2",
-                                            variant="solid",
-                                            color_scheme="green",
-                                            on_click=SupervisorState.alternar_presenca_participante(item["id"]),
-                                            style=STYLE_BUTTON_CHIP,
+                                        rx.cond(
+                                            item["presenca_dia2"],
+                                            rx.button(
+                                                "Desmarcar",
+                                                size="1",
+                                                variant="ghost",
+                                                color_scheme="red",
+                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
+                                            rx.button(
+                                                "Confirmar",
+                                                size="1",
+                                                variant="solid",
+                                                color_scheme="violet",
+                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
+                                                style=STYLE_BUTTON_CHIP,
+                                            ),
                                         ),
+                                        spacing="2",
+                                        align="center",
                                     ),
                                 ),
                                 align="center",

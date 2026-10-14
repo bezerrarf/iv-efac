@@ -23,6 +23,8 @@ class Usuario(SQLModel, table=True):
     role: str = Field(default="participante", index=True)  # 'participante', 'supervisor', 'admin'
     foto_url: Optional[str] = Field(default=None)
     presenca_confirmada: bool = Field(default=False, index=True)
+    presenca_dia1: bool = Field(default=False, index=True)
+    presenca_dia2: bool = Field(default=False, index=True)
     email_confirmado: bool = Field(default=True, index=True)
     codigo_confirmacao: Optional[str] = Field(default=None)
     codigo_confirmacao_hash: Optional[str] = Field(default=None)

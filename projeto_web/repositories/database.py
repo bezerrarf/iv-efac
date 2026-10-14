@@ -26,6 +26,10 @@ def _exec_migration(engine_instance):
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN foto_url VARCHAR;")
                 if "presenca_confirmada" not in cols:
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN presenca_confirmada BOOLEAN DEFAULT 0;")
+                if "presenca_dia1" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN presenca_dia1 BOOLEAN DEFAULT 0;")
+                if "presenca_dia2" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN presenca_dia2 BOOLEAN DEFAULT 0;")
                 if "email_confirmado" not in cols:
                     conn.exec_driver_sql("ALTER TABLE usuario ADD COLUMN email_confirmado BOOLEAN DEFAULT 0;")
                 if "codigo_confirmacao" not in cols:
@@ -63,6 +67,8 @@ def _seed_admin_and_schedule():
                 codigo_inscricao="ADMIN-001",
                 role="admin",
                 presenca_confirmada=True,
+                presenca_dia1=True,
+                presenca_dia2=True,
                 email_confirmado=True,
             )
             session.add(novo_admin)

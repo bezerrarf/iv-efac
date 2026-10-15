@@ -177,201 +177,6 @@ def modal_alterar_senha_inscrito() -> rx.Component:
     )
 
 
-def modal_carteirinha_admin() -> rx.Component:
-    """Modal para o administrador visualizar, conferir e imprimir a carteirinha de qualquer inscrito."""
-    return rx.cond(
-        AdminState.admin_carteirinha_aberta,
-        rx.box(
-            # Backdrop de foco
-            rx.box(
-                position="fixed",
-                inset="0",
-                background="rgba(0, 0, 0, 0.85)",
-                z_index="1000",
-                backdrop_filter="blur(8px)",
-                on_click=AdminState.fechar_carteirinha_admin,
-            ),
-            # Caixa do Modal
-            rx.card(
-                rx.vstack(
-                    rx.hstack(
-                        rx.box(
-                            rx.icon(tag="id-card", size=22, color=COLOR_CYAN),
-                            background="rgba(0, 173, 181, 0.15)",
-                            border_radius="8px",
-                            padding="0.5rem",
-                            display="grid",
-                            place_items="center",
-                        ),
-                        rx.vstack(
-                            rx.heading("Carteirinha Oficial do Participante", size="4", weight="bold", color="white"),
-                            rx.text("Emissão digital com chancela acadêmica UFCA / IFE", size="1", color="#CBD5E1"),
-                            spacing="0",
-                            align="start",
-                        ),
-                        rx.spacer(),
-                        rx.button(
-                            rx.hstack(
-                                rx.icon(tag="download", size=14),
-                                rx.text("Baixar Imagem (PNG)"),
-                                spacing="1",
-                                align="center",
-                            ),
-                            size="1",
-                            variant="solid",
-                            color_scheme="cyan",
-                            on_click=AdminState.baixar_carteirinha_admin_png,
-                            style=STYLE_BUTTON_CHIP,
-                        ),
-                        rx.button(
-                            rx.icon(tag="x", size=18),
-                            variant="ghost",
-                            color_scheme="gray",
-                            size="1",
-                            on_click=AdminState.fechar_carteirinha_admin,
-                            cursor="pointer",
-                        ),
-                        align="center",
-                        width="100%",
-                    ),
-                    rx.divider(color_scheme="gray", opacity="0.2"),
-                    # Cartão de Identificação / Carteirinha
-                    rx.box(
-                        rx.vstack(
-                            rx.hstack(
-                                rx.image(
-                                    src="/logo_ivefac.jpeg",
-                                    alt="Logo IV EFAC",
-                                    width="36px",
-                                    height="36px",
-                                    border_radius="50%",
-                                    object_fit="cover",
-                                    border="1.5px solid #00ADB5",
-                                ),
-                                rx.vstack(
-                                    rx.text("IV EFAC 2026", size="2", weight="bold", color="white"),
-                                    rx.text("Universidade Federal do Cariri • Campus Brejo Santo", size="1", color="#CBD5E1"),
-                                    spacing="0",
-                                ),
-                                rx.spacer(),
-                                rx.badge("CARTEIRINHA OFICIAL", color_scheme="cyan", variant="solid", size="1"),
-                                align="center",
-                                width="100%",
-                            ),
-                            rx.divider(color_scheme="cyan", opacity="0.3"),
-                            rx.hstack(
-                                rx.box(
-                                    rx.cond(
-                                        AdminState.admin_carteirinha_foto != "",
-                                        rx.image(
-                                            src=AdminState.admin_carteirinha_foto,
-                                            alt=AdminState.admin_carteirinha_nome,
-                                            width="95px",
-                                            height="95px",
-                                            border_radius="50%",
-                                            object_fit="cover",
-                                            border="2.5px solid #00ADB5",
-                                            box_shadow="0 0 16px rgba(0, 173, 181, 0.4)",
-                                        ),
-                                        rx.image(
-                                            src="/favicon.png",
-                                            alt="Soldadinho do Araripe",
-                                            width="95px",
-                                            height="95px",
-                                            border_radius="50%",
-                                            object_fit="cover",
-                                            border="2.5px solid #00ADB5",
-                                            box_shadow="0 0 16px rgba(0, 173, 181, 0.4)",
-                                        ),
-                                    ),
-                                    display="grid",
-                                    place_items="center",
-                                ),
-                                rx.vstack(
-                                    rx.text(AdminState.admin_carteirinha_nome, size="3", weight="bold", color="white"),
-                                    rx.text(AdminState.admin_carteirinha_email, size="1", color="#CBD5E1"),
-                                    rx.text(AdminState.admin_carteirinha_inst, size="1", color="#CBD5E1"),
-                                    rx.hstack(
-                                        rx.badge(AdminState.admin_carteirinha_mod, color_scheme="indigo", size="1"),
-                                        rx.badge(AdminState.admin_carteirinha_role.upper(), color_scheme="violet", size="1"),
-                                        rx.badge(
-                                            rx.hstack(
-                                                rx.icon(tag="qr-code", size=11),
-                                                rx.text(AdminState.admin_carteirinha_cod, size="1"),
-                                                spacing="1",
-                                                align="center",
-                                            ),
-                                            color_scheme="cyan",
-                                            variant="surface",
-                                            size="1",
-                                        ),
-                                        spacing="2",
-                                        wrap="wrap",
-                                    ),
-                                    spacing="1",
-                                    align="start",
-                                    flex="1",
-                                ),
-                                spacing="3",
-                                align="center",
-                                width="100%",
-                            ),
-                            rx.box(
-                                rx.hstack(
-                                    rx.hstack(
-                                        rx.icon(tag="calendar", size=13, color="#00ADB5"),
-                                        rx.text("11 e 12 Nov 2026", size="1", weight="bold", color="white"),
-                                        spacing="1",
-                                        align="center",
-                                    ),
-                                    rx.hstack(
-                                        rx.icon(tag="clock", size=13, color="#f59e0b"),
-                                        rx.text("08h00 Abertura", size="1", weight="bold", color="white"),
-                                        spacing="1",
-                                        align="center",
-                                    ),
-                                    rx.spacer(),
-                                    rx.text("Fomento FUNCAP", size="1", color="#38bdf8"),
-                                    align="center",
-                                    width="100%",
-                                ),
-                                padding="0.55rem 0.85rem",
-                                background="rgba(0, 0, 0, 0.4)",
-                                border_radius="10px",
-                                border="1px solid rgba(255, 255, 255, 0.08)",
-                                width="100%",
-                            ),
-                            spacing="3",
-                            width="100%",
-                        ),
-                        padding="1.35rem",
-                        background="linear-gradient(155deg, rgba(8, 12, 28, 0.98) 0%, rgba(16, 28, 54, 0.95) 100%)",
-                        border="1.5px solid rgba(0, 173, 181, 0.5)",
-                        border_radius="16px",
-                        box_shadow="0 10px 35px rgba(0, 173, 181, 0.25)",
-                        width="100%",
-                    ),
-                    spacing="3",
-                    width="100%",
-                ),
-                position="fixed",
-                top="50%",
-                left="50%",
-                transform="translate(-50%, -50%)",
-                z_index="1001",
-                width="92%",
-                max_width="560px",
-                background="rgba(15, 23, 42, 0.98)",
-                border="1.5px solid rgba(0, 173, 181, 0.4)",
-                box_shadow="0 25px 60px rgba(0, 0, 0, 0.85)",
-                border_radius="16px",
-                padding="1.5rem",
-            ),
-        ),
-        rx.fragment(),
-    )
-
-
 def tabela_inscritos_admin() -> rx.Component:
     """Tabela analítica de participantes com rolagem cinética fluida no mobile e exportação em CSV/PDF."""
     return rx.vstack(
@@ -450,6 +255,17 @@ def tabela_inscritos_admin() -> rx.Component:
             width="100%",
         ),
         # Contêiner da Tabela com Scroll Suave e Cinético no Mobile
+        # Barra de Rolagem Horizontal no Topo da Tabela (sincronizada via script)
+        rx.box(
+            rx.box(
+                width="100%",
+                min_width="850px",
+                height="1px",
+            ),
+            id="admin-table-top-scroll",
+            class_name="table-top-scroll-track",
+            width="100%",
+        ),
         rx.box(
             rx.table.root(
                 rx.table.header(
@@ -582,22 +398,7 @@ def tabela_inscritos_admin() -> rx.Component:
                                         white_space="nowrap",
                                         flex_shrink="0",
                                     ),
-                                    # Botão Carteirinha
-                                    rx.button(
-                                        rx.hstack(
-                                            rx.icon(tag="id-card", size=12),
-                                            rx.text("Carteirinha", size="1"),
-                                            spacing="1",
-                                            align="center",
-                                        ),
-                                        size="1",
-                                        variant="outline",
-                                        color_scheme="cyan",
-                                        on_click=AdminState.ver_carteirinha_admin(u["id"]),
-                                        style=STYLE_BUTTON_CHIP,
-                                        white_space="nowrap",
-                                        flex_shrink="0",
-                                    ),
+                                    
                                     # Botão Alterar Senha do Inscrito
                                     rx.button(
                                         rx.hstack(
@@ -628,12 +429,50 @@ def tabela_inscritos_admin() -> rx.Component:
                     ),
                 ),
                 width="100%",
-                min_width="980px",
+                min_width="850px",
                 variant="surface",
             ),
+            id="admin-table-bottom-scroll",
             class_name="table-scroll-container",
             width="100%",
         ),
+        rx.script("""
+        (function() {
+            function syncTableScroll() {
+                var topEl = document.getElementById("admin-table-top-scroll");
+                var btmEl = document.getElementById("admin-table-bottom-scroll");
+                if (!topEl || !btmEl) return;
+                if (topEl._syncAttached) return;
+                topEl._syncAttached = true;
+
+                var isSyncingTop = false;
+                var isSyncingBtm = false;
+
+                topEl.addEventListener("scroll", function() {
+                    if (!isSyncingTop) {
+                        isSyncingBtm = true;
+                        btmEl.scrollLeft = topEl.scrollLeft;
+                    }
+                    isSyncingTop = false;
+                }, { passive: true });
+
+                btmEl.addEventListener("scroll", function() {
+                    if (!isSyncingBtm) {
+                        isSyncingTop = true;
+                        topEl.scrollLeft = btmEl.scrollLeft;
+                    }
+                    isSyncingBtm = false;
+                }, { passive: true });
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", syncTableScroll);
+            } else {
+                syncTableScroll();
+            }
+            setInterval(syncTableScroll, 800);
+        })();
+        """),
         spacing="3",
         width="100%",
     )
@@ -1378,6 +1217,20 @@ def modal_editar_participante_admin() -> rx.Component:
                     width="100%",
                 ),
                 rx.hstack(
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="trash-2", size=14),
+                            rx.text("Excluir", size="2", weight="bold"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        color_scheme="red",
+                        variant="solid",
+                        size="2",
+                        on_click=AdminState.excluir_participante_admin,
+                        style=STYLE_BUTTON_CHIP,
+                    ),
+                    rx.spacer(),
                     rx.dialog.close(
                         rx.button(
                             "Cancelar",
@@ -1391,7 +1244,7 @@ def modal_editar_participante_admin() -> rx.Component:
                     rx.button(
                         rx.hstack(
                             rx.icon(tag="check", size=14),
-                            rx.text("Salvar Alterações", size="2", weight="bold"),
+                            rx.text("Salvar Altera??es", size="2", weight="bold"),
                             spacing="1",
                             align="center",
                         ),
@@ -1402,7 +1255,7 @@ def modal_editar_participante_admin() -> rx.Component:
                         style=STYLE_BUTTON_CHIP,
                     ),
                     spacing="2",
-                    justify="end",
+                    align="center",
                     width="100%",
                     margin_top="1rem",
                 ),
@@ -1428,7 +1281,6 @@ def painel_admin_view() -> rx.Component:
         # Modal de alteração de senha de inscrito
         modal_alterar_senha_inscrito(),
         # Modal de visualização de carteirinha de participante
-        modal_carteirinha_admin(),
         modal_editar_participante_admin(),
 
         rx.vstack(
@@ -1523,6 +1375,7 @@ def painel_admin_view() -> rx.Component:
         border_radius="18px",
         padding=rx.breakpoints(initial="1.25rem", sm="2rem"),
         width="100%",
+        overflow_x="hidden",
         margin_top="1.5rem",
         on_mount=AdminState.carregar_painel_admin,
     )

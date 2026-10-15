@@ -73,6 +73,12 @@ class InMemoryUsuarioRepository(UsuarioRepositoryProtocol):
             return u
         return None
 
+    def delete(self, user_id: int) -> bool:
+        if user_id in self._usuarios:
+            del self._usuarios[user_id]
+            return True
+        return False
+
 
 @pytest.fixture
 def hasher() -> PasswordHasherProtocol:

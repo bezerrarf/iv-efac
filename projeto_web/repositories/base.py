@@ -31,6 +31,10 @@ class UsuarioCommandRepositoryProtocol(Protocol):
         """Atualiza a senha criptografada do usuário."""
         ...
 
+    def delete(self, user_id: int) -> bool:
+        """Exclui um participante do banco de dados."""
+        ...
+
 
 # ==============================================================================
 # CQRS: USUÁRIO - QUERIES (LEITURA / CONSULTAS E PROJEÇÕES)

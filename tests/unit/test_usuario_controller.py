@@ -231,3 +231,27 @@ def test_export_service_csv_e_pdf(controller: UsuarioController):
     pdf_bytes = gerar_pdf_inscritos(usuarios, stats)
     assert len(pdf_bytes) > 500
     assert pdf_bytes.startswith(b"%PDF-")
+
+def test_excluir_participante_sucesso_e_inexistente(controller: UsuarioController):
+    res_cad = controller.cadastrar(
+        nome="Alan Turing",
+        email="turing@bletchley.uk",
+        senha="enigma_cracker",
+        instituicao="Cambridge",
+    )
+    assert res_cad.sucesso
+    user_id = res_cad.dado.id
+
+    # Exclus?o com sucesso
+    res_del = controller.excluir_participante(user_id)
+    assert res_del.sucesso
+    assert "exclu?do com sucesso" in res_del.mensagem
+
+    # Confirmar que n?o ? mais encontrado
+    assert controller._queries.find_by_id(user_id) is None
+
+    # Tentar excluir novamente deve retornar insucesso
+    res_del2 = controller.excluir_participante(user_id)
+    assert not res_del2.sucesso
+    assert "n?o encontrado" in res_del2.mensagem
+

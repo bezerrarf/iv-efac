@@ -64,14 +64,6 @@ class AdminState(AuthState):
     new_ativ_local: str = "Auditório Principal - Campus Brejo Santo"
     new_ativ_tipo: str = "Conferência"
     new_ativ_descricao: str = ""
-    admin_carteirinha_aberta: bool = False
-    admin_carteirinha_nome: str = ""
-    admin_carteirinha_email: str = ""
-    admin_carteirinha_inst: str = ""
-    admin_carteirinha_mod: str = ""
-    admin_carteirinha_cod: str = ""
-    admin_carteirinha_foto: str = ""
-    admin_carteirinha_role: str = ""
     def set_admin_filtro(self, termo: str):
         self.admin_filtro_busca = termo
         self.carregar_painel_admin()
@@ -180,6 +172,27 @@ class AdminState(AuthState):
         self.carregar_painel_admin()
         if hasattr(self, "carregar_painel_supervisor"):
             self.carregar_painel_supervisor()
+
+    def excluir_participante_admin(self):
+        """Exclui o participante atualmente selecionado no modal de edi??o."""
+        if not self.is_admin or not self.admin_edit_user_id:
+            return
+
+        # Impede auto-exclus?o acidental da pr?pria conta de administrador logado
+        if self.current_user and getattr(self.current_user, "id", None) == self.admin_edit_user_id:
+            self.feedback_msg = "Voc? n?o pode excluir sua pr?pria conta de administrador."
+            self.feedback_tipo = "error"
+            return
+
+        res = _usuario_controller.excluir_participante(self.admin_edit_user_id)
+        self.feedback_msg = res.mensagem
+        self.feedback_tipo = "success" if res.sucesso else "error"
+        if res.sucesso:
+            self.modal_editar_participante_aberto = False
+            self.carregar_painel_admin()
+            if hasattr(self, "carregar_painel_supervisor"):
+                self.carregar_painel_supervisor()
+
 
     def abrir_modal_editar_participante(self, user_data: Dict[str, Any]):
         """Abre o modal de edição completa com os dados atuais do participante."""
@@ -423,41 +436,6 @@ class AdminState(AuthState):
         else:
             self.feedback_msg = "Erro ao delegar nova atividade."
             self.feedback_tipo = "error"
-    def ver_carteirinha_admin(self, user_id: Any):
-        """Abre a carteirinha oficial do participante selecionado para visualização/impressão."""
-        try:
-            uid = int(user_id)
-        except Exception:
-            return
-        u = _usuario_controller._repository.find_by_id(uid)
-        if u:
-            self.admin_carteirinha_nome = u.nome
-            self.admin_carteirinha_email = u.email
-            self.admin_carteirinha_inst = u.instituicao
-            self.admin_carteirinha_mod = u.modalidade
-            self.admin_carteirinha_cod = u.codigo_inscricao
-            self.admin_carteirinha_foto = u.foto_url or ""
-            self.admin_carteirinha_role = u.role
-            self.admin_carteirinha_aberta = True
-    def fechar_carteirinha_admin(self):
-        self.admin_carteirinha_aberta = False
-    def baixar_carteirinha_admin_png(self):
-        """Gera e baixa a imagem PNG da carteirinha selecionada pelo Admin."""
-        from projeto_web.core.badge_service import BadgeService
-        img_bytes = BadgeService.gerar_imagem_carteirinha(
-            nome=self.admin_carteirinha_nome,
-            email=self.admin_carteirinha_email,
-            instituicao=self.admin_carteirinha_inst,
-            modalidade=self.admin_carteirinha_mod,
-            role=self.admin_carteirinha_role,
-            codigo=self.admin_carteirinha_cod,
-            email_confirmado=True,
-            foto_url=self.admin_carteirinha_foto or None,
-            base_assets_path="assets",
-        )
-        cod_clean = (self.admin_carteirinha_cod or "001").replace(" ", "_")
-        return rx.download(data=img_bytes, filename=f"carteirinha_ivefac_{cod_clean}.png")
-
 
     def abrir_modal_senha(self, user_id: Any, user_nome: str):
         try:

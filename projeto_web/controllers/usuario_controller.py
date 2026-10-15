@@ -392,3 +392,18 @@ class UsuarioController:
             mensagem=f"Dados cadastrais de {salvo.nome} atualizados com sucesso!",
             dado=salvo,
         )
+    def excluir_participante(self, user_id: int) -> ControllerResult[bool]:
+        """Permite ao administrador excluir um participante do evento."""
+        usuario = self._queries.find_by_id(user_id)
+        if not usuario:
+            return ControllerResult(sucesso=False, mensagem="Participante n?o encontrado no banco de dados.")
+
+        sucesso = self._commands.delete(user_id)
+        if sucesso:
+            return ControllerResult(
+                sucesso=True,
+                mensagem=f"Participante {usuario.nome} exclu?do com sucesso do sistema.",
+                dado=True,
+            )
+        return ControllerResult(sucesso=False, mensagem="Erro ao excluir o participante no banco de dados.")
+

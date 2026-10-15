@@ -55,8 +55,37 @@ img {
 }
 
 /* ==========================================================================
-   TABELAS DE DADOS (ADMIN & SUPERVISOR) - ROLAGEM MOBILE SUAVE & CINÉTICA
+   TABELAS DE DADOS (ADMIN & SUPERVISOR) - ROLAGEM HORIZONTAL NO TOPO
    ========================================================================== */
+.table-top-scroll-track {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.4);
+  margin-bottom: 0.35rem;
+}
+
+.table-top-scroll-track::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-top-scroll-track::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 9999px;
+}
+
+.table-top-scroll-track::-webkit-scrollbar-thumb {
+  background: rgba(0, 173, 181, 0.65);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.table-top-scroll-track::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 173, 181, 1);
+}
+
 .table-scroll-container {
   width: 100%;
   overflow-x: auto;
@@ -68,27 +97,17 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(12px);
+
+  /* Remove completamente as barras de rolagem inferiores */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Barra de rolagem sutil, moderna e translúcida */
 .table-scroll-container::-webkit-scrollbar {
-  height: 6px;
+  display: none;
+  height: 0px;
+  width: 0px;
 }
-
-.table-scroll-container::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 9999px;
-  margin: 0 12px;
-}
-
-.table-scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 173, 181, 0.45);
-  border-radius: 9999px;
-  transition: background 0.2s ease;
-}
-
-.table-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 173, 181, 0.8);
 }
 
 /* Efeito suave de iluminação na linha ao passar o mouse ou tocar */

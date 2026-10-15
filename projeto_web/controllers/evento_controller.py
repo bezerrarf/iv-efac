@@ -79,9 +79,9 @@ class EventoController:
 
     STATS = [
         {"valor": "2", "rotulo": "Dias de Imersão"},
-        {"valor": "6", "rotulo": "Conferencistas Convidados"},
+        {"valor": "9", "rotulo": "Conferencistas Convidados"},
         {"valor": "100+", "rotulo": "Participantes Esperados"},
-        {"valor": "Anais", "rotulo": "Publicação Oficial"},
+        {"valor": "Apresentações", "rotulo": "Banners e Orais"},
     ]
 
     @staticmethod

@@ -348,6 +348,54 @@ def display_hud_contagem() -> rx.Component:
 # --- 1. TELA INÍCIO: COCKPIT CIENTÍFICO ---
 
 
+def _balao_stat(valor: str, rotulo: str) -> rx.Component:
+    """Balão de destaque estatístico em formato idêntico, sem quebra de linha."""
+    return rx.box(
+        rx.vstack(
+            rx.heading(
+                valor,
+                size=rx.breakpoints(initial="5", sm="6"),
+                weight="bold",
+                color=COLOR_CYAN,
+                line_height="1",
+            ),
+            rx.text(
+                rotulo,
+                size="1",
+                weight="medium",
+                color="#E2E8F0",
+                text_align="center",
+                white_space="nowrap",
+                style={"whiteSpace": "nowrap"},
+            ),
+            spacing="1",
+            align="center",
+            justify="center",
+            width="100%",
+        ),
+        background=COLOR_SURFACE_GLASS,
+        backdrop_filter="blur(16px)",
+        border=f"1px solid {COLOR_BORDER_CYAN}",
+        border_radius="16px",
+        padding_y="0.75rem",
+        padding_x="1rem",
+        text_align="center",
+        box_shadow="0 8px 24px rgba(0, 0, 0, 0.4), 0 0 16px rgba(0, 173, 181, 0.15)",
+        _hover={
+            "transform": "translateY(-3px)",
+            "border_color": "#00ADB5",
+            "box_shadow": "0 12px 32px rgba(0, 173, 181, 0.35)",
+        },
+        transition="all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+        width=rx.breakpoints(initial="160px", sm="185px", md="195px"),
+        height=rx.breakpoints(initial="74px", sm="78px"),
+        display="flex",
+        justify_content="center",
+        align_items="center",
+        flex_shrink="0",
+    )
+
+
 def tela_inicio() -> rx.Component:
     stats = EventoController.STATS
 
@@ -461,36 +509,29 @@ def tela_inicio() -> rx.Component:
                 spacing="4",
                 width="100%",
             ),
-            # Coluna 2: Ícone Orbital do Evento + Telemetria HPC
+            # Coluna 2: Ícone Orbital do Evento + Telemetria Científica em Triângulo (sem Anais)
             # No desktop: ao lado do texto (direita)
             # Em tela estreita: centralizado abaixo do texto
             rx.vstack(
                 logo_orbital_hpc(),
-                # Painel de Telemetria Científica
-                rx.grid(
-                    *[
-                        rx.box(
-                            rx.vstack(
-                                rx.heading(s["valor"], size="6", weight="bold", color=COLOR_CYAN),
-                                rx.text(s["rotulo"], size="1", color="#E2E8F0", text_align="center", style=STYLE_TEXT_RESPONSIVE),
-                                spacing="0",
-                                align="center",
-                            ),
-                            background=COLOR_SURFACE_GLASS,
-                            backdrop_filter="blur(12px)",
-                            border=f"1px solid {COLOR_BORDER_CYAN}",
-                            border_radius="14px",
-                            padding="0.8rem 1rem",
-                            text_align="center",
-                            box_shadow="0 4px 18px rgba(0, 0, 0, 0.3)",
-                        )
-                        for s in stats
-                    ],
-                    columns="2",
-                    spacing="3",
+                # Painel de Telemetria Científica em Triângulo (3 balões de mesmo tamanho sem quebra de linha)
+                rx.vstack(
+                    # Ponta superior: 9 Conferencistas Convidados
+                    _balao_stat("9", "Conferencistas Convidados"),
+                    # Base: +100 e 2 Dias nessa ordem
+                    rx.hstack(
+                        _balao_stat("+100", "Participantes Esperados"),
+                        _balao_stat("2", "Dias de Imersão"),
+                        spacing=rx.breakpoints(initial="2", sm="3"),
+                        justify="center",
+                        align="center",
+                        width="100%",
+                    ),
+                    align="center",
+                    justify="center",
+                    spacing=rx.breakpoints(initial="2", sm="3"),
                     width="100%",
-                    max_width="380px",
-                    margin_top="0.8rem",
+                    margin_top="0.6rem",
                 ),
                 align="center",
                 spacing="3",

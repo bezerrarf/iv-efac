@@ -18,47 +18,42 @@ from projeto_web.styles.theme import (
 )
 
 
-def _instituicao_link_chip(nome: str, papel: str, url_home: str, logo_file: str) -> rx.Component:
-    """Chip interativo com logotipo oficial e link externo para a página da instituição."""
+def _instituicao_link_chip(nome: str, url_home: str, logo_file: str) -> rx.Component:
+    """Item institucional com corpo transparente (espaço tocável), logotipo oficial e texto."""
     return rx.link(
-        rx.box(
-            rx.hstack(
-                rx.image(
-                    src=f"/logos/{logo_file}",
-                    alt=f"Logo oficial de {nome}",
-                    height="28px",
-                    max_width="70px",
-                    object_fit="contain",
-                    filter="brightness(1.1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))",
-                ),
-                rx.vstack(
-                    rx.text(nome, size="2", weight="bold", color=COLOR_TEXT_PRIMARY),
-                    rx.text(papel, size="1", color="#CBD5E1"),
-                    spacing="0",
-                    align="start",
-                ),
-                rx.icon(tag="external-link", size=12, color=COLOR_CYAN_LIGHT),
-                spacing="2",
-                align="center",
+        rx.hstack(
+            rx.image(
+                src=f"/logos/{logo_file}",
+                alt=f"Logo de {nome}",
+                height="32px",
+                max_width="75px",
+                object_fit="contain",
+                border_radius="6px",
             ),
-            padding="0.55rem 0.95rem",
-            border_radius="12px",
-            background="rgba(15, 23, 42, 0.8)",
-            backdrop_filter="blur(14px)",
-            border=f"1px solid {COLOR_BORDER_CYAN}",
-            box_shadow="0 4px 14px rgba(0, 0, 0, 0.3)",
+            rx.text(
+                nome,
+                size="2",
+                weight="medium",
+                color="#F1F5F9",
+                letter_spacing="-0.01em",
+                transition="color 0.2s ease",
+            ),
+            spacing="2",
+            align="center",
+            padding="0.4rem 0.75rem",
+            border_radius="10px",
+            background="transparent",
+            border="none",
+            transition="all 0.2s ease",
             _hover={
-                "border_color": COLOR_CYAN,
-                "background": "rgba(0, 173, 181, 0.2)",
+                "background": "rgba(255, 255, 255, 0.08)",
                 "transform": "translateY(-2px)",
-                "box_shadow": "0 6px 20px rgba(0, 173, 181, 0.35)",
             },
-            transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             cursor="pointer",
         ),
         href=url_home,
         is_external=True,
-        style=STYLE_BUTTON_CHIP,
+        style={"text_decoration": "none"},
     )
 
 
@@ -207,30 +202,37 @@ def tela_local() -> rx.Component:
                 max_width="1060px",
                 width="100%",
             ),
-            # Grade de Instituições com Logotipos Oficiais e Links Oficiais (CNPq DGP removido)
+            # Grade de Instituições com Logotipos Oficiais e Links Oficiais
             rx.vstack(
-                rx.text("Instituições Executoras, Parcerias Acadêmicas e Fomento Oficial:", size="2", weight="bold", color=COLOR_TEXT_PRIMARY),
+                rx.text(
+                    "Instituições Executoras, Parcerias Acadêmicas e Fomento Oficial:",
+                    size="2",
+                    weight="bold",
+                    color=COLOR_TEXT_PRIMARY,
+                ),
                 rx.flex(
-                    _instituicao_link_chip("UFCA / IFE", "Instituição Executora", "https://www.ufca.edu.br", "ufca.png"),
-                    _instituicao_link_chip("FUNCAP", "Fomento Oficial • Ceará", "https://www.ce.gov.br/funcap/", "funcap.png"),
-                    _instituicao_link_chip("Governo do Ceará", "Apoio Institucional", "https://www.ce.gov.br/", "governo_ceara.png"),
-                    _instituicao_link_chip("ITA", "Docência e Pesquisa", "http://www.ita.br", "ita.png"),
-                    _instituicao_link_chip("CBPF", "Física de Partículas", "https://www.gov.br/cbpf/pt-br", "cbpf.png"),
-                    _instituicao_link_chip("UFRGS", "Inovação e Ensino", "https://www.ufrgs.br", "ufrgs.png"),
-                    _instituicao_link_chip("UFPB", "Astrofísica Teórica", "https://www.ufpb.br", "ufpb.png"),
-                    _instituicao_link_chip("IFCE", "Ciência e Tecnologia", "https://ifce.edu.br", "ifce.png"),
-                    _instituicao_link_chip("UECE", "Gravitação e Cosmologia", "https://www.uece.br", "uece.png"),
-                    _instituicao_link_chip("URCA", "Polo Regional Cariri", "https://www.urca.br", "urca.png"),
-                    _instituicao_link_chip("Planetarium Kariri", "Divulgação Científica", "https://planetariumkariri.ufca.edu.br/", "planetarium.png"),
+                    _instituicao_link_chip("UFCA", "https://www.ufca.edu.br", "logo_ufca.png"),
+                    _instituicao_link_chip("FUNCAP", "https://www.funcap.ce.gov.br/", "funcap.jpg"),
+                    _instituicao_link_chip("Governo do Ceará", "https://www.ce.gov.br/", "brasao_ceara.svg"),
+                    _instituicao_link_chip("ITA", "http://www.ita.br", "ita.png"),
+                    _instituicao_link_chip("CBPF", "https://www.gov.br/cbpf/pt-br", "cbpf.jpg"),
+                    _instituicao_link_chip("UFRGS", "https://www.ufrgs.br", "ufrgs.png"),
+                    _instituicao_link_chip("UFPB", "https://www.ufpb.br", "ufpb.png"),
+                    _instituicao_link_chip("IFCE", "https://ifce.edu.br", "ifce.png"),
+                    _instituicao_link_chip("UECE", "https://www.uece.br", "uece.png"),
+                    _instituicao_link_chip("URCA", "https://www.urca.br", "urca.png"),
+                    _instituicao_link_chip("Planetarium Kariri", "https://planetariumkariri.ufca.edu.br/", "logo_planetarium.jpg"),
                     gap="2",
                     wrap="wrap",
                     justify="center",
-                    max_width="1060px",
+                    align="center",
+                    max_width="1120px",
+                    width="100%",
                 ),
                 spacing="2",
                 align="center",
                 width="100%",
-                margin_top="1.2rem",
+                margin_top="1.5rem",
             ),
             spacing="3",
             align="center",

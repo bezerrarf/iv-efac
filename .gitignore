@@ -62,9 +62,6 @@ assets/badge_template.jpeg
 assets/card_palestrante_template.jpeg
 assets/logos/regua_fomento_oficial.png
 assets/logos/regua_instituicoes_completa.png
-assets/logos/logo_funcap.png
-assets/logos/logo_ufca.png
-assets/logos/logo_planetarium.png
 projeto_web/views/components/badge_card.py
 projeto_web/views/components/space_fabric.py
 

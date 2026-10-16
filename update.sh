@@ -20,7 +20,7 @@ set -o pipefail
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BRANCH="main"
 LOG_FILE="${PROJECT_DIR}/update.log"
-SERVICE_NAME="efac"
+SERVICE_NAME="ivefac"
 
 # Carrega ambiente do usuário (garante uv e python no PATH ao rodar pelo cron)
 export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"

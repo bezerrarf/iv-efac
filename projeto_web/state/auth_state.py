@@ -159,7 +159,7 @@ class AuthState(rx.State):
         self.login_senha = ""
 
     async def handle_upload_foto(self, files: List[rx.UploadFile]):
-        """Recebe o arquivo de imagem enviado do computador ou dispositivo móvel (celular/tablet)."""
+        """Recebe o arquivo de imagem, otimiza em disco e salva apenas o caminho relativo no banco."""
         if not self.is_logged_in or not self.user_id:
             self.feedback_msg = "Você precisa estar logado para atualizar sua foto."
             self.feedback_tipo = "error"
@@ -170,7 +170,13 @@ class AuthState(rx.State):
             self.feedback_tipo = "error"
             return
 
-        import base64
+        import io
+        from pathlib import Path
+        from PIL import Image
+
+        upload_dir = Path("assets/uploaded_files")
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
         for file in files:
             upload_data = await file.read()
             if len(upload_data) > 6 * 1024 * 1024:
@@ -178,24 +184,30 @@ class AuthState(rx.State):
                 self.feedback_tipo = "error"
                 return
 
-            nome_arq = (file.filename or "").lower()
-            mime = "image/jpeg"
-            if nome_arq.endswith(".png"):
-                mime = "image/png"
-            elif nome_arq.endswith(".webp"):
-                mime = "image/webp"
+            try:
+                # Valida integridade e Magic Bytes com Pillow
+                img = Image.open(io.BytesIO(upload_data))
+                img = img.convert("RGB")
+                img.thumbnail((480, 480), Image.Resampling.LANCZOS)
+                
+                # Salva imagem otimizada em WebP compacto (~30KB)
+                filename = f"foto_user_{self.user_id}.webp"
+                file_dest = upload_dir / filename
+                img.save(file_dest, "WEBP", quality=85, optimize=True)
 
-            b64_str = base64.b64encode(upload_data).decode("utf-8")
-            data_uri = f"data:{mime};base64,{b64_str}"
-
-            res = _usuario_controller.atualizar_foto(self.user_id, data_uri)
-            if res.sucesso and res.dado:
-                self.user_foto_url = data_uri
-                self.feedback_msg = "Foto da carteirinha enviada com sucesso do seu dispositivo!"
-                self.feedback_tipo = "success"
-                return
-            else:
-                self.feedback_msg = res.mensagem
+                rel_url = f"/uploaded_files/{filename}"
+                res = _usuario_controller.atualizar_foto(self.user_id, rel_url)
+                if res.sucesso and res.dado:
+                    self.user_foto_url = rel_url
+                    self.feedback_msg = "Foto de perfil atualizada com sucesso!"
+                    self.feedback_tipo = "success"
+                    return
+                else:
+                    self.feedback_msg = res.mensagem
+                    self.feedback_tipo = "error"
+                    return
+            except Exception:
+                self.feedback_msg = "Arquivo de imagem inválido ou corrompido."
                 self.feedback_tipo = "error"
                 return
 

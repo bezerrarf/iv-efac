@@ -34,6 +34,9 @@ class InMemoryUsuarioRepository(UsuarioRepositoryProtocol):
     def count(self) -> int:
         return len(self._usuarios)
 
+    def count_presencial(self) -> int:
+        return sum(1 for u in self._usuarios.values() if u.modalidade == "Presencial")
+
     def list_all(self) -> list[Usuario]:
         return list(self._usuarios.values())
 

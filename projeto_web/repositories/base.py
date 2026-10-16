@@ -54,6 +54,10 @@ class UsuarioQueryRepositoryProtocol(Protocol):
         """Contagem total de inscritos."""
         ...
 
+    def count_presencial(self) -> int:
+        """Contagem de inscritos na modalidade Presencial."""
+        ...
+
     def list_all(self) -> List[Usuario]:
         """Lista todos os inscritos ordenados."""
         ...

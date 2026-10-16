@@ -27,6 +27,11 @@ htmlcov/
 .web/
 assets/external/
 
+# Uploaded Files at Runtime (preserves .gitkeep)
+assets/uploaded_files/*
+!assets/uploaded_files/.gitkeep
+uploaded_files/
+
 # Binaries & SQLite
 cloudflared.exe
 *.db
@@ -50,12 +55,14 @@ Estrutura_Web.md
 
 # Scripts de uso unico / suporte
 split_script.py
+scratch/
 
 # Arquivos e duplicatas locais preservados fora do repositorio
 frases_cientistas.txt
 Espec complementares.pdf
 identidade_visual/
-participantes/*.png
+participantes/
+logos/
 assets/regua_instituicoes_poster.png
 assets/cartao_participante.jpeg
 assets/badge_template.jpeg

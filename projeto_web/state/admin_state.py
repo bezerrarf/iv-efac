@@ -131,6 +131,8 @@ class AdminState(AuthState):
 
     def carregar_painel_admin(self):
         """Carrega e filtra a lista de inscritos e calcula métricas para o admin."""
+        if hasattr(self, "is_admin") and not self.is_admin:
+            return
         self.carregar_atividades_admin()
         self.carregar_links_modelos()
         usuarios = _usuario_controller.listar_inscritos(self.admin_filtro_busca)

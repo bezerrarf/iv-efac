@@ -15,16 +15,20 @@ class SQLiteUsuarioCommandRepository(UsuarioCommandRepositoryProtocol):
 
     def save(self, usuario: Usuario) -> Usuario:
         with self._session_factory() as session:
-            if usuario.id is None:
-                session.add(usuario)
-                session.commit()
-                session.refresh(usuario)
-                return usuario
-            else:
-                merged = session.merge(usuario)
-                session.commit()
-                session.refresh(merged)
-                return merged
+            try:
+                if usuario.id is None:
+                    session.add(usuario)
+                    session.commit()
+                    session.refresh(usuario)
+                    return usuario
+                else:
+                    merged = session.merge(usuario)
+                    session.commit()
+                    session.refresh(merged)
+                    return merged
+            except Exception:
+                session.rollback()
+                raise
 
     def update_role(self, user_id: int, role: str) -> Optional[Usuario]:
         with self._session_factory() as session:

@@ -39,15 +39,12 @@ def test_participantes_webp_existentes_em_disco():
         "jose_crisanto",
         "job_saraiva",
     ]
-    p_dir = Path("participantes")
     assets_dir = Path("assets/participantes")
     
     for n in nomes:
-        file_p = p_dir / f"{n}.webp"
         file_a = assets_dir / f"{n}.webp"
-        assert file_p.exists(), f"Arquivo WebP não encontrado em participantes: {file_p}"
         assert file_a.exists(), f"Arquivo WebP não encontrado em assets: {file_a}"
-        assert file_p.stat().st_size > 5000, f"Arquivo WebP inválido/muito pequeno: {file_p}"
+        assert file_a.stat().st_size > 5000, f"Arquivo WebP inválido/muito pequeno: {file_a}"
 
 
 def test_zoom_e_sinergia_estilos():

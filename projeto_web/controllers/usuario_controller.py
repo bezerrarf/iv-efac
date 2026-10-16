@@ -87,7 +87,10 @@ class UsuarioController:
             )
 
         # Validação de capacidade para modalidade presencial
-        if modalidade == "Presencial" and self._queries.count() >= self._capacidade_maxima:
+        vagas_presenciais = (self._queries.count_presencial() if hasattr(self._queries, "count_presencial") else self._queries.count())
+        if vagas_presenciais is None:
+            vagas_presenciais = 0
+        if modalidade == "Presencial" and vagas_presenciais >= self._capacidade_maxima:
             return ControllerResult(
                 sucesso=False,
                 mensagem="Limite de vagas presenciais esgotado. Escolha a modalidade Online.",

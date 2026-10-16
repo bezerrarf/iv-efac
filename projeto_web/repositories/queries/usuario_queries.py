@@ -1,7 +1,7 @@
 """Implementação concreta de consultas e projeções de usuários em SQLite (CQRS - Query Side)."""
 
 from typing import List, Optional
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from projeto_web.models.usuario import Usuario
 from projeto_web.repositories.base import UsuarioQueryRepositoryProtocol
 from projeto_web.repositories.database import get_session
@@ -25,8 +25,13 @@ class SQLiteUsuarioQueryRepository(UsuarioQueryRepositoryProtocol):
 
     def count(self) -> int:
         with self._session_factory() as session:
-            statement = select(Usuario)
-            return len(session.exec(statement).all())
+            statement = select(func.count(Usuario.id))
+            return int(session.exec(statement).one() or 0)
+
+    def count_presencial(self) -> int:
+        with self._session_factory() as session:
+            statement = select(func.count(Usuario.id)).where(Usuario.modalidade == "Presencial")
+            return int(session.exec(statement).one() or 0)
 
     def list_all(self) -> List[Usuario]:
         with self._session_factory() as session:

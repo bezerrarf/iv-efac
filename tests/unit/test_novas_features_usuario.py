@@ -122,3 +122,64 @@ def test_admin_atualizar_participante_completo():
     assert res_edit.dado.presenca_dia1 is True
     assert res_edit.dado.presenca_dia2 is False
     assert res_edit.dado.presenca_confirmada is True
+
+
+def test_capacidade_segregada_presencial_e_online():
+    """Garante que inscrições Online não bloqueiam vagas da modalidade Presencial."""
+    repo = SQLiteUsuarioRepository()
+    hasher = PBKDF2PasswordHasher()
+    import uuid
+
+    presenciais_iniciais = repo.count_presencial()
+    # Limite definido para 2 vagas presenciais a mais do que o estado atual
+    controller = UsuarioController(
+        repository=repo,
+        hasher=hasher,
+        capacidade_maxima=presenciais_iniciais + 2,
+    )
+
+    # 1. Cadastra 3 participantes Online (não devem consumir as 2 vagas presenciais)
+    for i in range(3):
+        res = controller.cadastrar(
+            nome=f"Online User {i}",
+            email=f"online_{uuid.uuid4().hex[:6]}@ufca.edu.br",
+            senha="SenhaOnline123!",
+            modalidade="Online",
+        )
+        assert res.sucesso is True
+
+    # 2. Cadastra até o limite de presenciais (+1 e +2)
+    cad_p1 = controller.cadastrar(
+        nome="Presencial 1",
+        email=f"p1_{uuid.uuid4().hex[:6]}@ufca.edu.br",
+        senha="SenhaPresencial123!",
+        modalidade="Presencial",
+    )
+    assert cad_p1.sucesso is True
+
+    cad_p2 = controller.cadastrar(
+        nome="Presencial 2",
+        email=f"p2_{uuid.uuid4().hex[:6]}@ufca.edu.br",
+        senha="SenhaPresencial123!",
+        modalidade="Presencial",
+    )
+    assert cad_p2.sucesso is True
+
+    # 3. 3º Presencial (+3) deve ser bloqueado por esgotamento
+    cad_p3 = controller.cadastrar(
+        nome="Presencial 3",
+        email=f"p3_{uuid.uuid4().hex[:6]}@ufca.edu.br",
+        senha="SenhaPresencial123!",
+        modalidade="Presencial",
+    )
+    assert cad_p3.sucesso is False
+    assert "Limite de vagas presenciais esgotado" in cad_p3.mensagem
+
+    # 4. Mas novo participante Online ainda DEVE ser aceito com sucesso!
+    cad_on_extra = controller.cadastrar(
+        nome="Online Extra",
+        email=f"online_extra_{uuid.uuid4().hex[:6]}@ufca.edu.br",
+        senha="SenhaOnline123!",
+        modalidade="Online",
+    )
+    assert cad_on_extra.sucesso is True

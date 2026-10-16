@@ -23,6 +23,8 @@ class SupervisorState(AdminState):
         self.carregar_painel_supervisor()
     def carregar_painel_supervisor(self):
         """Carrega lista de inscritos para credenciamento e presença."""
+        if hasattr(self, "is_supervisor") and not (self.is_supervisor or getattr(self, "is_admin", False)):
+            return
         usuarios = _usuario_controller.listar_inscritos(self.superv_busca)
         self.superv_inscritos = [
             {

@@ -176,7 +176,7 @@ class AdminState(AuthState):
             self.carregar_painel_supervisor()
 
     def excluir_participante_admin(self):
-        """Exclui o participante atualmente selecionado no modal de edi??o."""
+        """Exclui o participante atualmente selecionado no modal de edição."""
         if not self.is_admin or not self.admin_edit_user_id:
             return
 

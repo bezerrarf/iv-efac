@@ -1276,7 +1276,7 @@ def modal_editar_participante_admin() -> rx.Component:
                     rx.button(
                         rx.hstack(
                             rx.icon(tag="check", size=14),
-                            rx.text("Salvar Altera??es", size="2", weight="bold"),
+                            rx.text("Salvar Alterações", size="2", weight="bold"),
                             spacing="1",
                             align="center",
                         ),

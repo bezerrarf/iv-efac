@@ -375,9 +375,31 @@ class AdminState(AuthState):
             self.feedback_tipo = "success"
             self.is_editing_atividade = False
             self.carregar_atividades_admin()
+            if hasattr(self, "carregar_programacao_publica"):
+                self.carregar_programacao_publica()
         else:
             self.feedback_msg = "Erro ao salvar alterações da atividade."
             self.feedback_tipo = "error"
+    def excluir_atividade(self, ativ_id: Any):
+        """Exclui uma atividade da grade oficial pelo Administrador."""
+        if not self.is_admin:
+            return
+        try:
+            aid = int(ativ_id)
+        except Exception:
+            return
+        ok = EventoController.excluir_atividade(aid)
+        if ok:
+            self.feedback_msg = "Atividade excluída com sucesso da grade oficial!"
+            self.feedback_tipo = "success"
+            self.is_editing_atividade = False
+            self.carregar_atividades_admin()
+            if hasattr(self, "carregar_programacao_publica"):
+                self.carregar_programacao_publica()
+        else:
+            self.feedback_msg = "Erro ao excluir atividade."
+            self.feedback_tipo = "error"
+
     def restaurar_grade_padrao(self):
         """Restaura todas as atividades para os valores originais."""
         if not self.is_admin:
@@ -387,6 +409,8 @@ class AdminState(AuthState):
             self.feedback_msg = "Grade oficial de programação restaurada com sucesso!"
             self.feedback_tipo = "success"
             self.carregar_atividades_admin()
+            if hasattr(self, "carregar_programacao_publica"):
+                self.carregar_programacao_publica()
         else:
             self.feedback_msg = "Erro ao restaurar a grade de programação."
             self.feedback_tipo = "error"
@@ -435,6 +459,8 @@ class AdminState(AuthState):
             self.feedback_tipo = "success"
             self.is_creating_atividade = False
             self.carregar_atividades_admin()
+            if hasattr(self, "carregar_programacao_publica"):
+                self.carregar_programacao_publica()
         else:
             self.feedback_msg = "Erro ao delegar nova atividade."
             self.feedback_tipo = "error"

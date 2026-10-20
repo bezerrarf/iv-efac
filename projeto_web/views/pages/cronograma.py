@@ -3,17 +3,16 @@ Grade horária dos 2 dias oficiais (11 e 12 de Novembro de 2026).
 Preserva consistência visual com Fundo Cósmico Vetorial, Navbar e Footer oficiais.
 """
 
+from typing import Dict, Any
 import reflex as rx
 from projeto_web.views.components.navbar import navbar
 from projeto_web.views.components.footer import footer
 from projeto_web.views.components.cosmic_background import cosmic_background
 from projeto_web.state.evento_state import EventoState
-from projeto_web.controllers.evento_controller import EventoController, Atividade
 from projeto_web.styles.theme import (
     COLOR_BG,
     COLOR_SURFACE_GLASS,
     COLOR_BORDER_CYAN,
-    COLOR_BORDER_SUBTLE,
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
     STYLE_HEADING_RESPONSIVE,
@@ -22,13 +21,13 @@ from projeto_web.styles.theme import (
 )
 
 
-def timeline_card(item: Atividade) -> rx.Component:
+def timeline_card(item: Dict[str, Any]) -> rx.Component:
     """Card cósmico premium para exibição de cada atividade da grade horária."""
     return rx.card(
         rx.hstack(
             rx.vstack(
-                rx.badge(item.horario, color_scheme="cyan", variant="solid", size="2", style=STYLE_BUTTON_CHIP),
-                rx.text(item.local, size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
+                rx.badge(item["horario"], color_scheme="cyan", variant="solid", size="2", style=STYLE_BUTTON_CHIP),
+                rx.text(item["local"], size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                 align="start",
                 min_width=rx.breakpoints(initial="80px", sm="110px"),
                 spacing="1",
@@ -42,27 +41,27 @@ def timeline_card(item: Atividade) -> rx.Component:
             ),
             rx.vstack(
                 rx.hstack(
-                    rx.badge(item.tipo, color_scheme=item.tipo_color, variant="soft", size="1", style=STYLE_BUTTON_CHIP),
+                    rx.badge(item["tipo"], color_scheme=item["tipo_color"].to(str), variant="soft", size="1", style=STYLE_BUTTON_CHIP),
                     rx.spacer(),
                     align="center",
                     width="100%",
                 ),
                 rx.heading(
-                    item.titulo,
+                    item["titulo"],
                     size="3",
                     weight="bold",
                     color="white",
                     style=STYLE_HEADING_RESPONSIVE,
                 ),
                 rx.text(
-                    item.palestrante,
+                    item["palestrante"],
                     size="2",
                     weight="medium",
                     color=COLOR_CYAN_LIGHT,
                     style=STYLE_TEXT_RESPONSIVE,
                 ),
                 rx.text(
-                    item.descricao,
+                    item["descricao"],
                     size="1",
                     color="#CBD5E1",
                     line_height="1.5",
@@ -85,15 +84,6 @@ def timeline_card(item: Atividade) -> rx.Component:
         box_shadow="0 6px 25px rgba(0, 0, 0, 0.35)",
         _hover={"border_color": COLOR_CYAN, "transform": "translateX(4px)"},
         transition="all 0.2s ease",
-    )
-
-
-def dia_content(dia_nome: str) -> rx.Component:
-    atividades = EventoController.obter_programacao(dia_nome)
-    return rx.vstack(
-        *[timeline_card(item) for item in atividades],
-        width="100%",
-        spacing="2",
     )
 
 
@@ -180,8 +170,8 @@ def cronograma_page() -> rx.Component:
                 rx.box(
                     rx.cond(
                         EventoState.dia_selecionado == "Dia 1",
-                        dia_content("Dia 1"),
-                        dia_content("Dia 2"),
+                        rx.vstack(rx.foreach(EventoState.atividades_dia1, timeline_card), width="100%", spacing="2"),
+                        rx.vstack(rx.foreach(EventoState.atividades_dia2, timeline_card), width="100%", spacing="2"),
                     ),
                     width="100%",
                     max_width="920px",
@@ -204,4 +194,5 @@ def cronograma_page() -> rx.Component:
         background=COLOR_BG,
         color="white",
         position="relative",
+        on_mount=EventoState.carregar_programacao_publica,
     )

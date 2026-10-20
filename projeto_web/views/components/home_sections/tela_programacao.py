@@ -1,12 +1,11 @@
 """Seção de Programação do Simpósio reestruturada para a Landing Page única (UI/UX Pro Max).
 """
 
+from typing import Dict, Any
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
-from projeto_web.controllers.evento_controller import EventoController, Atividade
 from projeto_web.styles.theme import (
     COLOR_TEXT_PRIMARY,
-
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
     COLOR_SURFACE_GLASS,
@@ -17,21 +16,21 @@ from projeto_web.styles.theme import (
 )
 
 
-def _schedule_item_landing(item: Atividade) -> rx.Component:
+def _schedule_item_landing(item: Dict[str, Any]) -> rx.Component:
     """Card individual de atividade para a grade na Landing Page."""
     return rx.card(
         rx.hstack(
-            rx.badge(item.horario, color_scheme="cyan", variant="solid", size="1", style=STYLE_BUTTON_CHIP),
+            rx.badge(item["horario"], color_scheme="cyan", variant="solid", size="1", style=STYLE_BUTTON_CHIP),
             rx.vstack(
                 rx.hstack(
-                    rx.badge(item.tipo, color_scheme=item.tipo_color, size="1", variant="soft", style=STYLE_BUTTON_CHIP),
-                    rx.text(item.local, size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
+                    rx.badge(item["tipo"], color_scheme=item["tipo_color"].to(str), size="1", variant="soft", style=STYLE_BUTTON_CHIP),
+                    rx.text(item["local"], size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                     spacing="2",
                     align="center",
                     wrap="wrap",
                 ),
-                rx.text(item.titulo, size="2", weight="bold", color=COLOR_TEXT_PRIMARY, style=STYLE_HEADING_RESPONSIVE),
-                rx.text(item.palestrante, size="1", color=COLOR_CYAN_LIGHT, style=STYLE_TEXT_RESPONSIVE),
+                rx.text(item["titulo"], size="2", weight="bold", color=COLOR_TEXT_PRIMARY, style=STYLE_HEADING_RESPONSIVE),
+                rx.text(item["palestrante"], size="1", color=COLOR_CYAN_LIGHT, style=STYLE_TEXT_RESPONSIVE),
                 spacing="0",
                 align="start",
                 width="100%",
@@ -52,9 +51,6 @@ def _schedule_item_landing(item: Atividade) -> rx.Component:
 
 def tela_programacao() -> rx.Component:
     """Seção de Grade Horária do Simpósio adaptada para o fluxo contínuo da Landing Page."""
-    dia1 = EventoController.obter_programacao("Dia 1")
-    dia2 = EventoController.obter_programacao("Dia 2")
-
     return rx.box(
         rx.vstack(
             rx.heading("Programação do Simpósio", size=rx.breakpoints(initial="6", sm="7", md="8"), weight="bold", color=COLOR_TEXT_PRIMARY, text_align="center", style=STYLE_HEADING_RESPONSIVE),
@@ -111,12 +107,12 @@ def tela_programacao() -> rx.Component:
                 wrap="wrap",
                 justify="center",
             ),
-            # Lista de Itens com Scroll Suave
+            # Lista de Itens Reativos com Scroll Suave
             rx.box(
                 rx.cond(
                     EventoState.dia_selecionado == "Dia 1",
-                    rx.vstack(*[_schedule_item_landing(item) for item in dia1], width="100%"),
-                    rx.vstack(*[_schedule_item_landing(item) for item in dia2], width="100%"),
+                    rx.vstack(rx.foreach(EventoState.atividades_dia1, _schedule_item_landing), width="100%"),
+                    rx.vstack(rx.foreach(EventoState.atividades_dia2, _schedule_item_landing), width="100%"),
                 ),
                 width="100%",
                 max_width="880px",
@@ -172,4 +168,5 @@ def tela_programacao() -> rx.Component:
         ),
         width="100%",
         id="programacao",
+        on_mount=EventoState.carregar_programacao_publica,
     )

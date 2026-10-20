@@ -759,6 +759,20 @@ def editor_atividades_admin() -> rx.Component:
                     ),
                     rx.hstack(
                         rx.button(
+                            rx.hstack(
+                                rx.icon(tag="trash-2", size=14),
+                                rx.text("Excluir Atividade"),
+                                spacing="1",
+                                align="center",
+                            ),
+                            size="2",
+                            variant="soft",
+                            color_scheme="red",
+                            on_click=AdminState.excluir_atividade(AdminState.edit_ativ_id),
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                        rx.spacer(),
+                        rx.button(
                             "Cancelar",
                             size="2",
                             variant="ghost",
@@ -804,7 +818,7 @@ def editor_atividades_admin() -> rx.Component:
                         rx.table.column_header_cell("Tipo", width="120px", min_width="120px", white_space="nowrap"),
                         rx.table.column_header_cell("Tema / Atividade", min_width="260px", white_space="nowrap"),
                         rx.table.column_header_cell("Responsável Delegado", min_width="190px", white_space="nowrap"),
-                        rx.table.column_header_cell("Ação", width="110px", min_width="110px", text_align="center", white_space="nowrap"),
+                        rx.table.column_header_cell("Ações", width="180px", min_width="180px", text_align="center", white_space="nowrap"),
                     )
                 ),
                 rx.table.body(
@@ -823,18 +837,36 @@ def editor_atividades_admin() -> rx.Component:
                             ),
                             rx.table.cell(rx.text(a["palestrante"], size="2", color="#CBD5E1")),
                             rx.table.cell(
-                                rx.button(
-                                    rx.hstack(
-                                        rx.icon(tag="pencil", size=12),
-                                        rx.text("Editar", size="1"),
-                                        spacing="1",
-                                        align="center",
+                                rx.hstack(
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="pencil", size=12),
+                                            rx.text("Editar", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="surface",
+                                        color_scheme="cyan",
+                                        on_click=AdminState.abrir_edicao_atividade(a["id"]),
+                                        style=STYLE_BUTTON_CHIP,
                                     ),
-                                    size="1",
-                                    variant="surface",
-                                    color_scheme="cyan",
-                                    on_click=AdminState.abrir_edicao_atividade(a["id"]),
-                                    style=STYLE_BUTTON_CHIP,
+                                    rx.button(
+                                        rx.hstack(
+                                            rx.icon(tag="trash-2", size=12),
+                                            rx.text("Excluir", size="1"),
+                                            spacing="1",
+                                            align="center",
+                                        ),
+                                        size="1",
+                                        variant="soft",
+                                        color_scheme="red",
+                                        on_click=AdminState.excluir_atividade(a["id"]),
+                                        style=STYLE_BUTTON_CHIP,
+                                    ),
+                                    spacing="1",
+                                    justify="center",
+                                    align="center",
                                 ),
                             ),
                             align="center",

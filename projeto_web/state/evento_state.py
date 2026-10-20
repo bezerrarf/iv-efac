@@ -1,3 +1,5 @@
+import time
+import asyncio
 from projeto_web.state.supervisor_state import SupervisorState
 from projeto_web.core.quotes_service import carregar_frases_cientistas
 """Ponte reativa (Reflex State) que consome os Controllers (MVC)."""
@@ -19,6 +21,22 @@ init_db()
 _hasher = PBKDF2PasswordHasher()
 _repo = SQLiteUsuarioRepository()
 _usuario_controller = UsuarioController(repository=_repo, hasher=_hasher)
+
+
+def _obter_atividades_iniciais(dia: str) -> List[Dict[str, Any]]:
+    return [
+        {
+            "id": a.id or 0,
+            "horario": a.horario,
+            "titulo": a.titulo,
+            "palestrante": a.palestrante,
+            "local": a.local,
+            "tipo": a.tipo,
+            "descricao": a.descricao,
+            "tipo_color": a.tipo_color,
+        }
+        for a in EventoController.obter_programacao_padrao(dia)
+    ]
 
 
 class EventoState(SupervisorState):
@@ -44,6 +62,9 @@ class EventoState(SupervisorState):
 
     # --- Filtros de Cronograma ---
     dia_selecionado: str = "Dia 1"
+    atividades_dia1: List[Dict[str, Any]] = _obter_atividades_iniciais("Dia 1")
+    atividades_dia2: List[Dict[str, Any]] = _obter_atividades_iniciais("Dia 2")
+    ultima_atualizacao_programacao: float = 0.0
 
 
 
@@ -127,8 +148,50 @@ class EventoState(SupervisorState):
 
 
 
+    def carregar_programacao_publica(self):
+        """Carrega e sincroniza a programação oficial com cache de 1 minuto."""
+        d1 = EventoController.obter_programacao("Dia 1")
+        d2 = EventoController.obter_programacao("Dia 2")
+        self.atividades_dia1 = [
+            {
+                "id": a.id or 0,
+                "horario": a.horario,
+                "titulo": a.titulo,
+                "palestrante": a.palestrante,
+                "local": a.local,
+                "tipo": a.tipo,
+                "descricao": a.descricao,
+                "tipo_color": a.tipo_color,
+            }
+            for a in d1
+        ]
+        self.atividades_dia2 = [
+            {
+                "id": a.id or 0,
+                "horario": a.horario,
+                "titulo": a.titulo,
+                "palestrante": a.palestrante,
+                "local": a.local,
+                "tipo": a.tipo,
+                "descricao": a.descricao,
+                "tipo_color": a.tipo_color,
+            }
+            for a in d2
+        ]
+        self.ultima_atualizacao_programacao = time.time()
+
+    @rx.event(background=True)
+    async def monitor_programacao_background(self):
+        """Monitora e atualiza a programação a cada 60s (1 minuto) de forma reativa."""
+        while True:
+            await asyncio.sleep(60)
+            async with self:
+                self.carregar_programacao_publica()
+
     def set_dia(self, dia: str):
         self.dia_selecionado = dia
+        if not self.atividades_dia1 or not self.atividades_dia2 or (time.time() - self.ultima_atualizacao_programacao > 60.0):
+            self.carregar_programacao_publica()
 
     def set_badge_modo(self, modo: str):
         if modo in ["participante", "palestrante"]:

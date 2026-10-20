@@ -76,3 +76,4 @@ projeto_web/views/components/space_fabric.py
 .env
 .env.local
 .env.*.local
+*.bak*

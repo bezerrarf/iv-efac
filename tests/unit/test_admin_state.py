@@ -33,3 +33,29 @@ def test_admin_state_carregar_painel_executes_without_errors():
     AdminState.carregar_painel_admin(dummy)
     assert isinstance(dummy.admin_inscritos, list)
     assert dummy.admin_total_inscritos >= 0
+
+def test_admin_state_excluir_atividade():
+    assert hasattr(AdminState, "excluir_atividade")
+    # Testa retorno antecipado silencioso para nao-admin
+    dummy_unauth = types.SimpleNamespace(
+        is_admin=False,
+        feedback_msg="",
+    )
+    AdminState.excluir_atividade.fn(dummy_unauth, 999999)
+    assert dummy_unauth.feedback_msg == ""
+
+    # Testa execucao autorizada para admin com id invalido/inexistente
+    dummy_auth = types.SimpleNamespace(
+        is_admin=True,
+        feedback_msg="",
+        feedback_tipo="",
+        is_editing_atividade=False,
+        carregar_atividades_admin=lambda: None,
+    )
+    AdminState.excluir_atividade.fn(dummy_auth, 999999)
+    # Se ID nao existe, ok e False e feedback_tipo e error
+    assert dummy_auth.feedback_tipo == "error"
+
+    # Testa criacao de EventSpec
+    spec = AdminState.excluir_atividade(999999)
+    assert spec is not None

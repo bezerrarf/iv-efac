@@ -6,6 +6,7 @@ import reflex as rx
 from projeto_web.views.pages.home import home_page
 from projeto_web.views.pages.cronograma import cronograma_page
 from projeto_web.views.pages.inscricao import inscricao_page
+from projeto_web.state.evento_state import EventoState
 
 app = rx.App(
     stylesheets=[
@@ -27,6 +28,7 @@ app = rx.App(
 app.add_page(
     home_page,
     route="/",
+    on_load=EventoState.carregar_programacao_publica,
     title="IV EFAC • Encontro de Física e Astronomia do Cariri (UFCA)",
     description="IV Encontro de Física e Astronomia do Cariri. Fronteiras da Física Contemporânea, Formação Científica e Integração Regional. 11 e 12 de Novembro de 2026.",
     meta=[
@@ -40,6 +42,7 @@ app.add_page(
 app.add_page(
     cronograma_page,
     route="/cronograma",
+    on_load=EventoState.carregar_programacao_publica,
     title="Programação Oficial • IV EFAC 2026",
     description="Grade horária oficial de 2 dias do IV EFAC (11 e 12/11/2026): Conferências Magnas, Minicurso Python, Mesas-Redondas e Sessões Orais.",
 )

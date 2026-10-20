@@ -2,8 +2,9 @@
 Encontro de Física e Astronomia do Cariri - UFCA / IFE.
 """
 
+import time
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple, Any
 
 
 @dataclass
@@ -20,7 +21,6 @@ class Atividade:
     ordem: int = 0
 
 
-@dataclass
 @dataclass
 class Palestrante:
     nome: str
@@ -84,9 +84,17 @@ class EventoController:
         {"valor": "Apresentações", "rotulo": "Banners e Orais"},
     ]
 
+    _cache_programacao: Dict[str, Tuple[float, List[Atividade]]] = {}
+    CACHE_TTL_SEGUNDOS: float = 60.0  # 1 minuto de cache
+
+    @classmethod
+    def invalidar_cache_programacao(cls):
+        """Invalida o cache em memória da programação oficial."""
+        cls._cache_programacao.clear()
+
     @staticmethod
     def obter_programacao_padrao(dia: str) -> List[Atividade]:
-        """Grade oficial estática padrão do evento."""
+        """Grade oficial padrão do IV EFAC com dados 100% fiéis aos banners oficiais."""
         programacoes = {
             "Dia 1": [
                 Atividade(
@@ -112,40 +120,40 @@ class EventoController:
                     ordem=2,
                 ),
                 Atividade(
-                    horario="09:30 – 10:30",
-                    titulo="Palestra Convidada 1: Educação Científica e Ensino de Física",
+                    horario="09:30 – 10:45",
+                    titulo="Palestra Convidada: Da licenciatura à sala de aula: como dar continuidade à formação docente?",
                     palestrante="Profa. Dra. Eliane Angela Veit (UFRGS)",
                     local="Auditório Central",
-                    tipo="Palestra de Abertura",
-                    descricao="Inovação, epistemologia, metodologias ativas e formação científica de qualidade no ensino contemporâneo.",
+                    tipo="Palestra Convidada",
+                    descricao="A formação de professores pensada além de cursos com início e fim. Aborda a Teoria Social da Aprendizagem de Etienne Wenger, comunidades de prática e a articulação entre escola e universidade.",
                     tipo_color="cyan",
                     dia="Dia 1",
                     ordem=3,
                 ),
                 Atividade(
-                    horario="10:30 – 11:00",
+                    horario="10:45 – 11:30",
                     titulo="Coffee Break, Acolhimento e Sessão de Networking",
                     palestrante="Integração Acadêmica",
                     local="Espaço de Convivência IFE",
                     tipo="Intervalo Técnico",
-                    descricao="Momento de conexão e articulação científica entre estudantes, professores e conferencistas.",
+                    descricao="Momento de conexão e articulação científica entre estudantes, professores e conferencistas convidados.",
                     tipo_color="gray",
                     dia="Dia 1",
                     ordem=4,
                 ),
                 Atividade(
-                    horario="11:00 – 12:30",
-                    titulo="Palestra Convidada 2: Astrofísica Teórica e Objetos Compactos",
-                    palestrante="Prof. Dr. Iarley Lobato (UFPB)",
+                    horario="11:30 – 12:45",
+                    titulo="Palestra Convidada: Sondando a gravidade quântica com astrofísica multimensageira e experimentos de bancada",
+                    palestrante="Prof. Dr. Iarley Pereira Lobo (UFPB)",
                     local="Auditório Central",
                     tipo="Palestra Convidada",
-                    descricao="Estrutura e física da matéria sob densidades e pressões extremas: evolução estelar, pulsares e estrelas de nêutrons.",
+                    descricao="Aborda o problema da gravidade quântica, tentativas de detecção experimental de sua assinatura através de observáveis astrofísicos, física de altas energias e sistemas quânticos a baixas energias.",
                     tipo_color="sky",
                     dia="Dia 1",
                     ordem=5,
                 ),
                 Atividade(
-                    horario="12:30 – 14:00",
+                    horario="12:45 – 14:00",
                     titulo="Intervalo de Almoço",
                     palestrante="Livre",
                     local="Praça de Alimentação / Cidade Universitária",
@@ -156,6 +164,17 @@ class EventoController:
                     ordem=6,
                 ),
                 Atividade(
+                    horario="14:00 – 17:00",
+                    titulo="Minicurso Oficial: Entre ondas e partículas: história, controvérsias e a construção da Física Quântica",
+                    palestrante="Prof. Marcos Antonio Barros (UEPB)",
+                    local="Salas Temáticas / Laboratório",
+                    tipo="Minicurso",
+                    descricao="Construção histórica da dualidade onda-partícula, quantização da luz em Einstein, ondas de De Broglie, complementaridade de Bohr, interferômetro de Mach-Zehnder e epistemologia para o ensino.",
+                    tipo_color="teal",
+                    dia="Dia 1",
+                    ordem=7,
+                ),
+                Atividade(
                     horario="14:00 – 17:30",
                     titulo="Sessões Orais dos Inscritos (Bloco A): Apresentações de Trabalhos Submetidos",
                     palestrante="Pesquisadores e Estudantes Autores",
@@ -164,7 +183,7 @@ class EventoController:
                     descricao="Apresentação oral (15 minutos) de resumos expandidos submetidos e aprovados pelos comitês avaliadores.",
                     tipo_color="teal",
                     dia="Dia 1",
-                    ordem=7,
+                    ordem=8,
                 ),
                 Atividade(
                     horario="17:30 – 18:00",
@@ -172,21 +191,21 @@ class EventoController:
                     palestrante="Livre",
                     local="Espaço IFE",
                     tipo="Intervalo Técnico",
-                    descricao="Pausa para ajuste de áudio e recepção da conferência magna.",
+                    descricao="Pausa para ajuste de áudio e recepção da conferência magna do dia.",
                     tipo_color="gray",
                     dia="Dia 1",
-                    ordem=8,
+                    ordem=9,
                 ),
                 Atividade(
-                    horario="18:00 – 19:15",
-                    titulo="Plenária Magna do Dia 1: Astrofísica de Altas Energias e Matéria Densa",
-                    palestrante="Prof. Dr. Cesar Lenzi (ITA - São José dos Campos)",
+                    horario="18:00 – 19:30",
+                    titulo="Palestra Convidada: A mecânica quântica e o nosso dia a dia: aspectos históricos e desenvolvimento tecnológico",
+                    palestrante="Prof. Dr. César Lenzi (ITA)",
                     local="Auditório Central",
-                    tipo="Plenária Magna",
-                    descricao="Astrofísica de altas energias, objetos ultradensos, processos de radiação e física de fronteira.",
+                    tipo="Palestra Convidada",
+                    descricao="Como a mecânica quântica faz parte de nosso cotidiano e interfere em diversos aspectos em nossa vida, revisitando a história, conceitos e tecnologias derivadas desta teoria fundamental.",
                     tipo_color="indigo",
                     dia="Dia 1",
-                    ordem=9,
+                    ordem=10,
                 ),
             ],
             "Dia 2": [
@@ -196,76 +215,65 @@ class EventoController:
                     palestrante="Prof. Dr. José Crisanto (UECE)",
                     local="Auditório Central",
                     tipo="Palestra Convidada",
-                    descricao="Percurso didático conectando a equação de Dirac à linha de 21 cm do hidrogênio neutro e suas aplicações na radioastronomia galáctica.",
+                    descricao="Percurso didático que conecta a equação de Dirac à linha de 21 cm do hidrogênio neutro, interação hiperfina e radioastronomia para investigar a distribuição do hidrogênio na Via Láctea.",
                     tipo_color="cyan",
                     dia="Dia 2",
-                    ordem=10,
+                    ordem=11,
                 ),
                 Atividade(
-                    horario="09:30 – 10:15",
+                    horario="09:30 – 10:30",
                     titulo="Palestra Convidada: Do grafeno curvo aos Qubits: Um caminho para a computação quântica",
                     palestrante="Prof. Dr. Job Saraiva Furtado (UFCA)",
                     local="Auditório Central",
                     tipo="Palestra Convidada",
-                    descricao="Trajetória da pesquisa dedicada ao uso da curvatura no grafeno para computação quântica, topologia e portas quânticas.",
-                    tipo_color="teal",
-                    dia="Dia 2",
-                    ordem=11,
-                ),
-                Atividade(
-                    horario="10:15 – 10:45",
-                    titulo="Coffee Break e Intervalo Técnico",
-                    palestrante="Integração Acadêmica",
-                    local="Espaço de Convivência IFE",
-                    tipo="Intervalo Técnico",
-                    descricao="Convivência acadêmica e café da manhã institucional.",
-                    tipo_color="gray",
-                    dia="Dia 2",
-                    ordem=11,
-                ),
-                Atividade(
-                    horario="10:45 – 11:45",
-                    titulo="Palestra Convidada 3: Astrofísica e Física Computacional",
-                    palestrante="Prof. Dr. Jonathan (IFCE)",
-                    local="Auditório Central",
-                    tipo="Palestra Convidada",
-                    descricao="Modelagem computacional de sistemas astrofísicos, métodos numéricos e computação científica de alto desempenho.",
+                    descricao="Uso da curvatura no grafeno como recurso para a computação quântica: nanotorus de grafeno sob campos externos, ripples gaussianos e controle coerente de portas lógicas de dois qubits.",
                     tipo_color="teal",
                     dia="Dia 2",
                     ordem=12,
                 ),
                 Atividade(
-                    horario="11:45 – 12:45",
-                    titulo="Palestra Convidada 4: Gravitação, Cosmologia Quântica e Buracos Negros",
-                    palestrante="Prof. Dr. Célio Rodrigues Muniz (UECE / Bolsista PQ-CNPq)",
+                    horario="10:30 – 11:30",
+                    titulo="Palestra Convidada: Buracos de Minhoca de Casca Fina: da Estabilidade às Assinaturas Ópticas",
+                    palestrante="Prof. Jonathan A. Rebouças (IFCE)",
                     local="Auditório Central",
                     tipo="Palestra Convidada",
-                    descricao="Gravitação em regimes de campo forte, termodinâmica de buracos negros e avanços na cosmologia quântica.",
+                    descricao="Construção, estabilidade e propriedades ópticas de wormholes de casca fina em diferentes modelos de matéria e geometrias simétricas e assimétricas, com destaque para assinaturas observacionais.",
                     tipo_color="sky",
                     dia="Dia 2",
                     ordem=13,
                 ),
                 Atividade(
-                    horario="12:45 – 14:00",
-                    titulo="Intervalo de Almoço",
-                    palestrante="Livre",
-                    local="Praça de Alimentação",
-                    tipo="Intervalo",
-                    descricao="Pausa para refeição e recomposição.",
-                    tipo_color="gray",
+                    horario="11:30 – 12:30",
+                    titulo="Palestra Convidada: Buracos negros coloridos na teoria de Yang-Mills logarítmica: soluções, termodinâmica e estrutura interna",
+                    palestrante="Prof. Célio R. Muniz (UECE)",
+                    local="Auditório Central",
+                    tipo="Palestra Convidada",
+                    descricao="Buracos negros coloridos com cabelos não abelianos acoplados à teoria de Yang-Mills logarítmica com grupo SU(2), termodinâmica de Hawking e análise da estrutura interna.",
+                    tipo_color="violet",
                     dia="Dia 2",
                     ordem=14,
                 ),
                 Atividade(
-                    horario="14:00 – 17:30",
-                    titulo="Sessão Especial dos Estudantes (Apresentação dos Meninos)",
-                    palestrante="Estudantes de Iniciação Científica e Mestrado",
-                    local="Hall Principal e Salas de Banca",
-                    tipo="Sessão Especial",
-                    descricao="Exposição de Pôsteres Científicos no Hall Principal e Sessão Oral de Iniciação Científica/Mestrado com Banca Avaliadora.",
-                    tipo_color="indigo",
+                    horario="12:30 – 14:00",
+                    titulo="Intervalo de Almoço",
+                    palestrante="Livre",
+                    local="Praça de Alimentação",
+                    tipo="Intervalo",
+                    descricao="Pausa para almoço, descanso e recomposição dos participantes.",
+                    tipo_color="gray",
                     dia="Dia 2",
                     ordem=15,
+                ),
+                Atividade(
+                    horario="14:00 – 17:30",
+                    titulo="Sessão Especial dos Estudantes: Exposição de Pôsteres Científicos e Apresentações Orais",
+                    palestrante="Estudantes de Iniciação Científica e Pós-Graduação",
+                    local="Hall Principal e Salas de Banca",
+                    tipo="Sessão Especial",
+                    descricao="Exposição de Pôsteres Científicos no Hall Principal e Sessão Oral de Iniciação Científica/Mestrado com Banca Avaliadora e premiação.",
+                    tipo_color="indigo",
+                    dia="Dia 2",
+                    ordem=16,
                 ),
                 Atividade(
                     horario="17:30 – 18:00",
@@ -273,46 +281,53 @@ class EventoController:
                     palestrante="Livre",
                     local="Espaço IFE",
                     tipo="Intervalo Técnico",
-                    descricao="Preparação para a conferência magna de encerramento.",
+                    descricao="Preparação técnica e recepção para a conferência magna de encerramento.",
                     tipo_color="gray",
-                    dia="Dia 2",
-                    ordem=16,
-                ),
-                Atividade(
-                    horario="18:00 – 19:15",
-                    titulo="Conferência Magna de Encerramento: Astrofísica de Partículas e Grandes Levantamentos de Dados",
-                    palestrante="Prof. Dr. Ronaldo Vieira Lobato (CBPF - Rio de Janeiro)",
-                    local="Auditório Central",
-                    tipo="Conferência Magna",
-                    descricao="Astrofísica de partículas, processamento de Big Data cósmico, Machine Learning e levantamentos observacionais.",
-                    tipo_color="violet",
                     dia="Dia 2",
                     ordem=17,
                 ),
                 Atividade(
-                    horario="19:15 – 19:45",
-                    titulo="Premiação dos Trabalhos dos Estudantes, Lançamento dos Anais e Solenidade de Encerramento",
-                    palestrante="Coordenação Geral (Prof. Dr. Edson Otoniel e Prof. Dr. André Flávio) & Comitê",
+                    horario="18:00 – 19:30",
+                    titulo="Conferência Magna de Encerramento: Inteligência Artificial na Astrofísica: Modelagem Física e Inferência Bayesiana",
+                    palestrante="Dr. Ronaldo Vieira Lobato (CBPF)",
                     local="Auditório Central",
-                    tipo="Solenidade de Encerramento",
-                    descricao="Premiação dos destaques orais e pôsteres, formalização dos Anais do IV EFAC e encerramento oficial.",
-                    tipo_color="indigo",
+                    tipo="Conferência Magna",
+                    descricao="Redes neurais e machine learning em problemas atuais de astrofísica: matéria nuclear densa, estrelas de nêutrons, anãs brancas, pulsares, magnetares e quantificação de incertezas bayesianas.",
+                    tipo_color="cyan",
                     dia="Dia 2",
                     ordem=18,
+                ),
+                Atividade(
+                    horario="19:30 – 20:00",
+                    titulo="Premiação de Melhores Trabalhos e Cerimônia Oficial de Encerramento",
+                    palestrante="Coordenação Geral IV EFAC / UFCA",
+                    local="Auditório Central",
+                    tipo="Encerramento",
+                    descricao="Divulgação dos trabalhos premiados, homenagens acadêmicas e encerramento oficial do simpósio.",
+                    tipo_color="amber",
+                    dia="Dia 2",
+                    ordem=19,
                 ),
             ],
         }
         return programacoes.get(dia, programacoes["Dia 1"])
 
-    @staticmethod
-    def obter_programacao(dia: str) -> List[Atividade]:
-        """Busca programação do SQLite persistente via CQRS Query Repository ou fallback para padrão."""
+    @classmethod
+    def obter_programacao(cls, dia: str) -> List[Atividade]:
+        """Busca programação do SQLite persistente via CQRS Query Repository com cache inteligente de 1 minuto."""
+        now = time.time()
+        if dia in cls._cache_programacao:
+            ts, dados = cls._cache_programacao[dia]
+            if now - ts < cls.CACHE_TTL_SEGUNDOS:
+                return dados
+
+        resultado = None
         try:
             from projeto_web.repositories.queries.atividade_queries import SQLiteAtividadeQueryRepository
             query_repo = SQLiteAtividadeQueryRepository()
-            resultados = query_repo.find_by_dia(dia)
-            if resultados:
-                return [
+            itens = query_repo.find_by_dia(dia)
+            if itens:
+                resultado = [
                     Atividade(
                         id=r.id,
                         dia=r.dia,
@@ -325,12 +340,16 @@ class EventoController:
                         tipo_color=r.tipo_color,
                         ordem=r.ordem,
                     )
-                    for r in resultados
+                    for r in itens
                 ]
         except Exception:
             pass
 
-        return EventoController.obter_programacao_padrao(dia)
+        if not resultado:
+            resultado = cls.obter_programacao_padrao(dia)
+
+        cls._cache_programacao[dia] = (now, resultado)
+        return resultado
 
     @staticmethod
     def obter_todas_atividades() -> List[Atividade]:
@@ -340,8 +359,9 @@ class EventoController:
             todas.extend(EventoController.obter_programacao(dia))
         return todas
 
-    @staticmethod
+    @classmethod
     def atualizar_atividade(
+        cls,
         id: int,
         dia: str,
         horario: str,
@@ -355,7 +375,7 @@ class EventoController:
         try:
             from projeto_web.repositories.commands.atividade_commands import SQLiteAtividadeCommandRepository
             cmd_repo = SQLiteAtividadeCommandRepository()
-            return cmd_repo.update_by_fields(
+            ok = cmd_repo.update_by_fields(
                 id=id,
                 dia=dia,
                 horario=horario,
@@ -365,11 +385,15 @@ class EventoController:
                 tipo=tipo,
                 descricao=descricao,
             )
+            if ok:
+                cls.invalidar_cache_programacao()
+            return ok
         except Exception:
             return False
 
-    @staticmethod
+    @classmethod
     def adicionar_atividade(
+        cls,
         dia: str,
         horario: str,
         titulo: str,
@@ -401,12 +425,26 @@ class EventoController:
                 ordem=total_dia + 1,
             )
             cmd_repo.create(nova)
+            cls.invalidar_cache_programacao()
             return True
         except Exception:
             return False
 
-    @staticmethod
-    def restaurar_programacao_padrao() -> bool:
+    @classmethod
+    def excluir_atividade(cls, id: int) -> bool:
+        """Permite ao administrador excluir uma atividade da grade via CQRS Command."""
+        try:
+            from projeto_web.repositories.commands.atividade_commands import SQLiteAtividadeCommandRepository
+            cmd_repo = SQLiteAtividadeCommandRepository()
+            ok = cmd_repo.delete(id)
+            if ok:
+                cls.invalidar_cache_programacao()
+            return ok
+        except Exception:
+            return False
+
+    @classmethod
+    def restaurar_programacao_padrao(cls) -> bool:
         """Restaura a grade de atividades para os valores originais via CQRS Command."""
         try:
             from projeto_web.models.atividade import AtividadeModel
@@ -417,7 +455,7 @@ class EventoController:
 
             ordem_counter = 1
             for dia in ["Dia 1", "Dia 2"]:
-                padrao = EventoController.obter_programacao_padrao(dia)
+                padrao = cls.obter_programacao_padrao(dia)
                 for p in padrao:
                     at = AtividadeModel(
                         dia=dia,
@@ -432,6 +470,7 @@ class EventoController:
                     )
                     cmd_repo.create(at)
                     ordem_counter += 1
+            cls.invalidar_cache_programacao()
             return True
         except Exception:
             return False
@@ -440,75 +479,75 @@ class EventoController:
     def obter_palestrantes() -> List[Palestrante]:
         return [
             Palestrante(
-                nome="Prof. Dr. Cesar Lenzi",
-                cargo="Docente e Pesquisador",
-                instituicao="ITA (São José dos Campos)",
-                especialidade="Astrofísica de Altas Energias e Matéria Densa",
-                topico="Plenária Dia 1 (11/11 às 18:00) • Convidado Principal",
+                nome="Prof. Dr. César Lenzi",
+                cargo="Docente e Pesquisador Titular",
+                instituicao="Instituto Tecnológico de Aeronáutica (ITA)",
+                especialidade="A mecânica quântica e o nosso dia a dia",
+                topico="Palestra Convidada (11/11 às 18:00) • A mecânica quântica e o nosso dia a dia: aspectos históricos e desenvolvimento tecnológico",
                 foto="/participantes/cesar_lenzi.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Ronaldo Vieira Lobato",
+                nome="Dr. Ronaldo Vieira Lobato",
                 cargo="Pesquisador Titular",
-                instituicao="CBPF (Rio de Janeiro)",
-                especialidade="Astrofísica de Partículas e Big Data",
-                topico="Conferência Magna Dia 2 (12/11 às 18:00)",
+                instituicao="Centro Brasileiro de Pesquisas Físicas (CBPF)",
+                especialidade="Inteligência Artificial na Astrofísica",
+                topico="Conferência Magna (12/11 às 18:00) • Inteligência Artificial na Astrofísica: Modelagem Física e Inferência Bayesiana",
                 foto="/participantes/ronaldo_lobato.webp",
             ),
             Palestrante(
                 nome="Profa. Dra. Eliane Angela Veit",
                 cargo="Docente e Pesquisadora Titular",
-                instituicao="UFRGS (Porto Alegre)",
-                especialidade="Inovação, Epistemologia e Ensino de Física",
-                topico="Palestra de Abertura (11/11 às 09:30) • Convidada Principal",
+                instituicao="Universidade Federal do Rio Grande do Sul (UFRGS)",
+                especialidade="Formação Docente e Ensino de Ciências",
+                topico="Palestra Convidada (11/11 às 09:30) • Da licenciatura à sala de aula: como dar continuidade à formação docente?",
                 foto="/participantes/eliane_angela.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Iarley Lobo",
+                nome="Prof. Dr. Iarley Pereira Lobo",
                 cargo="Docente e Pesquisador",
-                instituicao="UFPB (João Pessoa)",
-                especialidade="Astrofísica Teórica e Objetos Compactos",
-                topico="Palestra Convidada (11/11 às 11:00)",
+                instituicao="Universidade Federal da Paraíba (UFPB)",
+                especialidade="Gravidade Quântica e Astrofísica Multimensageira",
+                topico="Palestra Convidada (11/11 às 11:30) • Sondando a gravidade quântica com astrofísica multimensageira e experimentos de bancada",
                 foto="/participantes/iarley_lobo.webp",
             ),
             Palestrante(
                 nome="Prof. Dr. José Crisanto",
                 cargo="Docente e Pesquisador",
                 instituicao="Universidade Estadual do Ceará (UECE)",
-                especialidade="Da equação de Dirac à linha de 21 cm • Radioastronomia",
-                topico="Palestra Convidada (12/11 às 08:30)",
+                especialidade="Teoria Relativística e Radioastronomia",
+                topico="Palestra Convidada (12/11 às 08:30) • Da equação de Dirac à linha de 21 cm: um percurso didático da teoria relativística à radioastronomia",
                 foto="/participantes/jose_crisanto.webp",
             ),
             Palestrante(
                 nome="Prof. Dr. Job Saraiva Furtado",
                 cargo="Docente e Pesquisador",
                 instituicao="Universidade Federal do Cariri (UFCA)",
-                especialidade="Do grafeno curvo aos Qubits • Computação Quântica",
-                topico="Palestra Convidada (12/11 às 09:30)",
+                especialidade="Grafeno Curvo e Computação Quântica",
+                topico="Palestra Convidada (12/11 às 09:30) • Do grafeno curvo aos Qubits: Um caminho para a computação quântica",
                 foto="/participantes/job_saraiva.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Jonathan Rebouças",
+                nome="Prof. Jonathan A. Rebouças",
                 cargo="Docente e Pesquisador",
-                instituicao="IFCE (Ceará)",
-                especialidade="Astrofísica e Física Computacional",
-                topico="Palestra Convidada (12/11 às 10:45) • Convidado Regional",
+                instituicao="Instituto Federal do Ceará (IFCE)",
+                especialidade="Buracos de Minhoca e Geometria Relativística",
+                topico="Palestra Convidada (12/11 às 10:30) • Buracos de Minhoca de Casca Fina: da Estabilidade às Assinaturas Ópticas",
                 foto="/participantes/jonathan_reboucas.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Célio Rodrigues Muniz",
-                cargo="Docente e Bolsista PQ-CNPq",
-                instituicao="UECE (Ceará)",
-                especialidade="Gravitação, Cosmologia Quântica e Buracos Negros",
-                topico="Palestra Convidada (12/11 às 11:45) • Convidado Regional",
+                nome="Prof. Célio R. Muniz",
+                cargo="Docente e Bolsista de Produtividade PQ-CNPq",
+                instituicao="Universidade Estadual do Ceará (UECE)",
+                especialidade="Gravitação, Buracos Negros e Yang-Mills",
+                topico="Palestra Convidada (12/11 às 11:30) • Buracos negros coloridos na teoria de Yang-Mills logarítmica: soluções, termodinâmica e estrutura interna",
                 foto="/participantes/celio_muniz.webp",
             ),
             Palestrante(
-                nome="Prof. Dr. Marcos Barros",
-                cargo="Docente e Pesquisador",
-                instituicao="Universidade Federal do Cariri (UFCA)",
-                especialidade="Física da Matéria Condensada e Espectroscopia",
-                topico="Mesa Temática • Pesquisa e Inovação Regional",
+                nome="Prof. Marcos Antonio Barros",
+                cargo="Docente e Pesquisador Titular",
+                instituicao="Universidade Estadual da Paraíba (UEPB)",
+                especialidade="História e Epistemologia da Física Quântica",
+                topico="Minicurso Oficial (11/11 às 14:00) • Entre ondas e partículas: história, controvérsias e a construção da Física Quântica",
                 foto="/participantes/marcos_barros.webp",
             ),
         ]
@@ -602,7 +641,7 @@ class EventoController:
         )
 
     @staticmethod
-    def obter_comite_institucional() -> Dict[str, any]:
+    def obter_comite_institucional() -> Dict[str, Any]:
         return {
             "coordenacao_geral": "Prof. Dr. Edson Otoniel da Silva (UFCA) e Prof. Dr. André Flávio Gonçalves Silva (UFCA)",
             "comite_cientifico": [

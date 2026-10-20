@@ -9,7 +9,7 @@ def tela_sobre() -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.heading(
-                "Sobre o Encontro & Consolidação Regional",
+                "Sobre o Encontro e Consolidação Regional",
                 size=rx.breakpoints(initial="6", sm="7", md="8"),
                 weight="bold",
                 color=COLOR_TEXT_PRIMARY,
@@ -31,7 +31,7 @@ def tela_sobre() -> rx.Component:
                     rx.vstack(
                         rx.hstack(
                             rx.icon(tag="radio", size=24, color=COLOR_CYAN),
-                            rx.heading("Acordo UFCA-USP & Radiotelescópio BINGO", size="4", weight="bold", color=COLOR_TEXT_PRIMARY, style=STYLE_HEADING_RESPONSIVE),
+                            rx.heading("Acordo UFCA-USP e Radiotelescópio BINGO", size="4", weight="bold", color=COLOR_TEXT_PRIMARY, style=STYLE_HEADING_RESPONSIVE),
                             spacing="2",
                             align="center",
                         ),
@@ -64,9 +64,9 @@ def tela_sobre() -> rx.Component:
                             align="center",
                         ),
                         rx.text(
-                            "Financiado com Fomento FUNCAP de Apoio a Eventos Científicos "
-                            "(Processo: CER-0264-00190.01.00/26), o IV EFAC viabiliza a interiorização "
-                            "efetiva da pós-graduação e iniciação científica no IFE – Campus Brejo Santo.",
+                            "Com fomento da Fundação Cearense de Apoio ao Desenvolvimento Científico e Tecnológico "
+                            "(FUNCAP - Processo: CER-0264-00190.01.00/26), o IV EFAC viabiliza a interiorização "
+                            "efetiva da pesquisa científica e da formação acadêmica no IFE – Campus Brejo Santo.",
                             size="2",
                             color="#CBD5E1",
                             line_height="1.6",

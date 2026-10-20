@@ -82,7 +82,7 @@ def modal_alterar_senha_inscrito() -> rx.Component:
                         ),
                         rx.vstack(
                             rx.heading("Alterar Senha do Inscrito", size="4", weight="bold", color="white"),
-                            rx.text("Redefinição direta no banco SQLite WAL", size="1", color="#CBD5E1"),
+                            rx.text("Redefinição direta e segura de senha", size="1", color="#CBD5E1"),
                             spacing="0",
                             align="start",
                         ),
@@ -483,9 +483,9 @@ def editor_atividades_admin() -> rx.Component:
     return rx.vstack(
         rx.hstack(
             rx.vstack(
-                rx.heading("Gestão e Delegação Manual da Grade de Atividades", size="4", weight="bold", color="white"),
+                rx.heading("Gestão da Grade de Atividades", size="4", weight="bold", color="white"),
                 rx.text(
-                    "Altere manualmente datas, horários e temas, delegue responsáveis e crie novas atividades diretamente pelo site.",
+                    "Gerencie horários, temas, palestrantes e novas atividades da programação oficial.",
                     size="2",
                     color="#CBD5E1",
                 ),
@@ -498,7 +498,7 @@ def editor_atividades_admin() -> rx.Component:
                 rx.button(
                     rx.hstack(
                         rx.icon(tag="circle-plus", size=14),
-                        rx.text("Delegar Nova Atividade", size="1"),
+                        rx.text("Incluir Nova Atividade", size="1"),
                         spacing="1",
                         align="center",
                     ),
@@ -535,7 +535,7 @@ def editor_atividades_admin() -> rx.Component:
                 rx.vstack(
                     rx.hstack(
                         rx.icon(tag="circle-plus", size=18, color=COLOR_CYAN),
-                        rx.heading("Delegar e Criar Nova Atividade na Grade", size="3", weight="bold", color="white"),
+                        rx.heading("Incluir Nova Atividade na Grade", size="3", weight="bold", color="white"),
                         rx.spacer(),
                         rx.badge("Nova Atividade", color_scheme="green", size="1"),
                         align="center",
@@ -554,7 +554,7 @@ def editor_atividades_admin() -> rx.Component:
                             spacing="1",
                         ),
                         rx.vstack(
-                            rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
+                            rx.text("Horário (ex.: 14:00 – 15:30)", size="1", weight="bold", color="white"),
                             rx.input(
                                 placeholder="Ex: 14:00 – 15:30",
                                 value=AdminState.new_ativ_horario,
@@ -689,7 +689,7 @@ def editor_atividades_admin() -> rx.Component:
                             spacing="1",
                         ),
                         rx.vstack(
-                            rx.text("Horário / Faixa Horária (Manual)", size="1", weight="bold", color="white"),
+                            rx.text("Horário (ex.: 14:00 – 15:30)", size="1", weight="bold", color="white"),
                             rx.input(
                                 value=AdminState.edit_ativ_horario,
                                 on_change=AdminState.set_edit_ativ_horario,

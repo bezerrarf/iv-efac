@@ -108,7 +108,7 @@ def tela_local() -> rx.Component:
                         rx.hstack(
                             rx.hstack(
                                 rx.icon(tag="plane", size=16, color=COLOR_CYAN),
-                                rx.text("Aeroporto de Juazeiro do Norte (JDO) a ~65 km", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
+                                rx.text("Aeroporto de Juazeiro do Norte (JDO) a cerca de 65 km", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                                 spacing="1",
                             ),
                             rx.hstack(
@@ -205,7 +205,7 @@ def tela_local() -> rx.Component:
             # Grade de Instituições com Logotipos Oficiais e Links Oficiais
             rx.vstack(
                 rx.text(
-                    "Instituições Executoras, Parcerias Acadêmicas e Fomento Oficial:",
+                    "Instituições Executoras, Parcerias Acadêmicas e Fomento Oficial",
                     size="2",
                     weight="bold",
                     color=COLOR_TEXT_PRIMARY,

@@ -20,7 +20,7 @@ def inscricao_page() -> rx.Component:
             rx.vstack(
                 rx.badge("Portal de Credenciamento Oficial • IV EFAC", color_scheme="cyan", variant="soft", size="2", style=STYLE_BUTTON_CHIP),
                 rx.heading(
-                    "Inscrição & Credencial do Evento",
+                    "Inscrição e Credencial do Evento",
                     size=rx.breakpoints(initial="6", sm="7", md="8"),
                     weight="bold",
                     color="white",
@@ -42,7 +42,7 @@ def inscricao_page() -> rx.Component:
                         rx.tabs.root(
                             rx.tabs.list(
                                 rx.tabs.trigger("Nova Inscrição", value="cadastro"),
-                                rx.tabs.trigger("Já sou Inscrito (Login)", value="login"),
+                                rx.tabs.trigger("Já Sou Inscrito", value="login"),
                                 size="2",
                             ),
                             rx.tabs.content(

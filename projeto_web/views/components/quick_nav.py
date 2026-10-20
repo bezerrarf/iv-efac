@@ -45,13 +45,13 @@ def quick_nav() -> rx.Component:
     """Dock flutuante lateral/canto inferior direito com navegação instantânea."""
     return rx.box(
         rx.vstack(
-            _quick_nav_btn("home", "Início / Hero", "#inicio"),
-            _quick_nav_btn("info", "Sobre o IV EFAC", "#sobre"),
+            _quick_nav_btn("home", "Início", "#inicio"),
+            _quick_nav_btn("info", "Sobre o Evento", "#sobre"),
             _quick_nav_btn("orbit", "Eixos Temáticos", "#eixos"),
-            _quick_nav_btn("users", "Palestrantes (Keynotes)", "#palestrantes"),
-            _quick_nav_btn("calendar", "Grade & Programação", "#programacao"),
-            _quick_nav_btn("map-pin", "Localização & Parcerias", "#local"),
-            _quick_nav_btn("ticket", "Área de Inscrição", "/inscricao"),
+            _quick_nav_btn("users", "Palestrantes Convidados", "#palestrantes"),
+            _quick_nav_btn("calendar", "Programação Oficial", "#programacao"),
+            _quick_nav_btn("map-pin", "Localização e Parcerias", "#local"),
+            _quick_nav_btn("ticket", "Inscrições", "/inscricao"),
             spacing="2",
             align="center",
         ),

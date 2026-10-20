@@ -53,7 +53,7 @@ def _card_atividade_disponivel(item: Atividade) -> rx.Component:
             rx.badge(
                 rx.hstack(
                     rx.icon(tag="check-check", size=13),
-                    rx.text("Inscrição Inclusa"),
+                    rx.text("Inscrição Confirmada"),
                     spacing="1",
                     align="center",
                 ),
@@ -94,7 +94,7 @@ def lista_inscricoes_disponiveis() -> rx.Component:
                 place_items="center",
             ),
             rx.vstack(
-                rx.heading("Inscrições & Atividades Disponíveis do IV EFAC", size="4", weight="bold", color="white"),
+                rx.heading("Atividades e Inscrições do IV EFAC", size="4", weight="bold", color="white"),
                 rx.text("Sua credencial concede acesso pleno a todas as conferências, mesas-redondas e sessões científicas.", size="2", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                 spacing="0",
                 align="start",
@@ -275,7 +275,7 @@ def logged_in_hub() -> rx.Component:
                 rx.cond(
                     AuthState.user_modalidade == "Presencial",
                     rx.button(
-                        "Mudar p/ Online",
+                        "Mudar para Online",
                         size="2",
                         variant="outline",
                         color_scheme="cyan",
@@ -283,7 +283,7 @@ def logged_in_hub() -> rx.Component:
                         style=STYLE_BUTTON_CHIP,
                     ),
                     rx.button(
-                        "Mudar p/ Presencial",
+                        "Mudar para Presencial",
                         size="2",
                         variant="outline",
                         color_scheme="indigo",
@@ -328,7 +328,7 @@ def logged_in_hub() -> rx.Component:
                 rx.tabs.trigger(
                     rx.hstack(
                         rx.icon(tag="calendar-check", size=15),
-                        rx.text("Atividades & Inscrições", size="2"),
+                        rx.text("Atividades e Inscrições", size="2"),
                         spacing="1",
                         align="center",
                     ),
@@ -337,7 +337,7 @@ def logged_in_hub() -> rx.Component:
                 rx.tabs.trigger(
                     rx.hstack(
                         rx.icon(tag="file-text", size=15),
-                        rx.text("Submissões & Modelos", size="2"),
+                        rx.text("Submissões e Modelos", size="2"),
                         spacing="1",
                         align="center",
                     ),

@@ -104,7 +104,7 @@ def modal_meu_perfil() -> rx.Component:
                                 rx.vstack(
                                     rx.text("Instituição de Ensino / Polo", size="1", weight="bold", color="white"),
                                     rx.input(
-                                        placeholder="Ex: Universidade Federal do Cariri (UFCA)",
+                                        placeholder="Exemplo: Universidade Federal do Cariri (UFCA)",
                                         value=AuthState.perfil_instituicao_input,
                                         on_change=AuthState.set_perfil_instituicao,
                                         size="2",

@@ -44,7 +44,7 @@ app.add_page(
     route="/cronograma",
     on_load=EventoState.carregar_programacao_publica,
     title="Programação Oficial • IV EFAC 2026",
-    description="Grade horária oficial de 2 dias do IV EFAC (11 e 12/11/2026): Conferências Magnas, Minicurso Python, Mesas-Redondas e Sessões Orais.",
+    description="Programação oficial do IV EFAC (11 e 12 de novembro de 2026): conferências magnas, palestras convidadas, minicurso e sessões de apresentação científica.",
 )
 
 app.add_page(
@@ -57,6 +57,6 @@ app.add_page(
 app.add_page(
     inscricao_page,
     route="/login",
-    title="Login & Acesso • IV EFAC 2026",
-    description="Acesso ao portal de inscritos e painel administrativo do IV EFAC 2026.",
+    title="Acesso e Credencial • IV EFAC 2026",
+    description="Acesso ao portal de congressistas e ao painel administrativo do IV EFAC 2026.",
 )

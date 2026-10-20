@@ -105,7 +105,7 @@ def cronograma_page() -> rx.Component:
                     style=STYLE_HEADING_RESPONSIVE,
                 ),
                 rx.text(
-                    "Dois dias de imersão intensiva com conferências magnas, minicurso de Python, mesas-redondas e sessões de comunicação oral e pôsteres no Campus Brejo Santo – UFCA.",
+                    "Dois dias de imersão acadêmica com conferências magnas, palestras convidadas, minicurso, mesas-redondas e sessões de apresentação científica no Campus Brejo Santo – UFCA.",
                     size=rx.breakpoints(initial="2", sm="3"),
                     color="#CBD5E1",
                     text_align="center",

@@ -81,7 +81,7 @@ class EventoController:
         {"valor": "2", "rotulo": "Dias de Imersão"},
         {"valor": "9", "rotulo": "Conferencistas Convidados"},
         {"valor": "100+", "rotulo": "Participantes Esperados"},
-        {"valor": "Apresentações", "rotulo": "Banners e Orais"},
+        {"valor": "Apresentações", "rotulo": "Orais e Painéis"},
     ]
 
     _cache_programacao: Dict[str, Tuple[float, List[Atividade]]] = {}
@@ -632,7 +632,7 @@ class EventoController:
             paginas="2 a 4 páginas (incluindo introdução, metodologia, resultados, conclusões e referências)",
             publicacao="Anais do IV EFAC (Publicação oficial digital com registro ISBN/ISSN institucional)",
             criterios=[
-                "Aderência temática aos 4 eixos do evento",
+                "Aderência temática aos eixos do evento",
                 "Coerência metodológica e fundamentação teórica",
                 "Rigor conceitual e precisão analítica",
                 "Originalidade e contribuição científica ou pedagógica",

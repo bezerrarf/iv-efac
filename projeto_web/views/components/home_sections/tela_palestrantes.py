@@ -71,7 +71,7 @@ def _palestrante_card_banner(p: Palestrante) -> rx.Component:
                     transition="transform 0.3s ease",
                 ),
                 rx.badge(
-                    "Clique p/ expandir",
+                    "Clique para expandir",
                     size="1",
                     variant="solid",
                     color_scheme="cyan",
@@ -195,7 +195,7 @@ def _modal_banner_expandido() -> rx.Component:
                             rx.button(
                                 rx.hstack(
                                     rx.icon(tag="minimize-2", size=16),
-                                    rx.text("Recolher", size="1"),
+                                    rx.text("Fechar", size="1"),
                                     spacing="1",
                                     align="center",
                                 ),

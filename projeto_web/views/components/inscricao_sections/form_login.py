@@ -79,7 +79,7 @@ def card_recuperacao_senha() -> rx.Component:
                 rx.button(
                     rx.hstack(
                         rx.icon(tag="send", size=15),
-                        rx.text("Enviar E-mail ao Prof. Otoniel"),
+                        rx.text("Contatar Coordenação por E-mail"),
                         spacing="2",
                         align="center",
                     ),
@@ -171,7 +171,7 @@ def form_login() -> rx.Component:
             width="100%",
         ),
         rx.button(
-            "Acessar Minha Credencial",
+            "Acessar Credencial",
             size="3",
             color_scheme="cyan",
             radius="full",

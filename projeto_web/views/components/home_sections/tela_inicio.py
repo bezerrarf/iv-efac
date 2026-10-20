@@ -459,7 +459,7 @@ def tela_inicio() -> rx.Component:
                     rx.link(
                         rx.button(
                             rx.hstack(
-                                rx.text("Garantir Minha Inscrição"),
+                                rx.text("Garantir Inscrição"),
                                 rx.icon(tag="arrow-right", size=16),
                                 spacing="1",
                                 align="center",

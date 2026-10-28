@@ -1,0 +1,10 @@
+# Robots.txt Oficial - IV EFAC 2026 (UFCA)
+User-agent: *
+Allow: /
+
+# Bloqueio de arquivos internos e compilação
+Disallow: /_next/
+Disallow: /_reflex/
+
+# Sitemap Oficial do Simpósio
+Sitemap: https://ivefac.com.br/sitemap.xml

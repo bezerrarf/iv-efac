@@ -21,6 +21,27 @@ app = rx.App(
         rx.el.link(rel="icon", type="image/x-icon", href="/favicon.ico"),
         rx.el.link(rel="icon", type="image/png", href="/favicon.png"),
         rx.el.link(rel="apple-touch-icon", href="/favicon.png"),
+        rx.el.link(rel="canonical", href="https://ivefac.com.br/"),
+        # Diretrizes Oficiais para Motores de Busca (Googlebot, Bingbot)
+        rx.el.meta(name="robots", content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"),
+        rx.el.meta(name="googlebot", content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"),
+        rx.el.meta(name="author", content="Universidade Federal do Cariri (UFCA) / IFE"),
+        rx.el.meta(name="language", content="pt-BR"),
+        rx.el.meta(name="geo.region", content="BR-CE"),
+        rx.el.meta(name="geo.placename", content="Brejo Santo"),
+        # OpenGraph / Redes Sociais Globais
+        rx.el.meta(property="og:site_name", content="IV EFAC 2026 • UFCA"),
+        rx.el.meta(property="og:locale", content="pt_BR"),
+        rx.el.meta(property="og:url", content="https://ivefac.com.br/"),
+        rx.el.meta(property="og:image", content="https://ivefac.com.br/poster_oficial_ivefac.jpeg"),
+        rx.el.meta(property="og:image:alt", content="Poster Oficial do IV Encontro de Física e Astronomia do Cariri (UFCA)"),
+        rx.el.meta(name="twitter:card", content="summary_large_image"),
+        rx.el.meta(name="twitter:image", content="https://ivefac.com.br/poster_oficial_ivefac.jpeg"),
+        # Schema.org Structured Data (JSON-LD) para Evento Acadêmico no Google
+        rx.el.script(
+            '{"@context": "https://schema.org", "@type": "EducationEvent", "name": "IV EFAC - Encontro de Física e Astronomia do Cariri", "alternateName": "IV EFAC 2026 • UFCA", "description": "Fronteiras da Física Contemporânea, Formação Científica e Integração Regional. Encontro acadêmico sediado no Instituto de Formação de Educadores (IFE) - UFCA Campus Brejo Santo com apoio da FUNCAP.", "startDate": "2026-11-11T08:00:00-03:00", "endDate": "2026-11-12T18:00:00-03:00", "eventStatus": "https://schema.org/EventScheduled", "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode", "location": {"@type": "Place", "name": "Universidade Federal do Cariri (UFCA) - Campus Brejo Santo (IFE)", "address": {"@type": "PostalAddress", "addressLocality": "Brejo Santo", "addressRegion": "CE", "addressCountry": "BR"}}, "image": "https://ivefac.com.br/poster_oficial_ivefac.jpeg", "organizer": {"@type": "EducationalOrganization", "name": "Universidade Federal do Cariri (UFCA)", "url": "https://ufca.edu.br"}, "sponsor": {"@type": "Organization", "name": "FUNCAP - Fundação Cearense de Apoio ao Desenvolvimento Científico e Tecnológico", "url": "https://www.funcap.ce.gov.br"}, "url": "https://ivefac.com.br"}',
+            type="application/ld+json",
+        ),
         rx.el.style("a[href*='reflex.dev'] { display: none !important; opacity: 0 !important; pointer-events: none !important; visibility: hidden !important; }"),
     ],
 )

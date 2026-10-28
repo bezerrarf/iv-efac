@@ -6,6 +6,7 @@ os.environ.setdefault("REFLEX_SSR", "false")
 
 config = rx.Config(
     app_name="projeto_web",
+    deploy_url="https://ivefac.com.br",
     show_built_with_reflex=False,
     plugins=[
         rx.plugins.SitemapPlugin(),

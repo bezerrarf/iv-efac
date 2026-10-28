@@ -50,12 +50,12 @@ class AdminState(AuthState):
     admin_edit_presenca_d1: bool = False
     admin_edit_presenca_d2: bool = False
     # Links dos Modelos de Apresentação e Submissão
-    link_modelo_resumo: str = "https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
-    link_modelo_slides: str = "https://docs.google.com/presentation/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
-    link_modelo_poster: str = "https://docs.google.com/presentation/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing"
-    admin_link_resumo_input: str = ""
-    admin_link_slides_input: str = ""
-    admin_link_poster_input: str = ""
+    link_modelo_resumo: str = "https://docs.google.com/document/d/1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
+    link_modelo_slides: str = "https://docs.google.com/presentation/d/1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
+    link_modelo_poster: str = "https://docs.google.com/presentation/d/1p12rVh3LbCWgHostLjOYgxG1Z0tpk1qc/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
+    admin_link_resumo_input: str = "https://docs.google.com/document/d/1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
+    admin_link_slides_input: str = "https://docs.google.com/presentation/d/1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
+    admin_link_poster_input: str = "https://docs.google.com/presentation/d/1p12rVh3LbCWgHostLjOYgxG1Z0tpk1qc/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
     is_creating_atividade: bool = False
     new_ativ_dia: str = "Dia 1"
     new_ativ_horario: str = "08:00 – 09:30"

@@ -4,6 +4,7 @@ from sqlmodel import Session, SQLModel, create_engine, select
 from projeto_web.core.config import DATABASE_URL
 from projeto_web.models.usuario import Usuario
 from projeto_web.models.atividade import AtividadeModel
+from projeto_web.models.configuracao import ConfiguracaoModel
 from projeto_web.core.security import PBKDF2PasswordHasher
 
 engine = create_engine(
@@ -108,6 +109,22 @@ def _seed_admin_and_schedule():
                     session.add(at_model)
                     ordem_counter += 1
             session.commit()
+
+        # 3. Links Oficiais dos Modelos de Submissão
+        links_oficiais = {
+            "link_modelo_resumo": "https://docs.google.com/document/d/1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true",
+            "link_modelo_slides": "https://docs.google.com/presentation/d/1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true",
+            "link_modelo_poster": "https://docs.google.com/presentation/d/1p12rVh3LbCWgHostLjOYgxG1Z0tpk1qc/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true",
+        }
+        placeholder_antigo = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+        for chave, url_oficial in links_oficiais.items():
+            cfg = session.get(ConfiguracaoModel, chave)
+            if not cfg:
+                session.add(ConfiguracaoModel(chave=chave, valor=url_oficial))
+            elif placeholder_antigo in cfg.valor or not cfg.valor.strip():
+                cfg.valor = url_oficial
+                session.add(cfg)
+        session.commit()
 
 
 def init_db():

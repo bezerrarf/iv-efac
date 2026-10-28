@@ -59,3 +59,11 @@ def test_admin_state_excluir_atividade():
     # Testa criacao de EventSpec
     spec = AdminState.excluir_atividade(999999)
     assert spec is not None
+
+
+def test_admin_state_links_modelos_oficiais():
+    """Garante que os links oficiais dos modelos de submissao estao configurados por padrao."""
+    fields = AdminState.get_fields()
+    assert "1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN" in fields["link_modelo_resumo"].default
+    assert "1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ" in fields["link_modelo_slides"].default
+    assert "1p12rVh3LbCWgHostLjOYgxG1Z0tpk1qc" in fields["link_modelo_poster"].default

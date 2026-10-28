@@ -81,7 +81,7 @@ def templates_pos_inscricao() -> rx.Component:
                         rx.icon(tag="file-text", size=18, color=COLOR_CYAN),
                         rx.vstack(
                             rx.text("Modelo de Resumo Expandido (.docx)", size="2", weight="bold", color="white"),
-                            rx.text("2 a 4 páginas com Introdução, Metodologia, Resultados e Referências", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
+                            rx.text("Até 2 páginas com Introdução, Metodologia, Resultados e Referências", size="1", color="#CBD5E1", style=STYLE_TEXT_RESPONSIVE),
                             spacing="0",
                             align="start",
                         ),

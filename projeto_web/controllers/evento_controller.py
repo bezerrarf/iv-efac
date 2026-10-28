@@ -629,7 +629,7 @@ class EventoController:
             modalidade="Apresentação Oral (15 minutos) ou Apresentação em Pôster/Painel",
             duracao="15 minutos (oral) ou 1 hora (sessão de painéis)",
             formato="Resumo Expandido em PDF",
-            paginas="2 a 4 páginas (incluindo introdução, metodologia, resultados, conclusões e referências)",
+            paginas="Até 2 páginas (incluindo introdução, metodologia, resultados, conclusões e referências)",
             publicacao="Anais do IV EFAC (Publicação oficial digital com registro ISBN/ISSN institucional)",
             criterios=[
                 "Aderência temática aos eixos do evento",

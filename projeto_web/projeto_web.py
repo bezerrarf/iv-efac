@@ -6,6 +6,7 @@ import reflex as rx
 from projeto_web.views.pages.home import home_page
 from projeto_web.views.pages.cronograma import cronograma_page
 from projeto_web.views.pages.inscricao import inscricao_page
+from projeto_web.views.pages.normas_submissao import normas_submissao_page
 from projeto_web.state.evento_state import EventoState
 
 app = rx.App(
@@ -59,4 +60,11 @@ app.add_page(
     route="/login",
     title="Acesso e Credencial • IV EFAC 2026",
     description="Acesso ao portal de congressistas e ao painel administrativo do IV EFAC 2026.",
+)
+
+app.add_page(
+    normas_submissao_page,
+    route="/normas-submissao",
+    title="Normas de Submissão de Trabalhos • IV EFAC 2026",
+    description="Regulamento oficial, diretrizes de formatação (resumo expandido), apresentação em pôster/oral e cronograma de submissões do IV EFAC 2026.",
 )

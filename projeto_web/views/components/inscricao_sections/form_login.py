@@ -106,85 +106,91 @@ def card_recuperacao_senha() -> rx.Component:
 
 
 def form_login() -> rx.Component:
-    return rx.vstack(
-        feedback_alert(),
+    return rx.form(
         rx.vstack(
-            rx.text("E-mail Cadastrado", size="2", weight="bold", color="white"),
-            rx.input(
-                placeholder="seu.email@exemplo.com",
-                type="email",
-                value=AuthState.login_email,
-                on_change=AuthState.set_login_email,
-                size="3",
-                width="100%",
-            ),
-            spacing="1",
-            width="100%",
-        ),
-        rx.vstack(
-            rx.hstack(
-                rx.text("Senha", size="2", weight="bold", color="white"),
-                rx.spacer(),
-                rx.link(
-                    "Esqueceu sua senha?",
-                    size="1",
-                    color="#CBD5E1",
-                    _hover={"color": "#38bdf8"},
-                    cursor="pointer",
-                    on_click=AuthState.toggle_aviso_recuperacao_senha,
-                ),
-                width="100%",
-                align="center",
-            ),
-            rx.box(
+            feedback_alert(),
+            rx.vstack(
+                rx.text("E-mail Cadastrado", size="2", weight="bold", color="white"),
                 rx.input(
-                    placeholder="Sua senha",
-                    type=rx.cond(AuthState.mostrar_senha_login, "text", "password"),
-                    value=AuthState.login_senha,
-                    on_change=AuthState.set_login_senha,
+                    placeholder="seu.email@exemplo.com",
+                    type="email",
+                    name="email",
+                    value=AuthState.login_email,
+                    on_change=AuthState.set_login_email,
                     size="3",
                     width="100%",
-                    padding_right="2.5rem",
                 ),
-                rx.box(
-                    rx.tooltip(
-                        rx.icon(
-                            tag=rx.cond(AuthState.mostrar_senha_login, "eye-off", "eye"),
-                            size=18,
-                            color="#CBD5E1",
-                            _hover={"color": COLOR_CYAN},
-                            cursor="pointer",
-                            on_click=AuthState.toggle_mostrar_senha_login,
-                        ),
-                        content=rx.cond(AuthState.mostrar_senha_login, "Ocultar senha", "Ver senha"),
-                    ),
-                    position="absolute",
-                    right="0.75rem",
-                    top="50%",
-                    transform="translateY(-50%)",
-                    z_index="10",
-                ),
-                position="relative",
+                spacing="1",
                 width="100%",
             ),
-            spacing="1",
+            rx.vstack(
+                rx.hstack(
+                    rx.text("Senha", size="2", weight="bold", color="white"),
+                    rx.spacer(),
+                    rx.link(
+                        "Esqueceu sua senha?",
+                        size="1",
+                        color="#CBD5E1",
+                        _hover={"color": "#38bdf8"},
+                        cursor="pointer",
+                        on_click=AuthState.toggle_aviso_recuperacao_senha,
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                rx.box(
+                    rx.input(
+                        placeholder="Sua senha",
+                        type=rx.cond(AuthState.mostrar_senha_login, "text", "password"),
+                        name="senha",
+                        value=AuthState.login_senha,
+                        on_change=AuthState.set_login_senha,
+                        size="3",
+                        width="100%",
+                        padding_right="2.5rem",
+                    ),
+                    rx.box(
+                        rx.tooltip(
+                            rx.icon(
+                                tag=rx.cond(AuthState.mostrar_senha_login, "eye-off", "eye"),
+                                size=18,
+                                color="#CBD5E1",
+                                _hover={"color": COLOR_CYAN},
+                                cursor="pointer",
+                                on_click=AuthState.toggle_mostrar_senha_login,
+                            ),
+                            content=rx.cond(AuthState.mostrar_senha_login, "Ocultar senha", "Ver senha"),
+                        ),
+                        position="absolute",
+                        right="0.75rem",
+                        top="50%",
+                        transform="translateY(-50%)",
+                        z_index="10",
+                    ),
+                    position="relative",
+                    width="100%",
+                ),
+                spacing="1",
+                width="100%",
+            ),
+            rx.button(
+                "Acessar Credencial",
+                type="submit",
+                size="3",
+                color_scheme="cyan",
+                radius="full",
+                width="100%",
+                margin_top="1rem",
+                style=STYLE_BUTTON_CHIP,
+            ),
+            # Aviso institucional para redefinição de senha com Prof. Otoniel (exibido ao errar ou ao clicar no link)
+            rx.cond(
+                AuthState.mostrar_aviso_recuperacao_senha,
+                card_recuperacao_senha(),
+            ),
+            spacing="3",
             width="100%",
         ),
-        rx.button(
-            "Acessar Credencial",
-            size="3",
-            color_scheme="cyan",
-            radius="full",
-            width="100%",
-            margin_top="1rem",
-            on_click=AuthState.realizar_login,
-            style=STYLE_BUTTON_CHIP,
-        ),
-        # Aviso institucional para redefinição de senha com Prof. Otoniel (exibido ao errar ou ao clicar no link)
-        rx.cond(
-            AuthState.mostrar_aviso_recuperacao_senha,
-            card_recuperacao_senha(),
-        ),
-        spacing="3",
+        on_submit=AuthState.realizar_login_form,
         width="100%",
     )

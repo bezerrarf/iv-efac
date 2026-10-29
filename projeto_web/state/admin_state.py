@@ -176,21 +176,30 @@ class AdminState(AuthState):
             self.carregar_painel_supervisor()
 
     def excluir_participante_admin(self):
-        """Exclui o participante atualmente selecionado no modal de edição."""
-        if not self.is_admin or not self.admin_edit_user_id:
-            return
-
-        # Impede auto-exclus?o acidental da pr?pria conta de administrador logado
-        if self.current_user and getattr(self.current_user, "id", None) == self.admin_edit_user_id:
-            self.feedback_msg = "Voc? n?o pode excluir sua pr?pria conta de administrador."
+        """Exclui o participante atualmente selecionado no modal de edição (Exclusivo para Administradores)."""
+        role_atual = getattr(self, "user_role", "admin" if getattr(self, "is_admin", False) else "participante")
+        if not getattr(self, "is_admin", False) or role_atual != "admin":
+            self.feedback_msg = "Permissão negada: somente administradores podem excluir cadastros."
             self.feedback_tipo = "error"
             return
 
-        res = _usuario_controller.excluir_participante(self.admin_edit_user_id)
+        if not self.admin_edit_user_id:
+            return
+
+        # Impede autoexclusão acidental da própria conta de administrador logado
+        meu_user_id = int(getattr(self, "user_id", 0) or 0)
+        alvo_user_id = int(self.admin_edit_user_id)
+        if meu_user_id and meu_user_id == alvo_user_id:
+            self.feedback_msg = "Você não pode excluir sua própria conta de administrador."
+            self.feedback_tipo = "error"
+            return
+
+        res = _usuario_controller.excluir_participante(alvo_user_id, solicitante_role=role_atual)
         self.feedback_msg = res.mensagem
         self.feedback_tipo = "success" if res.sucesso else "error"
         if res.sucesso:
             self.modal_editar_participante_aberto = False
+            self.admin_edit_user_id = 0
             self.carregar_painel_admin()
             if hasattr(self, "carregar_painel_supervisor"):
                 self.carregar_painel_supervisor()

@@ -242,16 +242,49 @@ def test_excluir_participante_sucesso_e_inexistente(controller: UsuarioControlle
     assert res_cad.sucesso
     user_id = res_cad.dado.id
 
-    # Exclus?o com sucesso
-    res_del = controller.excluir_participante(user_id)
+    # Exclusão com sucesso (exclusivo para admin)
+    res_del = controller.excluir_participante(user_id, solicitante_role="admin")
     assert res_del.sucesso
-    assert "exclu?do com sucesso" in res_del.mensagem
+    assert "excluído com sucesso" in res_del.mensagem
 
-    # Confirmar que n?o ? mais encontrado
+    # Confirmar que não é mais encontrado
     assert controller._queries.find_by_id(user_id) is None
 
     # Tentar excluir novamente deve retornar insucesso
-    res_del2 = controller.excluir_participante(user_id)
+    res_del2 = controller.excluir_participante(user_id, solicitante_role="admin")
     assert not res_del2.sucesso
-    assert "n?o encontrado" in res_del2.mensagem
+    assert "não encontrado" in res_del2.mensagem
+
+
+def test_excluir_participante_bloqueado_para_nao_admin(controller: UsuarioController):
+    """Garante que apenas administradores podem excluir contatos."""
+    res_cad = controller.cadastrar(
+        nome="Participante Protegido",
+        email="protegido@ufca.edu.br",
+        senha="senha_segura_123",
+        instituicao="UFCA",
+    )
+    assert res_cad.sucesso
+    uid = res_cad.dado.id
+
+    for role_invalida in ["participante", "supervisor", ""]:
+        res_negado = controller.excluir_participante(uid, solicitante_role=role_invalida)
+        assert res_negado.sucesso is False
+        assert "somente administradores" in res_negado.mensagem
+        assert controller._queries.find_by_id(uid) is not None
+
+
+def test_autenticacao_tolerante_a_espacos_e_caixa_alta(controller: UsuarioController):
+    """Garante que inscritos conseguem acessar seu cadastro mesmo com letras maiúsculas ou espaços do teclado móvel."""
+    res_cad = controller.cadastrar(
+        nome="Inscrito Mobile",
+        email="Mobile.User@UFCA.edu.br",
+        senha="SenhaMobile123",
+    )
+    assert res_cad.sucesso
+
+    # Login com e-mail em maiúsculas e espaço acidental no final da senha
+    res_auth = controller.autenticar("  MOBILE.USER@UFCA.EDU.BR  ", "SenhaMobile123 ")
+    assert res_auth.sucesso is True
+    assert res_auth.dado.nome == "Inscrito Mobile"
 

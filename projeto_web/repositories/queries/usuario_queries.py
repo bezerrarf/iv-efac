@@ -18,10 +18,17 @@ class SQLiteUsuarioQueryRepository(UsuarioQueryRepositoryProtocol):
             return session.get(Usuario, user_id)
 
     def find_by_email(self, email: str) -> Optional[Usuario]:
+        if not email:
+            return None
         email_clean = email.strip().lower()
         with self._session_factory() as session:
+            # Busca exata primeiro (usa índice) e fallback case-insensitive/trim para máxima compatibilidade
             statement = select(Usuario).where(Usuario.email == email_clean)
-            return session.exec(statement).first()
+            encontrado = session.exec(statement).first()
+            if encontrado is not None:
+                return encontrado
+            statement_ci = select(Usuario).where(func.lower(func.trim(Usuario.email)) == email_clean)
+            return session.exec(statement_ci).first()
 
     def count(self) -> int:
         with self._session_factory() as session:

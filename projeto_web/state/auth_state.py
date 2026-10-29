@@ -76,6 +76,19 @@ class AuthState(rx.State):
     def fechar_aviso_recuperacao_senha(self):
         self.mostrar_aviso_recuperacao_senha = False
 
+    def realizar_cadastro_form(self, form_data: Dict[str, Any]):
+        """Submissão de formulário de cadastro compatível com autofill do navegador e tecla Enter."""
+        if isinstance(form_data, dict):
+            if form_data.get("nome"):
+                self.cad_nome = str(form_data["nome"])
+            if form_data.get("email"):
+                self.cad_email = str(form_data["email"])
+            if form_data.get("senha"):
+                self.cad_senha = str(form_data["senha"])
+            if form_data.get("instituicao"):
+                self.cad_instituicao = str(form_data["instituicao"])
+        self.realizar_cadastro()
+
     def realizar_cadastro(self):
         """Dispara caso de uso de cadastro no Controller."""
         self.limpar_feedback()
@@ -118,6 +131,17 @@ class AuthState(rx.State):
         self.cad_email = ""
         self.cad_senha = ""
         self.cad_instituicao = ""
+
+    def realizar_login_form(self, form_data: Dict[str, Any]):
+        """Submissão de formulário de login compatível com autofill do navegador e tecla Enter."""
+        if isinstance(form_data, dict):
+            email_form = str(form_data.get("email", "") or "").strip()
+            senha_form = str(form_data.get("senha", "") or "")
+            if email_form:
+                self.login_email = email_form
+            if senha_form:
+                self.login_senha = senha_form
+        self.realizar_login()
 
     def realizar_login(self):
         """Dispara caso de uso de autenticação no Controller. Se falhar, exibe aviso institucional."""

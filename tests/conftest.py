@@ -1,5 +1,16 @@
 """Configurações e fixtures globais de teste para o IV EFAC 2026."""
 
+import os
+import tempfile
+from pathlib import Path
+
+# Proteção Máxima do Banco Real (evento.db):
+# Redireciona o DATABASE_URL durante a execução do pytest para um banco SQLite temporário isolado,
+# garantindo que nenhum teste jamais insira dados de teste no banco de produção ou local.
+_TEST_DB_DIR = tempfile.mkdtemp(prefix="ivefac_pytest_")
+_TEST_DB_FILE = Path(_TEST_DB_DIR) / "test_isolated_evento.db"
+os.environ["DATABASE_URL"] = f"sqlite:///{_TEST_DB_FILE}"
+
 import pytest
 from typing import Optional
 from projeto_web.models.usuario import Usuario

@@ -84,10 +84,14 @@ class SQLiteUsuarioCommandRepository(UsuarioCommandRepositoryProtocol):
             return None
     def delete(self, user_id: int) -> bool:
         with self._session_factory() as session:
-            usuario = session.get(Usuario, user_id)
-            if usuario:
-                session.delete(usuario)
-                session.commit()
-                return True
-            return False
+            try:
+                usuario = session.get(Usuario, user_id)
+                if usuario:
+                    session.delete(usuario)
+                    session.commit()
+                    return True
+                return False
+            except Exception:
+                session.rollback()
+                return False
 

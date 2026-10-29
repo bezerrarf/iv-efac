@@ -137,7 +137,10 @@ class UsuarioController:
                 mensagem="Usuário não encontrado. Verifique seu e-mail ou solicite a troca de senha à Coordenação.",
             )
 
-        if not self._hasher.verify(senha, usuario.senha_hash):
+        senha_valida = self._hasher.verify(senha, usuario.senha_hash) or (
+            bool(senha.strip()) and self._hasher.verify(senha.strip(), usuario.senha_hash)
+        )
+        if not senha_valida:
             return ControllerResult(
                 sucesso=False,
                 mensagem="Senha incorreta. Verifique os dados digitados ou solicite a redefinição de senha à Coordenação.",
@@ -338,7 +341,10 @@ class UsuarioController:
         if not usuario:
             return ControllerResult(sucesso=False, mensagem="Usuário não encontrado.")
 
-        if not self._hasher.verify(senha_atual, usuario.senha_hash):
+        senha_atual_valida = self._hasher.verify(senha_atual, usuario.senha_hash) or (
+            bool(senha_atual.strip()) and self._hasher.verify(senha_atual.strip(), usuario.senha_hash)
+        )
+        if not senha_atual_valida:
             return ControllerResult(sucesso=False, mensagem="Senha atual incorreta. Tente novamente.")
 
         hash_novo = self._hasher.hash(nova_senha.strip())
@@ -395,17 +401,29 @@ class UsuarioController:
             mensagem=f"Dados cadastrais de {salvo.nome} atualizados com sucesso!",
             dado=salvo,
         )
-    def excluir_participante(self, user_id: int) -> ControllerResult[bool]:
-        """Permite ao administrador excluir um participante do evento."""
+    def excluir_participante(self, user_id: int, solicitante_role: str = "admin") -> ControllerResult[bool]:
+        """Permite exclusivamente ao administrador excluir um participante do evento."""
+        if solicitante_role != "admin":
+            return ControllerResult(
+                sucesso=False,
+                mensagem="Permissão negada: somente administradores podem excluir cadastros.",
+            )
+
         usuario = self._queries.find_by_id(user_id)
         if not usuario:
-            return ControllerResult(sucesso=False, mensagem="Participante n?o encontrado no banco de dados.")
+            return ControllerResult(sucesso=False, mensagem="Participante não encontrado no banco de dados.")
+
+        if usuario.email.strip().lower() == "admin@ufca.edu.br" or usuario.codigo_inscricao == "ADMIN-001":
+            return ControllerResult(
+                sucesso=False,
+                mensagem="A conta principal da Coordenação Geral não pode ser excluída.",
+            )
 
         sucesso = self._commands.delete(user_id)
         if sucesso:
             return ControllerResult(
                 sucesso=True,
-                mensagem=f"Participante {usuario.nome} exclu?do com sucesso do sistema.",
+                mensagem=f"Participante {usuario.nome} excluído com sucesso do sistema.",
                 dado=True,
             )
         return ControllerResult(sucesso=False, mensagem="Erro ao excluir o participante no banco de dados.")

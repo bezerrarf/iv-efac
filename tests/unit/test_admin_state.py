@@ -67,3 +67,32 @@ def test_admin_state_links_modelos_oficiais():
     assert "1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN" in fields["link_modelo_resumo"].default
     assert "1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ" in fields["link_modelo_slides"].default
     assert "1p12rVh3LbCWgHostLjOYgxG1Z0tpk1qc" in fields["link_modelo_poster"].default
+
+
+def test_admin_state_excluir_participante_admin_seguranca():
+    """Garante que excluir_participante_admin funciona sem AttributeError e restringe exclusivamente a admins."""
+    # 1. Bloqueia não-admin (participante ou supervisor)
+    dummy_nao_admin = types.SimpleNamespace(
+        is_admin=False,
+        user_role="supervisor",
+        user_id=10,
+        admin_edit_user_id=20,
+        feedback_msg="",
+        feedback_tipo="",
+    )
+    AdminState.excluir_participante_admin.fn(dummy_nao_admin)
+    assert dummy_nao_admin.feedback_tipo == "error"
+    assert "somente administradores" in dummy_nao_admin.feedback_msg
+
+    # 2. Impede autoexclusão da própria conta de admin logada (sem usar self.current_user)
+    dummy_self = types.SimpleNamespace(
+        is_admin=True,
+        user_role="admin",
+        user_id=14,
+        admin_edit_user_id=14,
+        feedback_msg="",
+        feedback_tipo="",
+    )
+    AdminState.excluir_participante_admin.fn(dummy_self)
+    assert dummy_self.feedback_tipo == "error"
+    assert "própria conta" in dummy_self.feedback_msg

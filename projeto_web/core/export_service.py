@@ -1,17 +1,90 @@
 """Serviço de Exportação de Dados do IV EFAC 2026.
-Gera relatórios oficiais em formato CSV e PDF (ReportLab).
+Gera relatórios oficiais em formato CSV e PDF (ReportLab) com suporte completo a UTF-8 e acentuação pt-BR (NFC).
 """
 
 import io
+import os
+import unicodedata
+from xml.sax.saxutils import escape as xml_escape
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
+
+
+def normalizar_texto_ptbr(valor: Any) -> str:
+    """Normaliza qualquer texto para Unicode NFC (padrão pt-BR composto) e remove BOM invisível (\ufeff)."""
+    if valor is None:
+        return ""
+    texto = str(valor).replace("\ufeff", "").replace("\u200b", "")
+    return unicodedata.normalize("NFC", texto)
+
+
+def _escapar_pdf_texto(valor: Any) -> str:
+    """Normaliza em NFC e escapa caracteres especiais XML (&, <, >) para uso seguro em Paragraph do ReportLab."""
+    return xml_escape(normalizar_texto_ptbr(valor))
+
+
+def _configurar_fontes_utf8_pdf() -> Tuple[str, str, str]:
+    """Registra fontes TrueType com suporte completo aos acentos do Português do Brasil (UTF-8).
+    Retorna a tupla (font_regular, font_bold, font_italic).
+    """
+    try:
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+
+        familias_candidatas = [
+            (
+                "EFACDejaVu",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
+            ),
+            (
+                "EFACLiberation",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf",
+            ),
+            (
+                "EFACUbuntu",
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf",
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-RI.ttf",
+                "/usr/share/fonts/truetype/ubuntu/Ubuntu-BI.ttf",
+            ),
+        ]
+
+        for nome_base, reg_path, bold_path, italic_path, bold_italic_path in familias_candidatas:
+            if os.path.exists(reg_path) and os.path.exists(bold_path):
+                f_reg = f"{nome_base}-Regular"
+                f_bold = f"{nome_base}-Bold"
+                f_italic = f"{nome_base}-Italic"
+                f_bi = f"{nome_base}-BoldItalic"
+                if f_reg not in pdfmetrics.getRegisteredFontNames():
+                    pdfmetrics.registerFont(TTFont(f_reg, reg_path))
+                    pdfmetrics.registerFont(TTFont(f_bold, bold_path))
+                    pdfmetrics.registerFont(TTFont(f_italic, italic_path if os.path.exists(italic_path) else reg_path))
+                    pdfmetrics.registerFont(TTFont(f_bi, bold_italic_path if os.path.exists(bold_italic_path) else bold_path))
+                    pdfmetrics.registerFontFamily(
+                        f_reg,
+                        normal=f_reg,
+                        bold=f_bold,
+                        italic=f_italic,
+                        boldItalic=f_bi,
+                    )
+                return (f_reg, f_bold, f_italic)
+    except Exception:
+        pass
+
+    return ("Helvetica", "Helvetica-Bold", "Helvetica-Oblique")
 
 
 def gerar_csv_inscritos(usuarios: List[Any]) -> str:
-    """Gera string CSV em UTF-8 (compatível com Excel com BOM)."""
+    """Gera string CSV em UTF-8 puro normalizado em NFC (sem BOM \\ufeff para total compatibilidade com iOS/Safari/WebKit)."""
     linhas = [
-        "sep=;",  # Instrução para Excel reconhecer separador ponto-e-vírgula
-        "ID;Código de Check-in;Nome Completo;E-mail;Instituição / Polo;Modalidade;Eixo Temático;Função / Papel;Presença Confirmada;Data de Cadastro"
+        "sep=;",
+        "ID;Código de Check-in;Nome Completo;E-mail;Instituição / Polo;Modalidade;Eixo Temático;Função / Papel;Presença Dia 1 (11/Nov);Presença Dia 2 (12/Nov)"
     ]
     for u in usuarios:
         if isinstance(u, dict):
@@ -25,7 +98,6 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             role = u.get("role", "")
             pres_d1 = "SIM" if u.get("presenca_dia1", False) else "NÃO"
             pres_d2 = "SIM" if u.get("presenca_dia2", False) else "NÃO"
-            criado = str(u.get("criado_em", ""))
         else:
             uid = getattr(u, "id", "")
             cod = getattr(u, "codigo_inscricao", "")
@@ -37,28 +109,27 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             role = getattr(u, "role", "")
             pres_d1 = "SIM" if getattr(u, "presenca_dia1", False) else "NÃO"
             pres_d2 = "SIM" if getattr(u, "presenca_dia2", False) else "NÃO"
-            criado = str(getattr(u, "criado_em", ""))
 
-        # Sanitizar campos contra ponto-e-vírgula
+        # Normalizar para NFC e sanitizar contra ponto-e-vírgula e caracteres invisíveis
         linha = [
-            str(uid),
-            f'"{cod}"',
-            f'"{str(nome).replace(";", ",")}"',
-            f'"{str(email).replace(";", ",")}"',
-            f'"{str(inst).replace(";", ",")}"',
-            f'"{mod}"',
-            f'"{str(area).replace(";", ",")}"',
-            f'"{str(role).upper()}"',
+            normalizar_texto_ptbr(uid),
+            f'"{normalizar_texto_ptbr(cod)}"',
+            f'"{normalizar_texto_ptbr(nome).replace(";", ",")}"',
+            f'"{normalizar_texto_ptbr(email).replace(";", ",")}"',
+            f'"{normalizar_texto_ptbr(inst).replace(";", ",")}"',
+            f'"{normalizar_texto_ptbr(mod)}"',
+            f'"{normalizar_texto_ptbr(area).replace(";", ",")}"',
+            f'"{normalizar_texto_ptbr(role).upper()}"',
             f'"{pres_d1}"',
             f'"{pres_d2}"',
         ]
         linhas.append(";".join(linha))
 
-    return "\ufeff" + "\n".join(linhas)
+    return "\n".join(linhas)
 
 
 def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
-    """Gera PDF oficial diagramado em formato paisagem com ReportLab."""
+    """Gera PDF oficial diagramado em formato paisagem com ReportLab e fontes TrueType UTF-8 (pt-BR)."""
     try:
         from reportlab.lib.pagesizes import letter, landscape
         from reportlab.lib import colors
@@ -90,11 +161,13 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
             f"trailer<</Size 4/Root 1 0 R>>\nstartxref\n210\n%%EOF\n"
         ).encode("utf-8")
 
-    # Estilos customizados
+    font_reg, font_bold, _ = _configurar_fontes_utf8_pdf()
+
+    # Estilos customizados com fontes TrueType UTF-8 completas
     estilo_titulo = ParagraphStyle(
         "TituloEFAC",
         parent=estilos["Heading1"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=18,
         leading=22,
         textColor=colors.HexColor("#103460"),
@@ -103,7 +176,7 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
     estilo_subtitulo = ParagraphStyle(
         "SubtituloEFAC",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=11,
         leading=14,
         textColor=colors.HexColor("#00ADB5"),
@@ -112,7 +185,7 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
     estilo_meta = ParagraphStyle(
         "MetaEFAC",
         parent=estilos["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=9,
         leading=12,
         textColor=colors.HexColor("#475569"),
@@ -121,7 +194,7 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
     estilo_celula = ParagraphStyle(
         "CelulaTabela",
         parent=estilos["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=8,
         leading=10,
         textColor=colors.HexColor("#0f172a"),
@@ -129,7 +202,7 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
     estilo_cabecalho_tab = ParagraphStyle(
         "CabecalhoTabela",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=8,
         leading=10,
         textColor=colors.white,
@@ -192,12 +265,12 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
         pres2 = "SIM" if (getattr(u, "presenca_dia2", False) or (isinstance(u, dict) and u.get("presenca_dia2", False))) else "NÃO"
 
         linhas_tabela.append([
-            Paragraph(f"<b>{cod}</b>", estilo_celula),
-            Paragraph(str(nome), estilo_celula),
-            Paragraph(str(email), estilo_celula),
-            Paragraph(str(inst), estilo_celula),
-            Paragraph(str(mod), estilo_celula),
-            Paragraph(role.upper(), estilo_celula),
+            Paragraph(f"<b>{_escapar_pdf_texto(cod)}</b>", estilo_celula),
+            Paragraph(_escapar_pdf_texto(nome), estilo_celula),
+            Paragraph(_escapar_pdf_texto(email), estilo_celula),
+            Paragraph(_escapar_pdf_texto(inst), estilo_celula),
+            Paragraph(_escapar_pdf_texto(mod), estilo_celula),
+            Paragraph(_escapar_pdf_texto(role).upper(), estilo_celula),
             Paragraph(f"<b>{pres1}</b>", estilo_celula),
             Paragraph(f"<b>{pres2}</b>", estilo_celula),
         ])
@@ -219,7 +292,7 @@ def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
     return buffer.getvalue()
 
 def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]) -> bytes:
-    """Gera PDF oficial diagramado com a programação e atividades completas do IV EFAC."""
+    """Gera PDF oficial diagramado com a programação e atividades completas do IV EFAC (UTF-8 / pt-BR)."""
     try:
         from reportlab.lib.pagesizes import A4
         from reportlab.lib import colors
@@ -249,10 +322,12 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
             f"trailer<</Size 4/Root 1 0 R>>\nstartxref\n210\n%%EOF\n"
         ).encode("utf-8")
 
+    font_reg, font_bold, font_italic = _configurar_fontes_utf8_pdf()
+
     estilo_titulo = ParagraphStyle(
         "TituloEFACProg",
         parent=estilos["Heading1"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=14,
         leading=17,
         textColor=colors.HexColor("#103460"),
@@ -261,7 +336,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_subtitulo = ParagraphStyle(
         "SubtituloEFACProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=9.5,
         leading=12.5,
         textColor=colors.HexColor("#00ADB5"),
@@ -270,7 +345,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_meta = ParagraphStyle(
         "MetaEFACProg",
         parent=estilos["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=8,
         leading=10.5,
         textColor=colors.HexColor("#475569"),
@@ -279,7 +354,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_dia_header = ParagraphStyle(
         "DiaHeaderEFAC",
         parent=estilos["Heading2"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=10.5,
         leading=13.5,
         textColor=colors.HexColor("#0f172a"),
@@ -289,7 +364,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_hora = ParagraphStyle(
         "HoraProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=7.5,
         leading=9.5,
         textColor=colors.HexColor("#00ADB5"),
@@ -297,7 +372,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_tipo = ParagraphStyle(
         "TipoProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=7,
         leading=9,
         textColor=colors.HexColor("#2563EB"),
@@ -305,7 +380,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_titulo_atv = ParagraphStyle(
         "TituloAtvProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=8,
         leading=10.5,
         textColor=colors.HexColor("#0f172a"),
@@ -313,7 +388,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_palestrante_atv = ParagraphStyle(
         "PalestranteAtvProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Oblique",
+        fontName=font_italic,
         fontSize=7.5,
         leading=9.5,
         textColor=colors.HexColor("#334155"),
@@ -321,7 +396,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_local = ParagraphStyle(
         "LocalProg",
         parent=estilos["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=7,
         leading=9,
         textColor=colors.HexColor("#1e293b"),
@@ -329,7 +404,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_cabecalho_tab = ParagraphStyle(
         "CabTabProg",
         parent=estilos["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=7.5,
         leading=9.5,
         textColor=colors.white,
@@ -343,12 +418,12 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
 
     def _montar_tabela_dia(nome_dia: str, subtitulo_dia: str, atividades: List[Any]):
         t_elementos = []
-        t_elementos.append(Paragraph(f"<b>{nome_dia}</b> • {subtitulo_dia}", estilo_dia_header))
+        t_elementos.append(Paragraph(f"<b>{_escapar_pdf_texto(nome_dia)}</b> • {_escapar_pdf_texto(subtitulo_dia)}", estilo_dia_header))
 
         cabecalho = [
             Paragraph("Horário", estilo_cabecalho_tab),
             Paragraph("Categoria", estilo_cabecalho_tab),
-            Paragraph("Atividade & Ministrante", estilo_cabecalho_tab),
+            Paragraph("Atividade &amp; Ministrante", estilo_cabecalho_tab),
             Paragraph("Local", estilo_cabecalho_tab),
         ]
         linhas = [cabecalho]
@@ -360,15 +435,15 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
             palestrante = getattr(a, "palestrante", "") if hasattr(a, "palestrante") else str(a.get("palestrante", ""))
             local = getattr(a, "local", "") if hasattr(a, "local") else str(a.get("local", ""))
 
-            bloco_desc = [Paragraph(titulo, estilo_titulo_atv)]
+            bloco_desc = [Paragraph(_escapar_pdf_texto(titulo), estilo_titulo_atv)]
             if palestrante and palestrante.strip():
-                bloco_desc.append(Paragraph(palestrante, estilo_palestrante_atv))
+                bloco_desc.append(Paragraph(_escapar_pdf_texto(palestrante), estilo_palestrante_atv))
 
             linhas.append([
-                Paragraph(horario, estilo_hora),
-                Paragraph(tipo, estilo_tipo),
+                Paragraph(_escapar_pdf_texto(horario), estilo_hora),
+                Paragraph(_escapar_pdf_texto(tipo), estilo_tipo),
                 bloco_desc,
-                Paragraph(local, estilo_local),
+                Paragraph(_escapar_pdf_texto(local), estilo_local),
             ])
 
         col_widths = [75, 75, 273, 100]
@@ -391,7 +466,7 @@ def gerar_pdf_programacao(atividades_dia1: List[Any], atividades_dia2: List[Any]
     estilo_rodape = ParagraphStyle(
         "RodapeProg",
         parent=estilos["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=7,
         leading=9,
         textColor=colors.HexColor("#64748B"),

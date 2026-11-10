@@ -49,6 +49,14 @@ class AdminState(AuthState):
     admin_edit_role: str = "participante"
     admin_edit_presenca_d1: bool = False
     admin_edit_presenca_d2: bool = False
+    # Nova Inscrição Direta pelo Painel (Admin e Supervisor)
+    modal_nova_inscricao_aberto: bool = False
+    novo_inscrito_nome: str = ""
+    novo_inscrito_email: str = ""
+    novo_inscrito_senha: str = ""
+    novo_inscrito_instituicao: str = ""
+    novo_inscrito_modalidade: str = "Presencial"
+    novo_inscrito_area: str = "Astrofísica"
     # Links dos Modelos de Apresentação e Submissão
     link_modelo_resumo: str = "https://docs.google.com/document/d/1tp2I660zIwhE8SpjEmeSdNa4aGOx5TAN/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
     link_modelo_slides: str = "https://docs.google.com/presentation/d/1iUEyNN3E_IglPo508DiXv8wOgi9emzqJ/edit?usp=drive_link&ouid=107036139512820297420&rtpof=true&sd=true"
@@ -163,15 +171,25 @@ class AdminState(AuthState):
     def set_admin_nova_senha(self, val: str):
         self.admin_nova_senha_input = val
     def alternar_presenca_dia(self, user_id: Any, dia: str):
-        """Alterna a presença de um inscrito em um dia específico."""
+        """Alterna a presença de um inscrito em um dia específico (restrito a Admin e Supervisor)."""
+        role_atual = getattr(
+            self,
+            "user_role",
+            "admin" if getattr(self, "is_admin", False) else ("supervisor" if getattr(self, "is_supervisor", False) else "participante"),
+        )
+        if not (getattr(self, "is_admin", False) or getattr(self, "is_supervisor", False)) or role_atual not in ["supervisor", "admin"]:
+            self.feedback_msg = "Permissão negada: os participantes não podem marcar a própria presença."
+            self.feedback_tipo = "error"
+            return
         try:
             uid = int(user_id)
         except Exception:
             return
-        res = _usuario_controller.alternar_presenca(uid, dia=dia)
+        res = _usuario_controller.alternar_presenca(uid, dia=dia, solicitante_role=role_atual)
         self.feedback_msg = res.mensagem
         self.feedback_tipo = "success" if res.sucesso else "error"
-        self.carregar_painel_admin()
+        if getattr(self, "is_admin", False):
+            self.carregar_painel_admin()
         if hasattr(self, "carregar_painel_supervisor"):
             self.carregar_painel_supervisor()
 
@@ -249,8 +267,13 @@ class AdminState(AuthState):
         self.admin_edit_presenca_d2 = val
 
     def salvar_edicao_participante(self):
-        """Persiste as alterações completas do participante realizadas pelo admin."""
-        if not self.is_admin or not self.admin_edit_user_id:
+        """Persiste as alterações completas do participante realizadas exclusivamente pelo admin."""
+        role_atual = getattr(self, "user_role", "admin" if getattr(self, "is_admin", False) else "participante")
+        if not getattr(self, "is_admin", False) or role_atual != "admin":
+            self.feedback_msg = "Permissão negada: somente administradores podem editar cadastros e conceder permissão de Supervisor."
+            self.feedback_tipo = "error"
+            return
+        if not self.admin_edit_user_id:
             return
 
         res = _usuario_controller.atualizar_participante_completo(
@@ -263,6 +286,7 @@ class AdminState(AuthState):
             role=self.admin_edit_role,
             presenca_dia1=self.admin_edit_presenca_d1,
             presenca_dia2=self.admin_edit_presenca_d2,
+            solicitante_role=role_atual,
         )
 
         self.feedback_msg = res.mensagem
@@ -272,6 +296,83 @@ class AdminState(AuthState):
             self.carregar_painel_admin()
             if hasattr(self, "carregar_painel_supervisor"):
                 self.carregar_painel_supervisor()
+
+    # --- Nova Inscrição Direta pelo Painel (Admin e Supervisor) ---
+    def abrir_modal_nova_inscricao(self):
+        """Abre o modal para Admin ou Supervisor cadastrar um novo inscrito diretamente pelo painel."""
+        if not (getattr(self, "is_admin", False) or getattr(self, "is_supervisor", False)):
+            self.feedback_msg = "Permissão negada: apenas administradores e supervisores podem realizar nova inscrição pelo painel."
+            self.feedback_tipo = "error"
+            return
+        self.novo_inscrito_nome = ""
+        self.novo_inscrito_email = ""
+        self.novo_inscrito_senha = ""
+        self.novo_inscrito_instituicao = ""
+        self.novo_inscrito_modalidade = "Presencial"
+        self.novo_inscrito_area = "Astrofísica"
+        self.modal_nova_inscricao_aberto = True
+
+    def fechar_modal_nova_inscricao(self):
+        """Fecha o modal de Nova Inscrição."""
+        self.modal_nova_inscricao_aberto = False
+
+    def set_novo_inscrito_nome(self, val: str):
+        self.novo_inscrito_nome = val
+
+    def set_novo_inscrito_email(self, val: str):
+        self.novo_inscrito_email = val
+
+    def set_novo_inscrito_senha(self, val: str):
+        self.novo_inscrito_senha = val
+
+    def set_novo_inscrito_instituicao(self, val: str):
+        self.novo_inscrito_instituicao = val
+
+    def set_novo_inscrito_modalidade(self, val: str):
+        self.novo_inscrito_modalidade = val
+
+    def set_novo_inscrito_area(self, val: str):
+        self.novo_inscrito_area = val
+
+    def salvar_nova_inscricao_painel(self):
+        """Cadastra um novo participante direto pelo Painel (Admin ou Supervisor) sem encerrar a sessão atual."""
+        role_atual = getattr(
+            self,
+            "user_role",
+            "admin" if getattr(self, "is_admin", False) else ("supervisor" if getattr(self, "is_supervisor", False) else "participante"),
+        )
+        if not (getattr(self, "is_admin", False) or getattr(self, "is_supervisor", False)) or role_atual not in ["supervisor", "admin"]:
+            self.feedback_msg = "Permissão negada: apenas administradores e supervisores podem realizar nova inscrição pelo painel."
+            self.feedback_tipo = "error"
+            return
+
+        res = _usuario_controller.cadastrar(
+            nome=self.novo_inscrito_nome,
+            email=self.novo_inscrito_email,
+            senha=self.novo_inscrito_senha,
+            instituicao=self.novo_inscrito_instituicao,
+            modalidade=self.novo_inscrito_modalidade,
+            area=self.novo_inscrito_area,
+        )
+
+        if not res.sucesso or res.dado is None:
+            self.feedback_msg = res.mensagem
+            self.feedback_tipo = "error"
+            return
+
+        novo = res.dado
+        self.feedback_msg = f"Nova inscrição de {novo.nome} realizada com sucesso! Código oficial: {novo.codigo_inscricao}"
+        self.feedback_tipo = "success"
+        self.modal_nova_inscricao_aberto = False
+        self.novo_inscrito_nome = ""
+        self.novo_inscrito_email = ""
+        self.novo_inscrito_senha = ""
+        self.novo_inscrito_instituicao = ""
+
+        if getattr(self, "is_admin", False):
+            self.carregar_painel_admin()
+        if hasattr(self, "carregar_painel_supervisor"):
+            self.carregar_painel_supervisor()
 
     def salvar_nova_senha_inscrito(self):
         """Persiste a nova senha definida pelo administrador para o inscrito selecionado."""

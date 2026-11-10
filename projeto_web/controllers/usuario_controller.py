@@ -1,5 +1,6 @@
 """Controller para orquestração de regras de negócio de usuários e participantes (C de MVC)."""
 
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Generic, List, Optional, TypeVar
@@ -13,6 +14,13 @@ from projeto_web.repositories.base import (
 )
 
 T = TypeVar("T")
+
+
+def _norm(texto: Optional[str]) -> str:
+    """Normaliza strings para Unicode NFC (acentuação pt-BR composta) e remove BOM invisível (\ufeff)."""
+    if not texto:
+        return ""
+    return unicodedata.normalize("NFC", str(texto).replace("\ufeff", "").replace("\u200b", "").strip())
 
 
 @dataclass
@@ -65,8 +73,11 @@ class UsuarioController:
         area: str = "Ciência de Dados / IA",
     ) -> ControllerResult[Usuario]:
         """Aplica validações e registra um novo participante no evento."""
-        nome_clean = nome.strip()
-        email_clean = email.strip().lower()
+        nome_clean = _norm(nome)
+        email_clean = _norm(email).lower()
+        inst_clean = _norm(instituicao) or "Não informada"
+        mod_clean = _norm(modalidade) or "Presencial"
+        area_clean = _norm(area) or "Ciência de Dados / IA"
 
         if not nome_clean or not email_clean or not senha:
             return ControllerResult(
@@ -90,7 +101,7 @@ class UsuarioController:
         vagas_presenciais = (self._queries.count_presencial() if hasattr(self._queries, "count_presencial") else self._queries.count())
         if vagas_presenciais is None:
             vagas_presenciais = 0
-        if modalidade == "Presencial" and vagas_presenciais >= self._capacidade_maxima:
+        if mod_clean == "Presencial" and vagas_presenciais >= self._capacidade_maxima:
             return ControllerResult(
                 sucesso=False,
                 mensagem="Limite de vagas presenciais esgotado. Escolha a modalidade Online.",
@@ -106,9 +117,9 @@ class UsuarioController:
         novo_usuario = Usuario(
             nome=nome_clean,
             email=email_clean,
-            instituicao=instituicao.strip() or "Não informada",
-            modalidade=modalidade,
-            area=area,
+            instituicao=inst_clean,
+            modalidade=mod_clean,
+            area=area_clean,
             senha_hash=self._hasher.hash(senha),
             role="participante",
             email_confirmado=True,
@@ -123,7 +134,7 @@ class UsuarioController:
 
     def autenticar(self, email: str, senha: str) -> ControllerResult[Usuario]:
         """Valida credenciais de um participante já cadastrado."""
-        email_clean = email.strip().lower()
+        email_clean = _norm(email).lower()
         if not email_clean or not senha:
             return ControllerResult(
                 sucesso=False,
@@ -137,8 +148,11 @@ class UsuarioController:
                 mensagem="Usuário não encontrado. Verifique seu e-mail ou solicite a troca de senha à Coordenação.",
             )
 
-        senha_valida = self._hasher.verify(senha, usuario.senha_hash) or (
-            bool(senha.strip()) and self._hasher.verify(senha.strip(), usuario.senha_hash)
+        senha_norm = unicodedata.normalize("NFC", str(senha).replace("\ufeff", ""))
+        senha_valida = (
+            self._hasher.verify(senha, usuario.senha_hash)
+            or self._hasher.verify(senha_norm, usuario.senha_hash)
+            or (bool(senha_norm.strip()) and self._hasher.verify(senha_norm.strip(), usuario.senha_hash))
         )
         if not senha_valida:
             return ControllerResult(
@@ -170,24 +184,29 @@ class UsuarioController:
         )
 
     def listar_inscritos(self, termo: Optional[str] = None) -> List[Usuario]:
-        """Retorna todos os inscritos filtrados por termo de busca opcional."""
+        """Retorna todos os inscritos filtrados por termo de busca opcional (normalizado em NFC)."""
         todos = self._queries.list_all()
-        if not termo or not termo.strip():
+        if not termo or not _norm(termo):
             return todos
-        termo_clean = termo.strip().lower()
+        termo_clean = _norm(termo).lower()
         return [
             u for u in todos
             if (
-                termo_clean in u.nome.lower()
-                or termo_clean in u.email.lower()
-                or termo_clean in u.codigo_inscricao.lower()
-                or termo_clean in u.instituicao.lower()
-                or termo_clean in u.role.lower()
+                termo_clean in _norm(u.nome).lower()
+                or termo_clean in _norm(u.email).lower()
+                or termo_clean in _norm(u.codigo_inscricao).lower()
+                or termo_clean in _norm(u.instituicao).lower()
+                or termo_clean in _norm(u.role).lower()
             )
         ]
 
-    def alterar_role(self, user_id: int, nova_role: str) -> ControllerResult[Usuario]:
-        """Permite ao administrador conceder ou revogar permissões de supervisor."""
+    def alterar_role(self, user_id: int, nova_role: str, solicitante_role: str = "admin") -> ControllerResult[Usuario]:
+        """Permite exclusivamente ao administrador conceder ou revogar permissões de supervisor."""
+        if solicitante_role != "admin":
+            return ControllerResult(
+                sucesso=False,
+                mensagem="Permissão negada: somente administradores podem conceder permissão de Supervisor.",
+            )
         if nova_role not in ["participante", "supervisor", "admin"]:
             return ControllerResult(sucesso=False, mensagem="Permissão inválida.")
 
@@ -195,15 +214,36 @@ class UsuarioController:
         if not atualizado:
             return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
 
-        status_label = "Supervisor(a)" if nova_role == "supervisor" else "Participante Regular"
+        status_label = "Supervisor(a)" if nova_role == "supervisor" else ("Administrador(a)" if nova_role == "admin" else "Participante Regular")
         return ControllerResult(
             sucesso=True,
             mensagem=f"Poderes de {status_label} atualizados para {atualizado.nome}!",
             dado=atualizado,
         )
 
-    def alternar_presenca(self, user_id: int, dia: Optional[str] = None) -> ControllerResult[Usuario]:
-        """Permite ao supervisor/admin marcar conferência de presença do participante segregada por dia."""
+    def alternar_presenca(
+        self,
+        user_id: int,
+        dia: Optional[str] = None,
+        solicitante_role: str = "supervisor",
+    ) -> ControllerResult[Usuario]:
+        """Permite exclusivamente ao supervisor ou admin marcar presença, vedado ao supervisor alterar presença de Admin."""
+        if solicitante_role not in ["supervisor", "admin"]:
+            return ControllerResult(
+                sucesso=False,
+                mensagem="Permissão negada: os participantes não podem marcar a própria presença.",
+            )
+
+        alvo = self._queries.find_by_id(user_id)
+        if not alvo:
+            return ControllerResult(sucesso=False, mensagem="Inscrito não encontrado.")
+
+        if getattr(alvo, "role", "participante") == "admin" and solicitante_role != "admin":
+            return ControllerResult(
+                sucesso=False,
+                mensagem="Permissão negada: supervisores não podem alterar a presença de administradores.",
+            )
+
         try:
             if dia is not None:
                 atualizado = self._commands.toggle_presenca(user_id, dia=dia)
@@ -282,11 +322,11 @@ class UsuarioController:
         self,
         user_id: int,
         nome: str,
-        instituicao: str,
-        modalidade: str,
+        instituicao: str = "Não informada",
+        modalidade: str = "Presencial",
     ) -> ControllerResult[Usuario]:
         """Permite ao participante editar seus dados de perfil cadastrais."""
-        nome_clean = nome.strip()
+        nome_clean = _norm(nome)
         if not nome_clean:
             return ControllerResult(sucesso=False, mensagem="O nome completo não pode ficar em branco.")
 
@@ -305,7 +345,7 @@ class UsuarioController:
                 )
 
         usuario.nome = nome_clean
-        usuario.instituicao = instituicao.strip() or "Não informada"
+        usuario.instituicao = _norm(instituicao) or "Não informada"
         usuario.modalidade = modalidade
         atualizado = self._commands.save(usuario)
         return ControllerResult(
@@ -365,15 +405,25 @@ class UsuarioController:
         role: str,
         presenca_dia1: bool,
         presenca_dia2: bool,
+        solicitante_role: str = "admin",
     ) -> ControllerResult[Usuario]:
-        """Permite ao administrador editar completamente todos os dados cadastrais do participante."""
-        nome_clean = nome.strip()
-        email_clean = email.strip().lower()
+        """Permite exclusivamente ao administrador editar completamente todos os dados cadastrais e conceder permissão de Supervisor."""
+        if solicitante_role != "admin":
+            return ControllerResult(
+                sucesso=False,
+                mensagem="Permissão negada: somente administradores podem editar cadastros e conceder permissão de Supervisor.",
+            )
+
+        nome_clean = _norm(nome)
+        email_clean = _norm(email).lower()
+        role_clean = _norm(role).lower() or "participante"
 
         if not nome_clean:
             return ControllerResult(sucesso=False, mensagem="O nome do participante não pode ficar vazio.")
         if not email_clean or "@" not in email_clean:
             return ControllerResult(sucesso=False, mensagem="Informe um e-mail válido para o participante.")
+        if role_clean not in ["participante", "supervisor", "admin"]:
+            return ControllerResult(sucesso=False, mensagem="Permissão / função inválida.")
 
         usuario = self._queries.find_by_id(user_id)
         if not usuario:
@@ -387,10 +437,10 @@ class UsuarioController:
 
         usuario.nome = nome_clean
         usuario.email = email_clean
-        usuario.instituicao = instituicao.strip() or "Não informada"
-        usuario.modalidade = modalidade
-        usuario.area = area
-        usuario.role = role
+        usuario.instituicao = _norm(instituicao) or "Não informada"
+        usuario.modalidade = _norm(modalidade) or "Presencial"
+        usuario.area = _norm(area) or "Astrofísica"
+        usuario.role = role_clean
         usuario.presenca_dia1 = presenca_dia1
         usuario.presenca_dia2 = presenca_dia2
         usuario.presenca_confirmada = bool(presenca_dia1 or presenca_dia2)

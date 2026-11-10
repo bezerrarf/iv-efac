@@ -34,6 +34,8 @@ class SupervisorState(AdminState):
                 "instituicao": u.instituicao,
                 "modalidade": u.modalidade,
                 "codigo": u.codigo_inscricao,
+                "role": getattr(u, "role", "participante"),
+                "is_admin_role": (getattr(u, "role", "participante") == "admin"),
                 "presenca_confirmada": bool(getattr(u, "presenca_confirmada", False)),
                 "presenca_dia1": bool(getattr(u, "presenca_dia1", False)),
                 "presenca_dia2": bool(getattr(u, "presenca_dia2", False)),
@@ -45,32 +47,46 @@ class SupervisorState(AdminState):
         self.superv_presentes_dia2_count = sum(1 for item in self.superv_inscritos if item["presenca_dia2"])
         self.superv_presentes_count = sum(1 for item in self.superv_inscritos if item["presenca_confirmada"] or item["presenca_dia1"] or item["presenca_dia2"])
     def alternar_presenca_dia(self, user_id: Any, dia: str):
-        """Supervisor confirma ou desmarca presença para o Dia 1 ou Dia 2."""
-        if not self.is_supervisor:
+        """Supervisor ou Admin confirma ou desmarca presença para o Dia 1 ou Dia 2 (Supervisor bloqueado para Admin)."""
+        role_atual = getattr(
+            self,
+            "user_role",
+            "admin" if getattr(self, "is_admin", False) else ("supervisor" if getattr(self, "is_supervisor", False) else "participante"),
+        )
+        if not (getattr(self, "is_supervisor", False) or getattr(self, "is_admin", False)) or role_atual not in ["supervisor", "admin"]:
+            self.feedback_msg = "Permissão negada: os participantes não podem marcar a própria presença."
+            self.feedback_tipo = "error"
             return
         try:
             uid = int(user_id)
         except Exception:
             return
-        res = _usuario_controller.alternar_presenca(uid, dia=dia)
+        res = _usuario_controller.alternar_presenca(uid, dia=dia, solicitante_role=role_atual)
         self.feedback_msg = res.mensagem
         self.feedback_tipo = "success" if res.sucesso else "error"
         self.carregar_painel_supervisor()
-        if self.is_admin:
+        if getattr(self, "is_admin", False):
             self.carregar_painel_admin()
 
     def alternar_presenca_participante(self, user_id: Any):
-        """Supervisor ou admin marca/desmarca presença do inscrito."""
-        if not self.is_supervisor:
+        """Supervisor ou admin marca/desmarca presença do inscrito (Supervisor bloqueado para Admin)."""
+        role_atual = getattr(
+            self,
+            "user_role",
+            "admin" if getattr(self, "is_admin", False) else ("supervisor" if getattr(self, "is_supervisor", False) else "participante"),
+        )
+        if not (getattr(self, "is_supervisor", False) or getattr(self, "is_admin", False)) or role_atual not in ["supervisor", "admin"]:
+            self.feedback_msg = "Permissão negada: os participantes não podem marcar a própria presença."
+            self.feedback_tipo = "error"
             return
         try:
             uid = int(user_id)
         except Exception:
             return
-        res = _usuario_controller.alternar_presenca(uid)
+        res = _usuario_controller.alternar_presenca(uid, solicitante_role=role_atual)
         self.feedback_msg = res.mensagem
         self.feedback_tipo = "success" if res.sucesso else "error"
         self.carregar_painel_supervisor()
-        if self.is_admin:
+        if getattr(self, "is_admin", False):
             self.carregar_painel_admin()
 

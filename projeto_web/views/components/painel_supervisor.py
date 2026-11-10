@@ -8,8 +8,10 @@ Permite:
 
 import reflex as rx
 from projeto_web.state.evento_state import EventoState
+from projeto_web.state.auth_state import AuthState
 from projeto_web.state.supervisor_state import SupervisorState
 from projeto_web.state.admin_state import AdminState
+from projeto_web.views.components.painel_admin import modal_nova_inscricao_painel
 from projeto_web.styles.theme import (
     COLOR_CYAN,
     COLOR_CYAN_LIGHT,
@@ -25,6 +27,7 @@ from projeto_web.styles.theme import (
 def painel_supervisor_view() -> rx.Component:
     """Componente oficial de credenciamento e conferência de presença durante as atividades."""
     return rx.box(
+        modal_nova_inscricao_painel(),
         rx.vstack(
             # Topo com Badges e Informações da Atividade
             rx.hstack(
@@ -32,6 +35,21 @@ def painel_supervisor_view() -> rx.Component:
                 rx.badge("Conferência de Presença em Tempo Real", color_scheme="cyan", variant="soft", size="2"),
                 rx.spacer(),
                 rx.hstack(
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="user-plus", size=14),
+                            rx.text("Nova Inscrição", size="1", weight="bold"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        size="2",
+                        variant="solid",
+                        color_scheme="violet",
+                        on_click=AdminState.abrir_modal_nova_inscricao,
+                        style=STYLE_BUTTON_CHIP,
+                        id="btn-superv-nova-inscricao",
+                        white_space="nowrap",
+                    ),
                     rx.button(
                         rx.hstack(
                             rx.icon(tag="file-spreadsheet", size=14),
@@ -63,6 +81,7 @@ def painel_supervisor_view() -> rx.Component:
 
                     spacing="2",
                     align="center",
+                    wrap="wrap",
                 ),
                 width="100%",
                 align="center",
@@ -182,7 +201,21 @@ def painel_supervisor_view() -> rx.Component:
                                 ),
                                 rx.table.cell(
                                     rx.vstack(
-                                        rx.text(item["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                        rx.hstack(
+                                            rx.text(item["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                            rx.cond(
+                                                item["is_admin_role"],
+                                                rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
+                                                rx.cond(
+                                                    item["role"] == "supervisor",
+                                                    rx.badge("SUPERVISOR", color_scheme="violet", variant="solid", size="1"),
+                                                    rx.fragment(),
+                                                ),
+                                            ),
+                                            spacing="2",
+                                            align="center",
+                                            wrap="nowrap",
+                                        ),
                                         rx.text(item["email"], size="1", color="#CBD5E1", white_space="nowrap"),
                                         spacing="0",
                                         align="start",
@@ -206,24 +239,28 @@ def painel_supervisor_view() -> rx.Component:
                                             rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1", white_space="nowrap"),
                                         ),
                                         rx.cond(
-                                            item["presenca_dia1"],
-                                            rx.button(
-                                                "Desmarcar",
-                                                size="1",
-                                                variant="ghost",
-                                                color_scheme="red",
-                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
-                                            ),
-                                            rx.button(
-                                                "Confirmar",
-                                                size="1",
-                                                variant="solid",
-                                                color_scheme="cyan",
-                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
+                                            item["is_admin_role"] & ~AuthState.is_admin,
+                                            rx.badge("Restrito (Admin)", color_scheme="red", variant="outline", size="1", white_space="nowrap"),
+                                            rx.cond(
+                                                item["presenca_dia1"],
+                                                rx.button(
+                                                    "Desmarcar",
+                                                    size="1",
+                                                    variant="ghost",
+                                                    color_scheme="red",
+                                                    on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
+                                                    style=STYLE_BUTTON_CHIP,
+                                                    white_space="nowrap",
+                                                ),
+                                                rx.button(
+                                                    "Confirmar",
+                                                    size="1",
+                                                    variant="solid",
+                                                    color_scheme="cyan",
+                                                    on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 1"),
+                                                    style=STYLE_BUTTON_CHIP,
+                                                    white_space="nowrap",
+                                                ),
                                             ),
                                         ),
                                         spacing="2",
@@ -242,24 +279,28 @@ def painel_supervisor_view() -> rx.Component:
                                             rx.badge("PENDENTE", color_scheme="gray", variant="surface", size="1", white_space="nowrap"),
                                         ),
                                         rx.cond(
-                                            item["presenca_dia2"],
-                                            rx.button(
-                                                "Desmarcar",
-                                                size="1",
-                                                variant="ghost",
-                                                color_scheme="red",
-                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
-                                            ),
-                                            rx.button(
-                                                "Confirmar",
-                                                size="1",
-                                                variant="solid",
-                                                color_scheme="violet",
-                                                on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
-                                                style=STYLE_BUTTON_CHIP,
-                                                white_space="nowrap",
+                                            item["is_admin_role"] & ~AuthState.is_admin,
+                                            rx.badge("Restrito (Admin)", color_scheme="red", variant="outline", size="1", white_space="nowrap"),
+                                            rx.cond(
+                                                item["presenca_dia2"],
+                                                rx.button(
+                                                    "Desmarcar",
+                                                    size="1",
+                                                    variant="ghost",
+                                                    color_scheme="red",
+                                                    on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
+                                                    style=STYLE_BUTTON_CHIP,
+                                                    white_space="nowrap",
+                                                ),
+                                                rx.button(
+                                                    "Confirmar",
+                                                    size="1",
+                                                    variant="solid",
+                                                    color_scheme="violet",
+                                                    on_click=SupervisorState.alternar_presenca_dia(item["id"], "Dia 2"),
+                                                    style=STYLE_BUTTON_CHIP,
+                                                    white_space="nowrap",
+                                                ),
                                             ),
                                         ),
                                         spacing="2",

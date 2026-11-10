@@ -288,3 +288,98 @@ def test_autenticacao_tolerante_a_espacos_e_caixa_alta(controller: UsuarioContro
     assert res_auth.sucesso is True
     assert res_auth.dado.nome == "Inscrito Mobile"
 
+
+def test_regras_presenca_participante_supervisor_admin(controller: UsuarioController):
+    """Garante que:
+    1. Participantes comuns NÃO podem marcar sua própria presença.
+    2. Supervisores PODEM marcar presença de participantes e supervisores, EXCETO de Admins.
+    3. Admins PODEM marcar presença de qualquer pessoa (incluindo Admins).
+    """
+    cad_part = controller.cadastrar("João Participante", "joao@ufca.edu.br", "senha123")
+    cad_admin = controller.cadastrar("Maria Admin", "admin@ufca.edu.br", "senha123")
+    controller.alterar_role(cad_admin.dado.id, "admin", solicitante_role="admin")
+
+    # 1. Participante comum bloqueado
+    res_negado_part = controller.alternar_presenca(cad_part.dado.id, dia="Dia 1", solicitante_role="participante")
+    assert res_negado_part.sucesso is False
+    assert "não podem marcar a própria presença" in res_negado_part.mensagem
+
+    # 2. Supervisor marca presença de participante comum -> Sucesso
+    res_sup_ok = controller.alternar_presenca(cad_part.dado.id, dia="Dia 1", solicitante_role="supervisor")
+    assert res_sup_ok.sucesso is True
+    assert res_sup_ok.dado.presenca_dia1 is True
+
+    # 3. Supervisor tenta marcar presença de um Admin -> Bloqueado
+    res_sup_admin = controller.alternar_presenca(cad_admin.dado.id, dia="Dia 1", solicitante_role="supervisor")
+    assert res_sup_admin.sucesso is False
+    assert "administradores" in res_sup_admin.mensagem.lower()
+
+    # 4. Admin marca presença de Admin -> Sucesso
+    res_adm_admin = controller.alternar_presenca(cad_admin.dado.id, dia="Dia 1", solicitante_role="admin")
+    assert res_adm_admin.sucesso is True
+    assert res_adm_admin.dado.presenca_dia1 is True
+
+
+def test_apenas_admin_pode_conceder_permissao_supervisor(controller: UsuarioController):
+    """Garante que somente Admin pode alterar role ou promover usuário a Supervisor."""
+    cad = controller.cadastrar("Carlos Candidato", "carlos@ufca.edu.br", "senha123")
+    uid = cad.dado.id
+
+    # Supervisor ou participante não pode promover ninguém
+    for role_nao_admin in ["participante", "supervisor"]:
+        res_negado = controller.alterar_role(uid, "supervisor", solicitante_role=role_nao_admin)
+        assert res_negado.sucesso is False
+        assert "somente administradores" in res_negado.mensagem
+
+    # Admin promove a supervisor via atualizar_participante_completo
+    res_ok = controller.atualizar_participante_completo(
+        user_id=uid,
+        nome="Carlos Supervisor",
+        email="carlos@ufca.edu.br",
+        instituicao="UFCA",
+        modalidade="Presencial",
+        area="Astrofísica",
+        role="supervisor",
+        presenca_dia1=True,
+        presenca_dia2=False,
+        solicitante_role="admin",
+    )
+    assert res_ok.sucesso is True
+    assert res_ok.dado.role == "supervisor"
+    assert res_ok.dado.presenca_dia1 is True
+
+
+def test_acentuacao_ptbr_nfc_e_csv_sem_bom_ios(controller: UsuarioController):
+    """Garante que acentos pt-BR (NFD do iOS/macOS) são normalizados para NFC e o CSV não possui BOM \\ufeff."""
+    import unicodedata
+    from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
+
+    # Texto decomposto (NFD) simulando entrada de teclado iOS/Safari + caractere fantasma \ufeff
+    nome_nfd = "\ufeff" + unicodedata.normalize("NFD", "João André Conceição Assunção Magalhães")
+    inst_nfd = unicodedata.normalize("NFD", "Instituição de Pós-Graduação em Ciências Físicas – São Paulo")
+
+    res = controller.cadastrar(
+        nome=nome_nfd,
+        email="joao.andre@ufca.edu.br",
+        senha="senha_acento_123",
+        instituicao=inst_nfd,
+        modalidade="Presencial",
+        area="Relatividade e Gravitação",
+    )
+    assert res.sucesso is True
+    assert res.dado.nome == "João André Conceição Assunção Magalhães"
+    assert unicodedata.is_normalized("NFC", res.dado.nome)
+    assert "\ufeff" not in res.dado.nome
+
+    usuarios = controller.listar_inscritos()
+    csv_str = gerar_csv_inscritos(usuarios)
+    # Sem BOM no início para não travar WebKit/JavaScriptCore no iPhone
+    assert not csv_str.startswith("\ufeff")
+    assert "\ufeff" not in csv_str
+    assert "João André Conceição Assunção Magalhães" in csv_str
+
+    pdf_bytes = gerar_pdf_inscritos(usuarios, controller.obter_estatisticas())
+    assert pdf_bytes.startswith(b"%PDF-")
+    assert len(pdf_bytes) > 1000
+
+

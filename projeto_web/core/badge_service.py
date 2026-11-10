@@ -1,5 +1,6 @@
 import os
 import io
+import unicodedata
 from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
 
@@ -51,6 +52,12 @@ class BadgeService:
         3. assets/cariri_cosmico_banner.jpeg (Cariri Cósmico)
         """
         W, H = 960, 520
+        nome = unicodedata.normalize("NFC", str(nome or "").replace("\ufeff", ""))
+        email = unicodedata.normalize("NFC", str(email or "").replace("\ufeff", ""))
+        instituicao = unicodedata.normalize("NFC", str(instituicao or "").replace("\ufeff", ""))
+        modalidade = unicodedata.normalize("NFC", str(modalidade or "Presencial").replace("\ufeff", ""))
+        role = unicodedata.normalize("NFC", str(role or "participante").replace("\ufeff", ""))
+        codigo = unicodedata.normalize("NFC", str(codigo or "ASTRO-001").replace("\ufeff", ""))
         base = Image.new("RGBA", (W, H), (6, 11, 23, 255))
 
         # 1. Textura de fundo: Cariri Cósmico com overlay escuro cósmico

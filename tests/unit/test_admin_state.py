@@ -96,3 +96,50 @@ def test_admin_state_excluir_participante_admin_seguranca():
     AdminState.excluir_participante_admin.fn(dummy_self)
     assert dummy_self.feedback_tipo == "error"
     assert "própria conta" in dummy_self.feedback_msg
+
+
+def test_admin_e_supervisor_podem_fazer_nova_inscricao_painel():
+    """Garante que Admin e Supervisor podem realizar Nova Inscrição pelo painel sem deslogar a sessão atual."""
+    assert hasattr(AdminState, "abrir_modal_nova_inscricao")
+    assert hasattr(AdminState, "salvar_nova_inscricao_painel")
+
+    # 1. Participante comum bloqueado de abrir modal de nova inscrição no painel
+    dummy_part = types.SimpleNamespace(
+        is_admin=False,
+        is_supervisor=False,
+        user_role="participante",
+        modal_nova_inscricao_aberto=False,
+        feedback_msg="",
+        feedback_tipo="",
+    )
+    AdminState.abrir_modal_nova_inscricao.fn(dummy_part)
+    assert dummy_part.modal_nova_inscricao_aberto is False
+    assert dummy_part.feedback_tipo == "error"
+
+    # 2. Supervisor realizando Nova Inscrição pelo painel
+    dummy_superv = types.SimpleNamespace(
+        is_admin=False,
+        is_supervisor=True,
+        user_role="supervisor",
+        user_id=77,
+        user_nome="Supervisor Ativo",
+        modal_nova_inscricao_aberto=True,
+        novo_inscrito_nome="Novo Congressista Cadastrado Pelo Supervisor",
+        novo_inscrito_email="novo.congressista.painel@ufca.edu.br",
+        novo_inscrito_senha="senha12345",
+        novo_inscrito_instituicao="UFCA - Campus Brejo Santo",
+        novo_inscrito_modalidade="Presencial",
+        novo_inscrito_area="Astrofísica",
+        feedback_msg="",
+        feedback_tipo="",
+        carregar_painel_admin=lambda: None,
+        carregar_painel_supervisor=lambda: None,
+    )
+    AdminState.salvar_nova_inscricao_painel.fn(dummy_superv)
+    assert dummy_superv.feedback_tipo == "success"
+    assert "ASTRO-" in dummy_superv.feedback_msg
+    assert dummy_superv.modal_nova_inscricao_aberto is False
+    # Confirma que a sessão do Supervisor não foi sobrescrita
+    assert dummy_superv.user_id == 77
+    assert dummy_superv.user_role == "supervisor"
+

@@ -11,13 +11,67 @@ from projeto_web.state.evento_state import EventoState
 
 app = rx.App(
     stylesheets=[
-        "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
+        "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
         "/styles.css",
     ],
     style={
-        "font_family": "'Plus Jakarta Sans', sans-serif",
+        "font_family": "'Plus Jakarta Sans', 'Inter', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Liberation Sans', Arial, sans-serif",
     },
     head_components=[
+        rx.el.meta(char_set="utf-8"),
+        rx.el.meta(http_equiv="Content-Language", content="pt-BR"),
+        # Blindagem WebSocket / HTTPS para iPhone (iOS WebKit) e Rede Local / Produção
+        rx.el.script(
+            """
+            (function() {
+                if (typeof window === "undefined") return;
+                var host = window.location.hostname || "";
+                var isProdDomain = host.endsWith("ivefac.com.br");
+
+                // 1. Se acessar http://ivefac.com.br (sem HTTPS), redireciona imediatamente para https://
+                // evitando que getBackendURL mantenha ws://ivefac.com.br:3000/_event
+                if (isProdDomain && window.location.protocol === "http:") {
+                    window.location.replace("https://" + window.location.host + window.location.pathname + window.location.search + window.location.hash);
+                    return;
+                }
+
+                // 2. Reescreve qualquer tentativa residual de usar porta :3000 ou :8000 no domínio público ivefac.com.br
+                // mantendo intacto o funcionamento em localhost e IPs de rede local (192.168.x.x, 10.x.x.x, 172.x.x.x)
+                function sanitizeProdUrl(urlStr) {
+                    if (!isProdDomain || typeof urlStr !== "string") return urlStr;
+                    return urlStr
+                        .replace(/^ws:\\/\\/([a-z0-9.-]*ivefac\\.com\\.br)(:\\d+)?/i, "wss://$1")
+                        .replace(/^wss:\\/\\/([a-z0-9.-]*ivefac\\.com\\.br):\\d+/i, "wss://$1")
+                        .replace(/^http:\\/\\/([a-z0-9.-]*ivefac\\.com\\.br)(:\\d+)?/i, "https://$1")
+                        .replace(/^https:\\/\\/([a-z0-9.-]*ivefac\\.com\\.br):\\d+/i, "https://$1");
+                }
+
+                if (isProdDomain && typeof window.WebSocket === "function") {
+                    var OrigWebSocket = window.WebSocket;
+                    var PatchedWebSocket = function(url, protocols) {
+                        var cleanUrl = sanitizeProdUrl(String(url));
+                        return protocols !== undefined ? new OrigWebSocket(cleanUrl, protocols) : new OrigWebSocket(cleanUrl);
+                    };
+                    PatchedWebSocket.prototype = OrigWebSocket.prototype;
+                    PatchedWebSocket.CONNECTING = OrigWebSocket.CONNECTING;
+                    PatchedWebSocket.OPEN = OrigWebSocket.OPEN;
+                    PatchedWebSocket.CLOSING = OrigWebSocket.CLOSING;
+                    PatchedWebSocket.CLOSED = OrigWebSocket.CLOSED;
+                    window.WebSocket = PatchedWebSocket;
+                }
+
+                if (isProdDomain && typeof window.fetch === "function") {
+                    var origFetch = window.fetch;
+                    window.fetch = function(input, init) {
+                        if (typeof input === "string") {
+                            input = sanitizeProdUrl(input);
+                        }
+                        return origFetch.call(this, input, init);
+                    };
+                }
+            })();
+            """
+        ),
         rx.el.link(rel="icon", type="image/x-icon", href="/favicon.ico"),
         rx.el.link(rel="icon", type="image/png", href="/favicon.png"),
         rx.el.link(rel="apple-touch-icon", href="/favicon.png"),

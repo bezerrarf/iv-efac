@@ -53,10 +53,10 @@ def feedback_alert() -> rx.Component:
                     window.removeEventListener("touchstart", onUserInteract);
                 }
 
-                // Auto-dismiss ap?s no m?ximo 10 segundos
+                // Auto-dismiss após no máximo 10 segundos
                 var timer = setTimeout(dismiss, 10000);
 
-                // Espera 350ms antes de registrar listeners para n?o capturar o clique inicial que gerou a mensagem
+                // Espera 350ms antes de registrar listeners para não capturar o clique inicial que gerou a mensagem
                 setTimeout(function() {
                     if (dismissed) return;
                     window.addEventListener("scroll", onUserInteract, { once: true, passive: true });

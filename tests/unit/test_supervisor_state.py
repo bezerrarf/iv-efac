@@ -25,3 +25,18 @@ def test_supervisor_state_carregar_painel_executes_without_errors():
     SupervisorState.carregar_painel_supervisor(dummy)
     assert isinstance(dummy.superv_inscritos, list)
     assert dummy.superv_total_count >= 0
+
+
+def test_supervisor_state_bloqueia_participante_comum():
+    """Garante que participante comum não consegue acionar alternar_presenca_dia via SupervisorState."""
+    dummy_part = types.SimpleNamespace(
+        is_supervisor=False,
+        is_admin=False,
+        user_role="participante",
+        feedback_msg="",
+        feedback_tipo="",
+    )
+    SupervisorState.alternar_presenca_dia.fn(dummy_part, 1, "Dia 1")
+    assert dummy_part.feedback_tipo == "error"
+    assert "Permissão negada" in dummy_part.feedback_msg
+

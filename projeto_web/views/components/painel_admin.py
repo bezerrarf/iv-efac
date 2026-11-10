@@ -203,6 +203,22 @@ def tabela_inscritos_admin() -> rx.Component:
                 style=STYLE_BUTTON_CHIP,
                 white_space="nowrap",
             ),
+            # Botão Nova Inscrição Direta no Painel
+            rx.button(
+                rx.hstack(
+                    rx.icon(tag="user-plus", size=14),
+                    rx.text("Nova Inscrição", size="1", weight="bold"),
+                    spacing="1",
+                    align="center",
+                ),
+                size="2",
+                variant="solid",
+                color_scheme="violet",
+                on_click=AdminState.abrir_modal_nova_inscricao,
+                style=STYLE_BUTTON_CHIP,
+                id="btn-admin-nova-inscricao",
+                white_space="nowrap",
+            ),
             # Botão Baixar CSV
             rx.button(
                 rx.hstack(
@@ -322,10 +338,24 @@ def tabela_inscritos_admin() -> rx.Component:
                                 ),
                                 white_space="nowrap",
                             ),
-                            # 2. Participante (Nome e e-mail com nowrap e hierarquia clara)
+                            # 2. Participante (Nome, badge de função e e-mail com nowrap e hierarquia clara)
                             rx.table.cell(
                                 rx.vstack(
-                                    rx.text(u["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                    rx.hstack(
+                                        rx.text(u["nome"], size="2", weight="bold", color="white", white_space="nowrap"),
+                                        rx.cond(
+                                            u["role"] == "admin",
+                                            rx.badge("ADMIN", color_scheme="red", variant="solid", size="1"),
+                                            rx.cond(
+                                                u["role"] == "supervisor",
+                                                rx.badge("SUPERVISOR", color_scheme="violet", variant="solid", size="1"),
+                                                rx.fragment(),
+                                            ),
+                                        ),
+                                        spacing="2",
+                                        align="center",
+                                        wrap="nowrap",
+                                    ),
                                     rx.text(u["email"], size="1", color="#CBD5E1", white_space="nowrap"),
                                     spacing="0",
                                     align="start",
@@ -1190,7 +1220,7 @@ def modal_editar_participante_admin() -> rx.Component:
                         rx.vstack(
                             rx.text("Privilégio / Função", size="1", weight="bold", color="#CBD5E1"),
                             rx.select(
-                                ["participante", "admin"],
+                                ["participante", "supervisor", "admin"],
                                 value=AdminState.admin_edit_role,
                                 on_change=AdminState.set_admin_edit_role,
                                 size="2",
@@ -1307,13 +1337,160 @@ def modal_editar_participante_admin() -> rx.Component:
 
 
 
+def modal_nova_inscricao_painel() -> rx.Component:
+    """Modal para Admin e Supervisor realizarem uma Nova Inscrição direta pelo painel."""
+    return rx.dialog.root(
+        rx.dialog.content(
+            rx.vstack(
+                rx.hstack(
+                    rx.box(
+                        rx.icon(tag="user-plus", size=22, color=COLOR_CYAN),
+                        background="rgba(0, 173, 181, 0.15)",
+                        border_radius="10px",
+                        padding="0.6rem",
+                    ),
+                    rx.vstack(
+                        rx.dialog.title("Nova Inscrição pelo Painel", size="4", weight="bold", color="white"),
+                        rx.dialog.description(
+                            "Cadastre um novo participante diretamente sem encerrar sua sessão atual.",
+                            size="1",
+                            color="#CBD5E1",
+                        ),
+                        spacing="0",
+                        align="start",
+                    ),
+                    spacing="3",
+                    align="center",
+                    width="100%",
+                ),
+                rx.divider(color_scheme="gray", opacity="0.2"),
+                rx.vstack(
+                    rx.text("Nome Completo", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.novo_inscrito_nome,
+                        on_change=AdminState.set_novo_inscrito_nome,
+                        placeholder="Ex: Maria José da Conceição",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.text("Endereço de E-mail", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.novo_inscrito_email,
+                        on_change=AdminState.set_novo_inscrito_email,
+                        placeholder="participante@ufca.edu.br",
+                        type="email",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.text("Senha de Acesso Inicial", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.novo_inscrito_senha,
+                        on_change=AdminState.set_novo_inscrito_senha,
+                        placeholder="Mínimo de 6 caracteres",
+                        type="password",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.text("Instituição / Polo Acadêmico", size="1", weight="bold", color="#CBD5E1"),
+                    rx.input(
+                        value=AdminState.novo_inscrito_instituicao,
+                        on_change=AdminState.set_novo_inscrito_instituicao,
+                        placeholder="Ex: UFCA, URCA, IFCE, UFC...",
+                        size="2",
+                        width="100%",
+                    ),
+                    rx.hstack(
+                        rx.vstack(
+                            rx.text("Modalidade", size="1", weight="bold", color="#CBD5E1"),
+                            rx.select(
+                                ["Presencial", "Online"],
+                                value=AdminState.novo_inscrito_modalidade,
+                                on_change=AdminState.set_novo_inscrito_modalidade,
+                                size="2",
+                                width="100%",
+                            ),
+                            width="50%",
+                            spacing="1",
+                        ),
+                        rx.vstack(
+                            rx.text("Eixo Temático", size="1", weight="bold", color="#CBD5E1"),
+                            rx.select(
+                                [
+                                    "Astrofísica",
+                                    "Física Computacional",
+                                    "Relatividade e Gravitação",
+                                    "Física Quântica",
+                                    "Ensino e Divulgação Científica",
+                                ],
+                                value=AdminState.novo_inscrito_area,
+                                on_change=AdminState.set_novo_inscrito_area,
+                                size="2",
+                                width="100%",
+                            ),
+                            width="50%",
+                            spacing="1",
+                        ),
+                        width="100%",
+                        spacing="3",
+                    ),
+                    spacing="2",
+                    width="100%",
+                ),
+                rx.hstack(
+                    rx.dialog.close(
+                        rx.button(
+                            "Cancelar",
+                            variant="soft",
+                            color_scheme="gray",
+                            size="2",
+                            on_click=AdminState.fechar_modal_nova_inscricao,
+                            style=STYLE_BUTTON_CHIP,
+                        ),
+                    ),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon(tag="user-check", size=14),
+                            rx.text("Confirmar Nova Inscrição", size="2", weight="bold"),
+                            spacing="1",
+                            align="center",
+                        ),
+                        color_scheme="cyan",
+                        variant="solid",
+                        size="2",
+                        on_click=AdminState.salvar_nova_inscricao_painel,
+                        style=STYLE_BUTTON_CHIP,
+                        id="btn-confirmar-nova-inscricao-painel",
+                    ),
+                    spacing="2",
+                    justify="end",
+                    align="center",
+                    width="100%",
+                    margin_top="1rem",
+                ),
+                spacing="3",
+                width="100%",
+            ),
+            background="rgba(15, 23, 42, 0.98)",
+            border="1.5px solid rgba(0, 173, 181, 0.4)",
+            border_radius="16px",
+            box_shadow="0 20px 60px rgba(0, 0, 0, 0.7)",
+            padding="1.75rem",
+            max_width="540px",
+            width="90vw",
+        ),
+        open=AdminState.modal_nova_inscricao_aberto,
+    )
+
+
 def painel_admin_view() -> rx.Component:
     """Componente completo de renderização do Painel de Administração."""
     return rx.box(
         # Modal de alteração de senha de inscrito
         modal_alterar_senha_inscrito(),
-        # Modal de visualização de carteirinha de participante
+        # Modal de edição completa de participante
         modal_editar_participante_admin(),
+        # Modal de nova inscrição direta pelo painel
+        modal_nova_inscricao_painel(),
 
         rx.vstack(
             # Título e Badges

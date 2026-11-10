@@ -8,7 +8,7 @@ def feedback_alert() -> rx.Component:
         rx.box(
             rx.callout(
                 AuthState.feedback_msg,
-                icon=rx.cond(AuthState.feedback_tipo == "success", "circle-check", "alert-circle"),
+                icon=rx.cond(AuthState.feedback_tipo == "success", "circle-check", "circle-alert"),
                 color_scheme=rx.cond(AuthState.feedback_tipo == "success", "green", "red"),
                 variant="soft",
                 size="2",

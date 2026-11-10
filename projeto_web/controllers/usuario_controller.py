@@ -17,10 +17,20 @@ T = TypeVar("T")
 
 
 def _norm(texto: Optional[str]) -> str:
-    """Normaliza strings para Unicode NFC (acentuação pt-BR composta) e remove BOM invisível (\ufeff)."""
+    """Normaliza strings para Unicode NFC (acentuação pt-BR composta), repara eventual mojibake e remove BOM invisível (\ufeff)."""
     if not texto:
         return ""
-    return unicodedata.normalize("NFC", str(texto).replace("\ufeff", "").replace("\u200b", "").strip())
+    limpo = str(texto).replace("\ufeff", "").replace("\u200b", "").strip()
+    if "Ã" in limpo or "Â" in limpo:
+        for enc in ("cp1252", "latin1"):
+            try:
+                reparado = limpo.encode(enc).decode("utf-8")
+                if len(reparado) < len(limpo):
+                    limpo = reparado
+                    break
+            except Exception:
+                pass
+    return unicodedata.normalize("NFC", limpo)
 
 
 @dataclass

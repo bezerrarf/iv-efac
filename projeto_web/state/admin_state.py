@@ -1,7 +1,7 @@
 import reflex as rx
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
+from projeto_web.core.export_service import gerar_csv_inscritos, gerar_csv_inscritos_bytes, gerar_pdf_inscritos
 from projeto_web.controllers.evento_controller import EventoController
 from projeto_web.state.auth_state import AuthState
 from projeto_web.core.security import PBKDF2PasswordHasher
@@ -407,15 +407,19 @@ class AdminState(AuthState):
             self.admin_propria_senha_input = ""
             self.admin_propria_senha_confirm = ""
     def exportar_inscritos_csv(self):
-        """Gera e dispara o download da relação de participantes em formato CSV para Admin e Supervisores."""
+        """Gera e dispara o download da relação de participantes em formato CSV (UTF-8 com BOM binário para Excel e seguro para iOS) para Admin e Supervisores."""
         if not (self.is_admin or self.is_supervisor):
             self.feedback_msg = "Permissão negada: apenas administradores e supervisores podem baixar a lista."
             self.feedback_tipo = "error"
             return
         usuarios = _usuario_controller.listar_inscritos()
-        csv_str = gerar_csv_inscritos(usuarios)
+        csv_bytes = gerar_csv_inscritos_bytes(usuarios)
         data_tag = datetime.now().strftime("%Y%m%d_%H%M")
-        return rx.download(data=csv_str, filename=f"inscritos_iv_efac_{data_tag}.csv")
+        return rx.download(
+            data=csv_bytes,
+            filename=f"inscritos_iv_efac_{data_tag}.csv",
+            mime_type="text/csv;charset=utf-8",
+        )
     def exportar_inscritos_pdf(self):
         """Gera e dispara o download do relatório oficial de credenciamento em PDF para Admin e Supervisores."""
         if not (self.is_admin or self.is_supervisor):
@@ -426,7 +430,11 @@ class AdminState(AuthState):
         stats = _usuario_controller.obter_estatisticas()
         pdf_bytes = gerar_pdf_inscritos(usuarios, stats)
         data_tag = datetime.now().strftime("%Y%m%d_%H%M")
-        return rx.download(data=pdf_bytes, filename=f"relatorio_oficial_inscritos_iv_efac_{data_tag}.pdf")
+        return rx.download(
+            data=pdf_bytes,
+            filename=f"relatorio_oficial_inscritos_iv_efac_{data_tag}.pdf",
+            mime_type="application/pdf",
+        )
     def carregar_atividades_admin(self):
         """Carrega todas as atividades salvas para edição no painel admin."""
         atividades = EventoController.obter_todas_atividades()

@@ -350,9 +350,22 @@ def test_apenas_admin_pode_conceder_permissao_supervisor(controller: UsuarioCont
 
 
 def test_acentuacao_ptbr_nfc_e_csv_sem_bom_ios(controller: UsuarioController):
-    """Garante que acentos pt-BR (NFD do iOS/macOS) são normalizados para NFC e o CSV não possui BOM \\ufeff."""
+    """Garante que acentos pt-BR (NFD do iOS/macOS e mojibake) são normalizados para NFC,
+    a string em memória não tem BOM nem 'sep=;', e o binário para Excel possui o BOM UTF-8 (0xEF,0xBB,0xBF).
+    """
     import unicodedata
-    from projeto_web.core.export_service import gerar_csv_inscritos, gerar_pdf_inscritos
+    from projeto_web.core.export_service import (
+        gerar_csv_inscritos,
+        gerar_csv_inscritos_bytes,
+        gerar_pdf_inscritos,
+        normalizar_texto_ptbr,
+    )
+
+    # Testa reparo automático de mojibake (caso exista string legada corrompida)
+    assert normalizar_texto_ptbr("CÃ³digo de Check-in") == "Código de Check-in"
+    assert normalizar_texto_ptbr("InstituiÃ§Ã£o / Polo") == "Instituição / Polo"
+    assert normalizar_texto_ptbr("ObservatÃ³rio Vera Rubin") == "Observatório Vera Rubin"
+    assert normalizar_texto_ptbr("NÃƒO") == "NÃO"
 
     # Texto decomposto (NFD) simulando entrada de teclado iOS/Safari + caractere fantasma \ufeff
     nome_nfd = "\ufeff" + unicodedata.normalize("NFD", "João André Conceição Assunção Magalhães")
@@ -373,10 +386,16 @@ def test_acentuacao_ptbr_nfc_e_csv_sem_bom_ios(controller: UsuarioController):
 
     usuarios = controller.listar_inscritos()
     csv_str = gerar_csv_inscritos(usuarios)
-    # Sem BOM no início para não travar WebKit/JavaScriptCore no iPhone
+    # Sem BOM na string em memória e sem 'sep=;' (que forçava ANSI cp1252 no Excel)
     assert not csv_str.startswith("\ufeff")
-    assert "\ufeff" not in csv_str
+    assert not csv_str.startswith("sep=;")
+    assert csv_str.startswith("ID;Código de Check-in;")
     assert "João André Conceição Assunção Magalhães" in csv_str
+
+    # Arquivo físico em bytes deve iniciar exatamente com os 3 bytes do BOM UTF-8 (0xEF, 0xBB, 0xBF) seguidos de 'ID;Código'
+    csv_bytes = gerar_csv_inscritos_bytes(usuarios)
+    assert csv_bytes.startswith(b"\xef\xbb\xbfID;C\xc3\xb3digo de Check-in;")
+    assert csv_bytes.decode("utf-8-sig").startswith("ID;Código de Check-in;")
 
     pdf_bytes = gerar_pdf_inscritos(usuarios, controller.obter_estatisticas())
     assert pdf_bytes.startswith(b"%PDF-")

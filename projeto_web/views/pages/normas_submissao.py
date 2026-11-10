@@ -250,7 +250,7 @@ def normas_submissao_page() -> rx.Component:
                                 align="start",
                             ),
                             rx.hstack(
-                                rx.icon(tag="x-circle", size=16, color="#EF4444"),
+                                rx.icon(tag="circle-x", size=16, color="#EF4444"),
                                 rx.text(
                                     "Submissões com 3 páginas ou mais serão rejeitadas preliminarmente sem avaliação de mérito.",
                                     size="2",

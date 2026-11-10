@@ -11,10 +11,19 @@ from typing import List, Dict, Any, Tuple
 
 
 def normalizar_texto_ptbr(valor: Any) -> str:
-    """Normaliza qualquer texto para Unicode NFC (padrão pt-BR composto) e remove BOM invisível (\ufeff)."""
+    """Normaliza qualquer texto para Unicode NFC (padrão pt-BR composto), repara eventual mojibake (cp1252/latin1) e remove BOM invisível (\ufeff)."""
     if valor is None:
         return ""
     texto = str(valor).replace("\ufeff", "").replace("\u200b", "")
+    if "Ã" in texto or "Â" in texto:
+        for enc in ("cp1252", "latin1"):
+            try:
+                reparado = texto.encode(enc).decode("utf-8")
+                if len(reparado) < len(texto):
+                    texto = reparado
+                    break
+            except Exception:
+                pass
     return unicodedata.normalize("NFC", texto)
 
 
@@ -81,9 +90,8 @@ def _configurar_fontes_utf8_pdf() -> Tuple[str, str, str]:
 
 
 def gerar_csv_inscritos(usuarios: List[Any]) -> str:
-    """Gera string CSV em UTF-8 puro normalizado em NFC (sem BOM \\ufeff para total compatibilidade com iOS/Safari/WebKit)."""
+    """Gera string CSV em UTF-8 puro normalizado em NFC (sem BOM \\ufeff na string em memória e sem 'sep=;' que força ANSI no Excel)."""
     linhas = [
-        "sep=;",
         "ID;Código de Check-in;Nome Completo;E-mail;Instituição / Polo;Modalidade;Eixo Temático;Função / Papel;Presença Dia 1 (11/Nov);Presença Dia 2 (12/Nov)"
     ]
     for u in usuarios:
@@ -120,12 +128,21 @@ def gerar_csv_inscritos(usuarios: List[Any]) -> str:
             f'"{normalizar_texto_ptbr(mod)}"',
             f'"{normalizar_texto_ptbr(area).replace(";", ",")}"',
             f'"{normalizar_texto_ptbr(role).upper()}"',
-            f'"{pres_d1}"',
-            f'"{pres_d2}"',
+            f'"{normalizar_texto_ptbr(pres_d1)}"',
+            f'"{normalizar_texto_ptbr(pres_d2)}"',
         ]
         linhas.append(";".join(linha))
 
-    return "\n".join(linhas)
+    return "\r\n".join(linhas)
+
+
+def gerar_csv_inscritos_bytes(usuarios: List[Any]) -> bytes:
+    """Gera os bytes finais do arquivo físico .csv adicionando o BOM UTF-8 (0xEF, 0xBB, 0xBF) exclusivamente nos bytes binários.
+    - No transporte WebSocket/JSON (Reflex rx.download), os bytes são codificados em Base64 ASCII ('77u/...'), nunca expondo '\\ufeff' ao motor JS do iOS.
+    - Ao salvar o arquivo físico no disco, os 3 bytes iniciais 0xEF 0xBB 0xBF (sem 'sep=;') garantem que o Microsoft Excel abra em UTF-8 perfeito.
+    """
+    csv_limpo = gerar_csv_inscritos(usuarios)
+    return b"\xef\xbb\xbf" + csv_limpo.encode("utf-8")
 
 
 def gerar_pdf_inscritos(usuarios: List[Any], stats: Dict[str, Any]) -> bytes:
